@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Instructores</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link active" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Instructores</span>
+          <h1>Gestión de instructores</h1>
+        </div>
+        <button class="button primary" type="button">+ Nuevo instructor</button>
+      </header>
+
+      <section class="card">
+        <div class="section-heading table-heading">
+          <div>
+            <h2>Listado de instructores</h2>
+            <p>Interfaz lista para vincular docentes con filiales, instrumentos y comisiones.</p>
+          </div>
+
+          <div class="table-tools">
+            <label class="search-box">
+              <span class="sr-only">Buscar instructores</span>
+              <input type="search" placeholder="Buscar por nombre o especialidad">
+            </label>
+            <select aria-label="Filtrar por filial">
+              <option value="">Todas las filiales</option>
+            </select>
+            <button class="button secondary" type="button">Actualizar</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Apellido y Nombre</th>
+                <th>DNI</th>
+                <th>Instrumento</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" class="empty-state">Sin instructores cargados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

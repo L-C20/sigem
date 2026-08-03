@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Teoría y Solfeo</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link active" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Teoría y Solfeo</span>
+          <h1>Gestión de teoría y solfeo</h1>
+        </div>
+        <button class="button primary" type="button">+ Nueva comisión</button>
+      </header>
+
+      <section class="card">
+        <div class="section-heading table-heading">
+          <div>
+            <h2>Comisiones y cursadas</h2>
+            <p>Vista preparada para administrar niveles, horarios e inscripciones teóricas.</p>
+          </div>
+
+          <div class="table-tools">
+            <label class="search-box">
+              <span class="sr-only">Buscar teoría y solfeo</span>
+              <input type="search" placeholder="Buscar por alumno o nivel">
+            </label>
+            <select aria-label="Filtrar por nivel">
+              <option value="">Todos los niveles</option>
+              <option value="inicial">Nivel 1</option>
+              <option value="intermedio">Nivel 2</option>
+              <option value="avanzado">Nivel 3</option>
+              <option value="avanzado">Nivel 4</option>
+            </select>
+            <button class="button secondary" type="button">Actualizar</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Nivel</th>
+                <th>Instructor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" class="empty-state">Sin cursadas cargadas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

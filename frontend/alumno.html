@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SIGEM | Ficha del alumno</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+
+<body>
+
+<div class="app-shell">
+
+
+<aside class="sidebar">
+
+<div class="brand">
+  <div class="brand-logo">SIGEM</div>
+  <p>Enseñanza de música</p>
+</div>
+
+
+<nav class="main-nav">
+
+<a class="nav-link" href="index.html">Inicio</a>
+<a class="nav-link active" href="alumnos.html">Alumnos</a>
+<a class="nav-link" href="instrumentos.html">Instrumentos</a>
+<a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+<a class="nav-link" href="instructores.html">Instructores</a>
+<a class="nav-link" href="asistencias.html">Asistencias</a>
+
+</nav>
+
+</aside>
+
+<main class="content">
+
+    <header class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                Ficha del alumno
+            </span>
+
+            <h1 id="nombreAlumno">
+                Cargando...
+            </h1>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button
+                id="btnEditar"
+                class="button primary"
+                type="button">Editar</button>
+
+            <button
+                id="btnGuardar"
+                class="button primary hidden"
+                type="button">
+
+                Guardar cambios
+
+            </button>
+
+            <button
+                id="btnCancelar"
+                class="button secondary hidden"
+                type="button">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <form id="formAlumno">
+
+
+        <!-- ====================== -->
+        <!-- DATOS PERSONALES -->
+        <!-- ====================== -->
+
+        <section class="card form-section">
+
+            <h2>Datos personales</h2>
+
+            <div class="form-grid">
+
+                <label class="field">
+                    <span>DNI</span>
+                    <input id="dni" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Apellido</span>
+                    <input id="apellido" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Nombre</span>
+                    <input id="nombre" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Teléfono</span>
+                    <input id="telefono" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Teléfono tutor</span>
+                    <input id="telefono_tutor" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Correo electrónico</span>
+                    <input id="correo" disabled>
+                </label>
+
+                <label class="field">
+                    <span>Iglesia</span>
+
+                    <select id="filial_id" disabled>
+
+                    </select>
+
+                </label>
+
+                <label class="field">
+                    <span>Anciano que autoriza</span>
+                    <input id="anciano_autoriza" disabled>
+                </label>
+
+            </div>
+
+            <label class="field">
+
+                <span>Observaciones</span>
+
+                <textarea
+                    id="observaciones"
+                    rows="4"
+                    disabled></textarea>
+
+            </label>
+
+        </section>
+
+
+
+        <!-- ====================== -->
+        <!-- INSTRUMENTO -->
+        <!-- ====================== -->
+
+        <section class="card form-section">
+
+    <h2>Instrumento</h2>
+
+    <div class="form-grid">
+
+
+        <label class="field">
+
+            <span>Instrumento</span>
+
+            <select id="instrumento_id" disabled>
+
+                <option value="">
+                    No pertenece
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Nivel</span>
+
+            <select id="nivel_instrumento_id" disabled>
+
+                <option value="">
+                    No pertenece
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Instructor</span>
+
+            <select id="instructor_instrumento_id" disabled>
+
+                <option value="">
+                    No pertenece
+                </option>
+
+            </select>
+
+        </label>
+
+
+    </div>
+
+</section>
+
+        <!-- ====================== -->
+        <!-- TEORÍA -->
+        <!-- ====================== -->
+
+       <section class="card form-section">
+
+    <h2>Teoría y Solfeo</h2>
+
+
+    <div class="form-grid">
+
+
+        <label class="field">
+
+            <span>Nivel</span>
+
+            <select id="nivel_teoria_id" disabled>
+
+                <option value="">
+                    No pertenece
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Instructor</span>
+
+            <select id="instructor_teoria_id" disabled>
+
+                <option value="">
+                    No pertenece
+                </option>
+
+            </select>
+
+        </label>
+
+
+    </div>
+
+
+</section>
+
+
+
+        <!-- ====================== -->
+        <!-- INSTRUCCIÓN MINISTERIAL -->
+        <!-- ====================== -->
+
+        <section class="card form-section">
+
+            <h2>Instrucción Ministerial</h2>
+
+            <div class="form-grid">
+
+                <label class="field">
+
+                    <span>Estado</span>
+
+                    <select id="estado_ministerial" disabled>
+
+                        <option value="No pertenece">No pertenece</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Finalizado">Finalizado</option>
+
+                    </select>
+
+                </label>
+
+                <label class="field">
+
+                    <span>Fecha de inicio</span>
+
+                    <input
+                        type="date"
+                        id="fecha_inicio_ministerial"
+                        disabled>
+
+                </label>
+
+                <label class="field">
+
+                    <span>Fecha de finalización</span>
+
+                    <input
+                        type="date"
+                        id="fecha_fin_ministerial"
+                        disabled>
+
+                </label>
+
+            </div>
+
+            <label class="field">
+
+                <span>Observaciones</span>
+
+                <textarea
+                    id="observaciones_ministerial"
+                    rows="3"
+                    disabled></textarea>
+
+            </label>
+
+        </section>
+
+    </form>
+
+</main>
+
+</div>
+
+<script src="js/alumno.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Alumnos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link active" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Alumnos</span>
+          <h1>Gestión de alumnos</h1>
+        </div>
+        <button class="button primary" id="btnAbrirFormulario" type="button">+ Nuevo alumno</button>
+      </header>
+
+      <section class="card form-card hidden" id="formularioAlumno" aria-labelledby="tituloFormulario">
+        <div class="section-heading">
+          <div>
+            <h2 id="tituloFormulario">Nuevo alumno</h2>
+            <p>Registre los datos personales, de instrumento, de teoría y solfeo.</p>
+          </div>
+        </div>
+
+        <form id="alumnoForm">
+          <!-- =========================
+     DATOS PERSONALES
+========================= -->
+
+<div class="form-section">
+
+    <h3 class="form-section-title">
+        Datos personales
+    </h3>
+
+
+    <div class="form-grid">
+
+        <label class="field">
+            <span>DNI</span>
+            <input 
+                type="text" 
+                id="dni" 
+                name="dni"
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Nombre</span>
+            <input 
+                type="text" 
+                id="nombre" 
+                name="nombre" 
+                required
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Apellido</span>
+            <input 
+                type="text" 
+                id="apellido" 
+                name="apellido" 
+                required
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Teléfono</span>
+            <input 
+                type="text" 
+                id="telefono" 
+                name="telefono"
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Teléfono tutor</span>
+            <input 
+                type="text" 
+                id="telefono_tutor" 
+                name="telefono_tutor"
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Correo Electrónico</span>
+            <input 
+                type="email" 
+                id="correo" 
+                name="correo"
+            >
+        </label>
+
+
+        <label class="field">
+            <span>Iglesia</span>
+
+            <select 
+                id="filial_id" 
+                name="filial_id" 
+                required
+            >
+                <option value="">
+                    Cargando iglesias...
+                </option>
+            </select>
+
+        </label>
+
+
+        <label class="field">
+            <span>Anciano que autoriza</span>
+
+            <input 
+                type="text" 
+                id="anciano_autoriza" 
+                name="anciano_autoriza"
+            >
+
+        </label>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     INSTRUMENTO
+========================= -->
+
+<div class="form-section">
+
+    <h3 class="form-section-title">
+        Instrumento
+    </h3>
+
+
+    <div class="form-grid">
+
+
+        <label class="field">
+
+            <span>Instrumento</span>
+
+            <select 
+                id="instrumento_id"
+                name="instrumento_id"
+            >
+
+                <option value="">
+                    Seleccione instrumento
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Nivel de instrumento</span>
+
+            <select 
+                id="nivel_instrumento_id"
+                name="nivel_instrumento_id"
+            >
+
+                <option value="">
+                    Seleccione nivel
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Instructor</span>
+
+            <select 
+                id="instructor_instrumento_id"
+                name="instructor_instrumento_id"
+            >
+
+                <option value="">
+                    Seleccione instructor
+                </option>
+
+            </select>
+
+        </label>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     TEORÍA Y SOLFEO
+========================= -->
+
+<div class="form-section">
+
+    <h3 class="form-section-title">
+        Teoría y Solfeo
+    </h3>
+
+
+    <div class="form-grid">
+
+
+        <label class="field">
+
+            <span>Nivel</span>
+
+            <select 
+                id="nivel_teoria_id"
+                name="nivel_teoria_id"
+            >
+
+                <option value="">
+                    Seleccione nivel
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>Instructor</span>
+
+            <select 
+                id="instructor_teoria_id"
+                name="instructor_teoria_id"
+            >
+
+                <option value="">
+                    Seleccione instructor
+                </option>
+
+            </select>
+
+        </label>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     OBSERVACIONES
+========================= -->
+
+<div class="form-section">
+
+    <h3 class="form-section-title">
+        Observaciones
+    </h3>
+
+
+    <label class="field">
+
+        <textarea
+            id="observaciones"
+            name="observaciones"
+            rows="4"
+            style="resize:none;"
+        ></textarea>
+
+    </label>
+
+</div>
+
+          <div class="form-actions">
+            <button class="button primary" type="submit">Guardar alumno</button>
+            <button class="button secondary" id="btnCancelar" type="button">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-heading table-heading">
+          <div>
+            <h2>Listado de alumnos</h2>
+            <p>Búsqueda por nombre o DNI, con carga preparada desde la API REST.</p>
+          </div>
+
+         <div class="table-tools">
+
+    <label class="search-box">
+
+        <span class="sr-only">
+            Buscar alumnos
+        </span>
+
+        <input
+            id="buscadorAlumnos"
+            type="search"
+            placeholder="Buscar por apellido, nombre o DNI"
+        >
+
+    </label>
+
+
+    <label class="field">
+
+        <span>Iglesia</span>
+
+        <select id="filtroFilial">
+
+            <option value="">
+                Todas las iglesias
+            </option>
+
+        </select>
+
+    </label>
+
+
+</div>
+
+  <button
+    class="button secondary"
+    id="btnActualizar"
+    type="button"
+  >
+    Actualizar
+  </button>
+</div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Apellido y nombre</th>
+                <th>DNI</th>
+                <th>Iglesia</th>
+                <th>Instrumento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaAlumnos">
+              <tr>
+                <td colspan="5" class="empty-state">Sin alumnos cargados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/alumnos.js"></script>
+</body>
+</html>

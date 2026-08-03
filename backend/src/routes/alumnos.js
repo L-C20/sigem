@@ -1,0 +1,391 @@
+const express = require("express");
+const router = express.Router();
+
+const pool = require("../database/connection");
+
+
+// =======================
+// Obtener todos los alumnos
+// =======================
+
+router.get("/", async (req, res) => {
+    try {
+
+        const resultado = await pool.query(`
+
+SELECT
+
+    a.id,
+    a.dni,
+    a.nombre,
+    a.apellido,
+    a.telefono,
+    a.telefono_tutor,
+    a.filial_id,
+
+    f.nombre AS filial_nombre,
+
+
+    -- Instrumento
+
+    i.id AS instrumento_id,
+
+    i.nombre AS instrumento,
+
+    ni.id AS nivel_instrumento_id,
+
+    ni.nombre AS nivel_instrumento,
+
+    instr.id AS instructor_instrumento_id,
+
+    instr.nombre AS instructor_instrumento,
+
+
+    -- Teoría
+
+    nt.id AS nivel_teoria_id,
+
+    nt.nombre AS nivel_teoria,
+
+    instr_t.id AS instructor_teoria_id,
+
+    instr_t.nombre AS instructor_teoria
+
+
+FROM alumnos a
+
+
+
+
+        LEFT JOIN filiales f
+            ON a.filial_id = f.id
+
+
+
+        LEFT JOIN cursada_instrumento ci
+            ON a.id = ci.alumno_id
+
+
+
+        LEFT JOIN instrumentos i
+            ON ci.instrumento_id = i.id
+
+
+
+        LEFT JOIN niveles_instrumento ni
+            ON ci.nivel_instrumento_id = ni.id
+
+
+
+        LEFT JOIN instructores instr
+            ON ci.instructor_id = instr.id
+
+
+
+
+        LEFT JOIN cursadas_teoria ct
+            ON a.id = ct.alumno_id
+
+
+
+        LEFT JOIN niveles_teoria nt
+            ON ct.nivel_id = nt.id
+
+
+
+        LEFT JOIN instructores instr_t
+            ON ct.instructor_id = instr_t.id
+
+
+
+        ORDER BY 
+            a.apellido,
+            a.nombre
+
+        `);
+
+
+        res.json(resultado.rows);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        res.status(500).json({
+
+            error:"Error al obtener alumnos"
+
+        });
+
+    }
+});
+
+// =======================
+// Obtener alumno por ID
+// =======================
+
+router.get("/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        const resultado = await pool.query(
+`
+SELECT
+
+    a.id,
+    a.dni,
+    a.nombre,
+    a.apellido,
+    a.telefono,
+    a.telefono_tutor,
+    a.correo,
+    a.filial_id,
+    a.iglesia,
+    a.anciano_autoriza,
+    a.observaciones,
+
+
+    f.nombre AS filial_nombre,
+
+
+    i.nombre AS instrumento,
+
+ci.instrumento_id,
+
+ci.nivel_instrumento_id,
+
+ci.instructor_id AS instructor_instrumento_id,
+
+ni.nombre AS nivel_instrumento,
+
+nt.nombre AS nivel_teoria,
+
+ct.nivel_id AS nivel_teoria_id,
+
+ct.instructor_id AS instructor_teoria_id
+
+
+FROM alumnos a
+
+
+LEFT JOIN filiales f
+    ON a.filial_id = f.id
+
+
+
+-- Instrumento
+
+LEFT JOIN cursada_instrumento ci
+    ON a.id = ci.alumno_id
+
+
+LEFT JOIN instrumentos i
+    ON ci.instrumento_id = i.id
+
+
+LEFT JOIN niveles_instrumento ni
+    ON ci.nivel_instrumento_id = ni.id
+
+
+LEFT JOIN instructores ins
+    ON ci.instructor_id = ins.id
+
+
+
+-- Teoría
+
+LEFT JOIN cursadas_teoria ct
+    ON a.id = ct.alumno_id
+
+
+LEFT JOIN niveles_teoria nt
+    ON ct.nivel_id = nt.id
+
+
+LEFT JOIN instructores inst
+    ON ct.instructor_id = inst.id
+
+
+
+WHERE a.id = $1
+`,
+[id]
+);
+
+
+        if(resultado.rows.length === 0){
+
+            return res.status(404).json({
+                error:"Alumno no encontrado"
+            });
+
+        }
+
+
+        res.json(resultado.rows[0]);
+
+
+    } catch(error){
+
+        console.error(error);
+
+        res.status(500).json({
+            error:"Error al obtener alumno"
+        });
+
+    }
+
+});
+
+
+// =======================
+// Crear alumno
+// =======================
+
+router.post("/", async (req, res) => {
+
+    try {
+
+        const {
+            dni,
+            nombre,
+            apellido,
+            telefono,
+            telefono_tutor,
+            filial_id
+        } = req.body;
+
+
+        const resultado = await pool.query(
+            `
+            INSERT INTO alumnos
+            (
+                dni,
+                nombre,
+                apellido,
+                telefono,
+                telefono_tutor,
+                filial_id
+            )
+            VALUES ($1,$2,$3,$4,$5,$6)
+            RETURNING *
+            `,
+            [
+                dni,
+                nombre,
+                apellido,
+                telefono,
+                telefono_tutor,
+                filial_id
+            ]
+        );
+
+
+        res.status(201).json(resultado.rows[0]);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            error: "Error al crear alumno"
+        });
+
+    }
+
+});
+
+// =======================
+// Editar alumno
+// =======================
+
+router.put("/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        const {
+            dni,
+            nombre,
+            apellido,
+            telefono,
+            telefono_tutor,
+            correo,
+            filial_id,
+            iglesia,
+            anciano_autoriza,
+            observaciones
+        } = req.body;
+
+
+
+        const resultado = await pool.query(
+            `
+            UPDATE alumnos
+
+            SET
+                dni = $1,
+                nombre = $2,
+                apellido = $3,
+                telefono = $4,
+                telefono_tutor = $5,
+                correo = $6,
+                filial_id = $7,
+                iglesia = $8,
+                anciano_autoriza = $9,
+                observaciones = $10
+
+            WHERE id = $11
+
+            RETURNING *
+            `,
+            [
+                dni,
+                nombre,
+                apellido,
+                telefono,
+                telefono_tutor,
+                correo,
+                filial_id,
+                iglesia,
+                anciano_autoriza,
+                observaciones,
+                id
+            ]
+
+        );
+
+
+        if(resultado.rows.length === 0){
+
+            return res.status(404).json({
+                error:"Alumno no encontrado"
+            });
+
+        }
+
+
+        res.json(resultado.rows[0]);
+
+
+    } catch(error){
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error al actualizar alumno"
+        });
+
+    }
+
+});
+module.exports = router;
