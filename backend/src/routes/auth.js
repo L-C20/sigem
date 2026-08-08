@@ -7,8 +7,7 @@ const jwt = require("jsonwebtoken");
 const pool = require("../database/connection");
 
 
-const SECRET = "SIGEM_SECRET_KEY";
-
+const SECRET = process.env.JWT_SECRET;
 
 router.post("/login", async (req,res)=>{
 
