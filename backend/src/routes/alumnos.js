@@ -132,7 +132,6 @@ router.get("/:id", async (req, res) => {
 
         const { id } = req.params;
 
-
         const resultado = await pool.query(
 `
 SELECT
@@ -149,39 +148,60 @@ SELECT
     a.anciano_autoriza,
     a.observaciones,
 
-
     f.nombre AS filial_nombre,
 
+    -- ==========================
+    -- INSTRUMENTO
+    -- ==========================
+
+    ci.instrumento_id,
+    ci.nivel_instrumento_id,
+    ci.instructor_id AS instructor_instrumento_id,
 
     i.nombre AS instrumento,
 
-ci.instrumento_id,
+    ni.nombre AS nivel_instrumento,
 
-ci.nivel_instrumento_id,
 
-ci.instructor_id AS instructor_instrumento_id,
+    -- ==========================
+    -- TEORÍA Y SOLFEO
+    -- ==========================
 
-ni.nombre AS nivel_instrumento,
+    ct.nivel_id AS nivel_teoria_id,
+    ct.instructor_id AS instructor_teoria_id,
 
-nt.nombre AS nivel_teoria,
-
-ct.nivel_id AS nivel_teoria_id,
-
-ct.instructor_id AS instructor_teoria_id
+    nt.nombre AS nivel_teoria
 
 
 FROM alumnos a
 
 
+-- ==========================
+-- FILIAL
+-- ==========================
+
 LEFT JOIN filiales f
     ON a.filial_id = f.id
 
 
+-- ==========================
+-- INSTRUMENTO ACTIVO
+-- ==========================
 
--- Instrumento
+LEFT JOIN LATERAL (
 
-LEFT JOIN cursada_instrumento ci
-    ON a.id = ci.alumno_id
+    SELECT *
+
+    FROM cursada_instrumento
+
+    WHERE alumno_id = a.id
+    AND estado = 'Activo'
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+) ci ON true
 
 
 LEFT JOIN instrumentos i
@@ -192,36 +212,40 @@ LEFT JOIN niveles_instrumento ni
     ON ci.nivel_instrumento_id = ni.id
 
 
-LEFT JOIN instructores ins
-    ON ci.instructor_id = ins.id
+-- ==========================
+-- TEORÍA ACTIVA
+-- ==========================
 
+LEFT JOIN LATERAL (
 
+    SELECT *
 
--- Teoría
+    FROM cursadas_teoria
 
-LEFT JOIN cursadas_teoria ct
-    ON a.id = ct.alumno_id
+    WHERE alumno_id = a.id
+    AND estado = 'Activo'
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+) ct ON true
 
 
 LEFT JOIN niveles_teoria nt
     ON ct.nivel_id = nt.id
 
 
-LEFT JOIN instructores inst
-    ON ct.instructor_id = inst.id
-
-
-
 WHERE a.id = $1
 `,
-[id]
-);
+        [id]
+        );
 
 
-        if(resultado.rows.length === 0){
+        if (resultado.rows.length === 0) {
 
             return res.status(404).json({
-                error:"Alumno no encontrado"
+                error: "Alumno no encontrado"
             });
 
         }
@@ -230,19 +254,17 @@ WHERE a.id = $1
         res.json(resultado.rows[0]);
 
 
-    } catch(error){
+    } catch (error) {
 
         console.error(error);
 
         res.status(500).json({
-            error:"Error al obtener alumno"
+            error: "Error al obtener alumno"
         });
 
     }
 
 });
-
-
 // =======================
 // Crear alumno
 // =======================

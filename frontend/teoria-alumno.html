@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SIGEM | Teoría y Solfeo</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+
+<body>
+<button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+<div class="app-shell">
+
+
+<aside class="sidebar">
+
+
+<div class="brand">
+
+<div class="brand-logo">
+SIGEM
+</div>
+
+<p>
+Enseñanza de música
+</p>
+
+</div>
+
+
+
+<nav class="main-nav">
+
+<a class="nav-link" href="index.html">
+Inicio
+</a>
+
+
+<a class="nav-link" href="alumnos.html">
+Alumnos
+</a>
+
+
+<a class="nav-link" href="instrumentos.html">
+Instrumentos
+</a>
+
+
+<a class="nav-link active" href="teoria.html">
+Teoría y Solfeo
+</a>
+
+
+<a class="nav-link" href="instructores.html">
+Instructores
+</a>
+
+
+<a class="nav-link" href="asistencias.html">
+Asistencias
+</a>
+
+
+</nav>
+
+
+</aside>
+
+
+
+
+<main class="content">
+
+
+<header class="page-header">
+
+
+<div>
+
+<span class="eyebrow">
+Teoría y Solfeo
+</span>
+
+
+<h1 id="nombreAlumno">
+Cargando...
+</h1>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<button
+id="btnEditar"
+class="button primary">
+
+Editar
+
+</button>
+
+
+
+<button
+id="btnGuardar"
+class="button primary hidden">
+
+Guardar cambios
+
+</button>
+
+
+
+<button
+id="btnCancelar"
+class="button secondary hidden">
+
+Cancelar
+
+</button>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+<section class="card form-section">
+
+
+<h2>Datos de cursada</h2>
+
+
+
+<div class="form-grid">
+
+
+
+<label class="field">
+
+<span>
+Nivel
+</span>
+
+
+<select 
+id="nivel_id"
+disabled>
+
+
+</select>
+
+</label>
+
+
+
+
+
+<label class="field">
+
+<span>
+Instructor
+</span>
+
+
+<select
+id="instructor_id"
+disabled>
+
+
+</select>
+
+
+</label>
+
+
+
+
+
+<label class="field">
+
+<span>
+Estado
+</span>
+
+
+<select
+id="estado"
+disabled>
+
+
+<option value="Activo">
+Activo
+</option>
+
+
+<option value="Finalizado">
+Finalizado
+</option>
+
+
+</select>
+
+
+</label>
+
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+</main>
+
+
+</div>
+
+
+
+<script src="js/teoria-alumno.js"></script>
+
+<script src="js/menu.js"></script>
+</body>
+
+</html>

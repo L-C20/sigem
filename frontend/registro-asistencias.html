@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>SIGEM | Registro de Asistencias</title>
+
+  <link
+    rel="stylesheet"
+    href="css/styles.css"
+  >
+
+</head>
+
+
+<body>
+
+    <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+  <div class="app-shell">
+
+    <!-- ============================= -->
+    <!-- BARRA LATERAL -->
+    <!-- ============================= -->
+
+    <aside class="sidebar">
+
+      <div class="brand">
+
+        <div class="brand-logo">
+          SIGEM
+        </div>
+
+        <p>
+          Enseñanza de música
+        </p>
+
+      </div>
+
+
+      <nav
+        class="main-nav"
+        aria-label="Menu principal"
+      >
+
+        <a class="nav-link" href="index.html">
+          Inicio
+        </a>
+
+        <a class="nav-link" href="alumnos.html">
+          Alumnos
+        </a>
+
+        <a class="nav-link" href="instrumentos.html">
+          Instrumentos
+        </a>
+
+        <a class="nav-link" href="teoria.html">
+          Teoría y Solfeo
+        </a>
+
+        <a class="nav-link" href="instructores.html">
+          Instructores
+        </a>
+
+        <a class="nav-link" href="asistencias.html">
+          Asistencias
+        </a>
+
+        <a
+          class="nav-link active"
+          href="registro-asistencias.html"
+        >
+          Registro de asistencias
+        </a>
+
+      </nav>
+
+    </aside>
+
+
+    <!-- ============================= -->
+    <!-- CONTENIDO -->
+    <!-- ============================= -->
+
+    <main class="content">
+
+
+      <header class="page-header">
+
+        <div>
+
+          <span class="eyebrow">
+            Registro de Asistencias
+          </span>
+
+          <h1>
+            Registro histórico
+          </h1>
+
+        </div>
+
+      </header>
+
+
+      <!-- ============================= -->
+      <!-- TIPO -->
+      <!-- ============================= -->
+
+      <section class="card">
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              Tipo de asistencia
+            </h2>
+
+            <p>
+              Seleccione el registro que desea consultar.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="table-tools">
+
+          <button
+            class="button primary"
+            type="button"
+            id="btnInstrumento"
+          >
+            Instrumento
+          </button>
+
+
+          <button
+            class="button secondary"
+            type="button"
+            id="btnTeoria"
+          >
+            Teoría y Solfeo
+          </button>
+
+
+          <button
+            class="button secondary"
+            type="button"
+            id="btnInstructores"
+          >
+            Instructores
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- ============================= -->
+      <!-- FILTROS -->
+      <!-- ============================= -->
+
+      <section class="card">
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              Filtros de consulta
+            </h2>
+
+            <p>
+              Seleccione el período y los datos que desea consultar.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="table-tools">
+
+          <!-- Mes -->
+
+          <label>
+            <span>Mes</span>
+
+            <input
+              type="month"
+              id="filtroMes"
+            >
+
+          </label>
+
+
+          <!-- Instrumento -->
+
+          <label id="contenedorInstrumento">
+
+            <span>Instrumento</span>
+
+            <select id="filtroInstrumento">
+
+              <option value="">
+                Todos
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <!-- Nivel instrumento -->
+
+          <label id="contenedorNivelInstrumento">
+
+            <span>Nivel</span>
+
+            <select id="filtroNivelInstrumento">
+
+              <option value="">
+                Todos
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <!-- Nivel teoría -->
+
+          <label
+            id="contenedorNivelTeoria"
+            class="hidden"
+          >
+
+            <span>Nivel de teoría</span>
+
+            <select id="filtroNivelTeoria">
+
+              <option value="">
+                Todos
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <!-- Instructor -->
+
+          <label id="contenedorInstructor">
+
+            <span>Instructor</span>
+
+            <select id="filtroInstructor">
+
+              <option value="">
+                Todos
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <button
+            class="button secondary"
+            type="button"
+            id="btnLimpiarFiltros"
+          >
+            Limpiar filtros
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- ============================= -->
+      <!-- HISTORIAL -->
+      <!-- ============================= -->
+
+      <section class="card">
+
+        <div class="section-heading table-heading">
+
+          <div>
+
+            <h2 id="tituloHistorial">
+              Asistencia de Instrumento
+            </h2>
+
+            <p id="descripcionHistorial">
+              Registro mensual de asistencia de alumnos de instrumento.
+            </p>
+
+          </div>
+
+
+          <div class="table-tools">
+
+            <label class="search-box">
+
+              <span class="sr-only">
+                Buscar
+              </span>
+
+              <input
+                type="search"
+                id="buscadorHistorial"
+                placeholder="Buscar alumno..."
+              >
+
+            </label>
+
+
+            <button
+              class="button secondary"
+              type="button"
+              id="btnActualizar"
+            >
+              Actualizar
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead id="encabezadoHistorial">
+
+            </thead>
+
+
+            <tbody id="tablaHistorial">
+
+              <tr>
+
+                <td
+                  colspan="10"
+                  class="empty-state"
+                >
+                  Cargando registro...
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <script src="js/registro-asistencias.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
+</body>
+
+</html>

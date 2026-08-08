@@ -1,47 +1,471 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>SIGEM | Inicio</title>
-  <link rel="stylesheet" href="css/styles.css">
+
+  <link
+    rel="stylesheet"
+    href="css/styles.css"
+  >
+
 </head>
+
+
 <body>
+<button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
   <div class="app-shell">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
     <aside class="sidebar">
+
       <div class="brand">
-        <div class="brand-logo">SIGEM</div>
-        <p>Enseñanza de música</p>
+
+        <div class="brand-logo">
+          SIGEM Dorrego
+        </div>
+
+        <p>
+          Enseñanza de música
+        </p>
+
       </div>
 
-      <nav class="main-nav" aria-label="Menu principal">
-        <a class="nav-link active" href="index.html">Inicio</a>
-        <a class="nav-link" href="alumnos.html">Alumnos</a>
-        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
-        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
-        <a class="nav-link" href="instructores.html">Instructores</a>
-        <a class="nav-link" href="asistencias.html">Asistencias</a>
+
+      <nav
+        class="main-nav"
+        aria-label="Menu principal"
+      >
+
+        <a
+          class="nav-link active"
+          href="index.html"
+        >
+          Inicio
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="alumnos.html"
+        >
+          Alumnos
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="instrumentos.html"
+        >
+          Instrumentos
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="teoria.html"
+        >
+          Teoría y Solfeo
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="instructores.html"
+        >
+          Instructores
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="asistencias.html"
+        >
+          Asistencias
+        </a>
+
+
+        <a
+          class="nav-link"
+          href="registro-asistencias.html"
+        >
+          Registro de asistencias
+        </a>
+
+        <button
+    class="nav-link logout-button"
+    type="button"
+    id="btnCerrarSesion"
+>
+    Cerrar sesión
+</button>
+
       </nav>
+
     </aside>
 
+
+
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL
+    =========================================== -->
+
     <main class="content">
+
+
+      <!-- ========================================
+           ENCABEZADO
+      ========================================= -->
+
       <header class="page-header">
+
         <div>
-          <span class="eyebrow">SIGEM</span>
-          <h1>Sistema Integrado de Gestión para la Enseñanza de Música</h1>
+
+          <span class="eyebrow">
+            Asamblea Cristiana
+          </span>
+
+          <h1>
+            Sistema Integrado de Gestión para la Enseñanza de Música
+          </h1>
+
         </div>
+
       </header>
 
-      <section class="welcome-panel">
-        <div>
-          <h2>Gestión de enseñanza de música</h2>
-          <p>
-            Alumnos, instrumentos, teoría y solfeo, asistencias e historial.
-          </p>
-        </div>
-        <a class="button primary" href="alumnos.html">Ir a alumnos</a>
+
+
+      <!-- ========================================
+           BIENVENIDA
+      ========================================= -->
+
+<section class="verse-panel">
+
+  <div class="verse-line"></div>
+
+  <blockquote>
+    “Porque aunque estoy ausente en cuerpo, no obstante en espíritu estoy con vosotros, gozándome y mirando vuestro buen orden y la firmeza de vuestra fe en Cristo”
+  </blockquote>
+
+  <p>
+    Colosenses 2:5
+  </p>
+
+  <div class="verse-line"></div>
+
+</section>
+
+
       </section>
+
+
+      <section class="dashboard-grid">
+
+
+        <!-- ======================================
+             ALUMNOS
+        ======================================= -->
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+
+              <path
+                d="M16 3.13a4 4 0 0 1 0 7.75"
+              />
+
+            </svg>
+
+          </div>
+
+
+          <div>
+
+            <span class="dashboard-card-label">
+              Alumnos activos
+            </span>
+
+            <strong
+              class="dashboard-card-number"
+              id="totalAlumnos"
+            >
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             INSTRUCTORES
+        ======================================= -->
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="12"
+                cy="7"
+                r="4"
+              />
+
+              <path
+                d="M5.5 21a6.5 6.5 0 0 1 13 0"
+              />
+
+              <path
+                d="M19 8v4"
+              />
+
+              <path
+                d="M21 10h-4"
+              />
+
+            </svg>
+
+          </div>
+
+
+          <div>
+
+            <span class="dashboard-card-label">
+              Instructores activos
+            </span>
+
+            <strong
+              class="dashboard-card-number"
+              id="totalInstructores"
+            >
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             INSTRUMENTO
+        ======================================= -->
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <path
+                d="M14.5 4.5
+                   L19.5 9.5
+                   C20.3 10.3 20.3 11.7 19.5 12.5
+                   L12.5 19.5
+                   C11.7 20.3 10.3 20.3 9.5 19.5
+                   L4.5 14.5
+                   C3.7 13.7 3.7 12.3 4.5 11.5
+                   L11.5 4.5
+                   C12.3 3.7 13.7 3.7 14.5 4.5Z"
+              />
+
+              <circle
+                cx="14"
+                cy="10"
+                r="1.5"
+              />
+
+              <path
+                d="M8 16l3-3"
+              />
+
+              <path
+                d="M6.5 17.5l-1 1"
+              />
+
+            </svg>
+
+          </div>
+
+
+          <div>
+
+            <span class="dashboard-card-label">
+              Alumnos de instrumento
+            </span>
+
+            <strong
+              class="dashboard-card-number"
+              id="totalInstrumento"
+            >
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ======================================
+             TEORÍA
+        ======================================= -->
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+
+              <path
+                d="M4 19.5
+                   A2.5 2.5 0 0 1 6.5 17
+                   H20"
+              />
+
+              <path
+                d="M6.5 2H20v20H6.5
+                   A2.5 2.5 0 0 1 4 19.5
+                   V4.5
+                   A2.5 2.5 0 0 1 6.5 2Z"
+              />
+
+              <path
+                d="M8 6h8"
+              />
+
+              <path
+                d="M8 10h8"
+              />
+
+              <path
+                d="M8 14h5"
+              />
+
+            </svg>
+
+          </div>
+
+
+          <div>
+
+            <span class="dashboard-card-label">
+              Alumnos de Teoría
+            </span>
+
+            <strong
+              class="dashboard-card-number"
+              id="totalTeoria"
+            >
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+
     </main>
+
   </div>
+
+  
+
+
+
+  <!-- ==========================================
+       JAVASCRIPT
+  =========================================== -->
+
+  <script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+
+    document
+        .getElementById("btnCerrarSesion")
+        .addEventListener(
+            "click",
+            cerrarSesion
+        );
+</script>
+  <script src="js/inicio.js"></script>
+
+  <script src="js/menu.js"></script>
+
 </body>
+
 </html>

@@ -1,225 +1,742 @@
 const API_BASE_URL = "http://localhost:3000";
+
 let alumnoEditando = null;
+
 const elementos = {
-  btnAbrirFormulario: document.getElementById("btnAbrirFormulario"),
-  btnCancelar: document.getElementById("btnCancelar"),
-  btnActualizar: document.getElementById("btnActualizar"),
-  formularioAlumno: document.getElementById("formularioAlumno"),
-  alumnoForm: document.getElementById("alumnoForm"),
-  tablaAlumnos: document.getElementById("tablaAlumnos"),
-  buscadorAlumnos: document.getElementById("buscadorAlumnos"),
+
+  btnAbrirFormulario:
+    document.getElementById("btnAbrirFormulario"),
+
+  btnCancelar:
+    document.getElementById("btnCancelar"),
+
+  btnActualizar:
+    document.getElementById("btnActualizar"),
+
+  formularioAlumno:
+    document.getElementById("formularioAlumno"),
+
+  alumnoForm:
+    document.getElementById("alumnoForm"),
+
+  tablaAlumnos:
+    document.getElementById("tablaAlumnos"),
+
+  buscadorAlumnos:
+    document.getElementById("buscadorAlumnos"),
 
   // Formulario
-  filialSelect: document.getElementById("filial_id"),
+
+  filialSelect:
+    document.getElementById("filial_id"),
 
   // Filtro tabla
-filtroFilial: document.getElementById("filtroFilial"),
 
-  instrumentoSelect: document.getElementById("instrumento_id"),
-  nivelInstrumentoSelect: document.getElementById("nivel_instrumento_id"),
-  instructorInstrumentoSelect: document.getElementById("instructor_instrumento_id"),
-  nivelTeoriaSelect: document.getElementById("nivel_teoria_id"),
-  instructorTeoriaSelect: document.getElementById("instructor_teoria_id"),
+  filtroFilial:
+    document.getElementById("filtroFilial"),
+
+  // Instrumento
+
+  instrumentoSelect:
+    document.getElementById("instrumento_id"),
+
+  nivelInstrumentoSelect:
+    document.getElementById("nivel_instrumento_id"),
+
+  instructorInstrumentoSelect:
+    document.getElementById("instructor_instrumento_id"),
+
+  // Teoría
+
+  nivelTeoriaSelect:
+    document.getElementById("nivel_teoria_id"),
+
+  instructorTeoriaSelect:
+    document.getElementById("instructor_teoria_id")
+
 };
+
 
 let alumnos = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarFiliales();
-  cargarFilialesFiltro();
-  cargarAlumnos();
-  cargarInstrumentos();
-cargarNivelesInstrumento();
-cargarNivelesTeoria();
-cargarInstructores();
 
-  elementos.btnAbrirFormulario.addEventListener("click", mostrarFormulario);
-  elementos.btnCancelar.addEventListener("click", ocultarFormulario);
-  elementos.btnActualizar.addEventListener("click", cargarAlumnos);
-  elementos.alumnoForm.addEventListener("submit", guardarAlumno);
-  elementos.buscadorAlumnos.addEventListener("input", buscarAlumnos);
+// =====================================
+// INICIO
+// =====================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  cargarFiliales();
+
+  cargarFilialesFiltro();
+
+  cargarAlumnos();
+
+  cargarInstrumentos();
+
+  cargarNivelesInstrumento();
+
+  cargarNivelesTeoria();
+
+  cargarInstructoresTeoria();
+
+
+  elementos.btnAbrirFormulario.addEventListener(
+    "click",
+    mostrarFormulario
+  );
+
+
+  elementos.btnCancelar.addEventListener(
+    "click",
+    ocultarFormulario
+  );
+
+
+  elementos.btnActualizar.addEventListener(
+    "click",
+    cargarAlumnos
+  );
+
+
+  elementos.alumnoForm.addEventListener(
+    "submit",
+    guardarAlumno
+  );
+
+
+  elementos.buscadorAlumnos.addEventListener(
+    "input",
+    buscarAlumnos
+  );
+
+
+  // =====================================
+  // CAMBIO DE INSTRUMENTO
+  // =====================================
+
+  elementos.instrumentoSelect.addEventListener(
+    "change",
+    () => {
+
+      const instrumentoId =
+        elementos.instrumentoSelect.value;
+
+      cargarInstructoresInstrumento(
+        instrumentoId
+      );
+
+    }
+  );
+
 });
 
+
+// =====================================
+// MOSTRAR FORMULARIO
+// =====================================
+
 function mostrarFormulario() {
+
   elementos.formularioAlumno.classList.remove("hidden");
+
   document.getElementById("dni").focus();
+
 }
+
+
+// =====================================
+// OCULTAR FORMULARIO
+// =====================================
 
 function ocultarFormulario() {
+
   elementos.alumnoForm.reset();
+
   elementos.formularioAlumno.classList.add("hidden");
+
+  alumnoEditando = null;
+
 }
 
+
+// =====================================
+// CARGAR FILIALES
+// =====================================
+
 async function cargarFiliales() {
+
   try {
 
-    const respuesta = await fetch(`${API_BASE_URL}/filiales`);
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/filiales`
+      );
+
 
     if (!respuesta.ok) {
-      throw new Error("No se pudieron cargar iglesias");
+
+      throw new Error(
+        "No se pudieron cargar iglesias"
+      );
+
     }
 
-    const iglesias = await respuesta.json();
+
+    const iglesias =
+      await respuesta.json();
+
 
     elementos.filialSelect.innerHTML =
       '<option value="">Seleccione una iglesia</option>';
 
+
     iglesias.forEach((iglesia) => {
 
-      const opcion = document.createElement("option");
+      const opcion =
+        document.createElement("option");
 
-      opcion.value = iglesia.id;
-      opcion.textContent = iglesia.nombre;
 
-      elementos.filialSelect.appendChild(opcion);
+      opcion.value =
+        iglesia.id;
+
+
+      opcion.textContent =
+        iglesia.nombre;
+
+
+      elementos.filialSelect.appendChild(
+        opcion
+      );
 
     });
+
 
   } catch (error) {
 
     console.error(error);
+
 
     elementos.filialSelect.innerHTML =
       '<option value="">No hay iglesias disponibles</option>';
 
   }
+
 }
 
-async function cargarFilialesFiltro(){
 
-    const respuesta = await fetch(
+// =====================================
+// FILTRO DE FILIALES
+// =====================================
+
+async function cargarFilialesFiltro() {
+
+  try {
+
+    const respuesta =
+      await fetch(
         `${API_BASE_URL}/filiales`
-    );
+      );
 
-    const iglesias = await respuesta.json();
+
+    const iglesias =
+      await respuesta.json();
 
 
     elementos.filtroFilial.innerHTML = `
-        <option value="">
-            Todas las iglesias
-        </option>
+      <option value="">
+        Todas las iglesias
+      </option>
     `;
 
 
-    iglesias.forEach(i => {
+    iglesias.forEach((iglesia) => {
 
-        elementos.filtroFilial.innerHTML += `
-            <option value="${i.id}">
-                ${i.nombre}
-            </option>
-        `;
+      elementos.filtroFilial.innerHTML += `
+        <option value="${iglesia.id}">
+          ${iglesia.nombre}
+        </option>
+      `;
 
     });
 
+  } catch (error) {
+
+    console.error(
+      "Error cargando filtro de filiales",
+      error
+    );
+
+  }
+
 }
+
+
+// =====================================
+// CARGAR ALUMNOS
+// =====================================
 
 async function cargarAlumnos() {
-  mostrarEstadoTabla("Cargando alumnos...");
+
+  mostrarEstadoTabla(
+    "Cargando alumnos..."
+  );
+
 
   try {
-    // Endpoint preparado: GET http://localhost:3000/alumnos
-    const respuesta = await fetch(`${API_BASE_URL}/alumnos`);
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/alumnos`
+      );
+
 
     if (!respuesta.ok) {
-      throw new Error("No se pudieron cargar los alumnos.");
+
+      throw new Error(
+        "No se pudieron cargar los alumnos."
+      );
+
     }
 
-    alumnos = await respuesta.json();
+
+    alumnos =
+      await respuesta.json();
+
+
     renderizarAlumnos(alumnos);
+
+
   } catch (error) {
+
     console.error(error);
-    mostrarEstadoTabla("No se pudo conectar con el listado de alumnos.", true);
+
+
+    mostrarEstadoTabla(
+      "No se pudo conectar con el listado de alumnos.",
+      true
+    );
+
   }
+
 }
+
+
+// =====================================
+// GUARDAR ALUMNO
+// =====================================
 
 async function guardarAlumno(evento) {
+
   evento.preventDefault();
 
-  const formData = new FormData(elementos.alumnoForm);
+
+  const formData =
+    new FormData(
+      elementos.alumnoForm
+    );
+
+
   const alumno = {
-    dni: formData.get("dni")?.trim() || null,
-    nombre: formData.get("nombre")?.trim(),
-    apellido: formData.get("apellido")?.trim(),
-    telefono: formData.get("telefono")?.trim() || "",
-    telefono_tutor: formData.get("telefono_tutor")?.trim() || "",
-    filial_id: Number(formData.get("filial_id"))
-};
+
+    dni:
+      formData.get("dni")?.trim() || null,
+
+    nombre:
+      formData.get("nombre")?.trim(),
+
+    apellido:
+      formData.get("apellido")?.trim(),
+
+    telefono:
+      formData.get("telefono")?.trim() || "",
+
+    telefono_tutor:
+      formData.get("telefono_tutor")?.trim() || "",
+
+    filial_id:
+      Number(
+        formData.get("filial_id")
+      )
+
+  };
+
 
   try {
-    // Endpoint preparado: POST http://localhost:3000/alumnos
-    const respuesta = await fetch(`${API_BASE_URL}/alumnos`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(alumno)
-    });
+
+    // =====================================
+    // CREAR ALUMNO
+    // =====================================
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/alumnos`,
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body:
+            JSON.stringify(alumno)
+
+        }
+      );
+
 
     if (!respuesta.ok) {
-      throw new Error("No se pudo guardar el alumno.");
+
+      const errorTexto =
+        await respuesta.text();
+
+      console.error(errorTexto);
+
+      throw new Error(
+        "No se pudo guardar el alumno."
+      );
+
     }
 
+
+    // IMPORTANTE:
+    // obtenemos el ID del alumno recién creado
+
+    const alumnoCreado =
+      await respuesta.json();
+
+
+    const nuevoAlumnoId =
+      alumnoCreado.id;
+
+
+    // =====================================
+    // GUARDAR INSTRUMENTO
+    // =====================================
+
+    if (
+      elementos.instrumentoSelect.value
+    ) {
+
+      await guardarInstrumento(
+        nuevoAlumnoId
+      );
+
+    }
+
+
+    // =====================================
+    // GUARDAR TEORÍA
+    // =====================================
+
+    if (
+      elementos.nivelTeoriaSelect.value
+    ) {
+
+      await guardarTeoria(
+        nuevoAlumnoId
+      );
+
+    }
+
+
+    alert(
+      "Alumno guardado correctamente"
+    );
+
+
     ocultarFormulario();
+
     await cargarAlumnos();
+
+
   } catch (error) {
+
     console.error(error);
-    alert("No se pudo guardar el alumno. Revise la conexion con la API.");
+
+
+    alert(
+      error.message ||
+      "No se pudo guardar el alumno."
+    );
+
   }
+
 }
+
+
+// =====================================
+// GUARDAR INSTRUMENTO
+// =====================================
+
+async function guardarInstrumento(
+  alumnoId
+) {
+
+  const datos = {
+
+    alumno_id:
+      Number(alumnoId),
+
+    instrumento_id:
+      Number(
+        elementos.instrumentoSelect.value
+      ),
+
+    nivel_instrumento_id:
+      elementos.nivelInstrumentoSelect.value
+        ? Number(
+            elementos.nivelInstrumentoSelect.value
+          )
+        : null,
+
+    instructor_id:
+      elementos.instructorInstrumentoSelect.value
+        ? Number(
+            elementos.instructorInstrumentoSelect.value
+          )
+        : null,
+
+    anio:
+      new Date().getFullYear(),
+
+    estado:
+      "Activo"
+
+  };
+
+
+  console.log(
+    "Guardando instrumento:",
+    datos
+  );
+
+
+  const respuesta =
+    await fetch(
+      `${API_BASE_URL}/cursada-instrumento`,
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body:
+          JSON.stringify(datos)
+
+      }
+    );
+
+
+  if (!respuesta.ok) {
+
+    const error =
+      await respuesta.text();
+
+    console.error(error);
+
+
+    throw new Error(
+      "El alumno se creó, pero hubo un error guardando el instrumento."
+    );
+
+  }
+
+}
+
+
+// =====================================
+// GUARDAR TEORÍA
+// =====================================
+
+async function guardarTeoria(
+  alumnoId
+) {
+
+  const datos = {
+
+    alumno_id:
+      Number(alumnoId),
+
+    nivel_id:
+      Number(
+        elementos.nivelTeoriaSelect.value
+      ),
+
+    instructor_id:
+      elementos.instructorTeoriaSelect.value
+        ? Number(
+            elementos.instructorTeoriaSelect.value
+          )
+        : null,
+
+    anio:
+      new Date().getFullYear(),
+
+    estado:
+      "Activo"
+
+  };
+
+
+  console.log(
+    "Guardando teoría:",
+    datos
+  );
+
+
+  const respuesta =
+    await fetch(
+      `${API_BASE_URL}/cursadas-teoria`,
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body:
+          JSON.stringify(datos)
+
+      }
+    );
+
+
+  if (!respuesta.ok) {
+
+    const error =
+      await respuesta.text();
+
+    console.error(error);
+
+
+    throw new Error(
+      "El alumno se creó, pero hubo un error guardando teoría."
+    );
+
+  }
+
+}
+
+
+// =====================================
+// BUSCAR ALUMNOS
+// =====================================
 
 function buscarAlumnos() {
-  const termino = elementos.buscadorAlumnos.value.trim().toLowerCase();
+
+  const termino =
+    elementos.buscadorAlumnos.value
+      .trim()
+      .toLowerCase();
+
 
   if (!termino) {
+
     renderizarAlumnos(alumnos);
+
     return;
+
   }
 
-  const alumnosFiltrados = alumnos.filter((alumno) => {
-    const dni = String(alumno.dni || "").toLowerCase();
-    const nombre = String(alumno.nombre || "").toLowerCase();
-    const apellido = String(alumno.apellido || "").toLowerCase();
 
-    return dni.includes(termino) || nombre.includes(termino) || apellido.includes(termino);
-  });
+  const alumnosFiltrados =
+    alumnos.filter((alumno) => {
 
-  renderizarAlumnos(alumnosFiltrados);
+      const dni =
+        String(
+          alumno.dni || ""
+        ).toLowerCase();
+
+
+      const nombre =
+        String(
+          alumno.nombre || ""
+        ).toLowerCase();
+
+
+      const apellido =
+        String(
+          alumno.apellido || ""
+        ).toLowerCase();
+
+
+      return (
+        dni.includes(termino) ||
+        nombre.includes(termino) ||
+        apellido.includes(termino)
+      );
+
+    });
+
+
+  renderizarAlumnos(
+    alumnosFiltrados
+  );
+
 }
 
-function renderizarFiliales(filiales) {
-  elementos.filialSelect.innerHTML = '<option value="">Seleccione una Iglesia</option>';
 
-  filiales.forEach((filial) => {
-    const opcion = document.createElement("option");
-    opcion.value = filial.id;
-    opcion.textContent = filial.nombre || filial.descripcion || `Filial ${filial.id}`;
-    elementos.filialSelect.appendChild(opcion);
-  });
-}
-function renderizarAlumnos(listaAlumnos) {
-  elementos.tablaAlumnos.innerHTML = "";
+// =====================================
+// RENDERIZAR ALUMNOS
+// =====================================
+
+function renderizarAlumnos(
+  listaAlumnos
+) {
+
+  elementos.tablaAlumnos.innerHTML =
+    "";
+
 
   if (!listaAlumnos.length) {
-    mostrarEstadoTabla("Sin alumnos cargados.");
+
+    mostrarEstadoTabla(
+      "Sin alumnos cargados."
+    );
+
     return;
+
   }
+
 
   listaAlumnos.forEach((alumno) => {
 
-    const fila = document.createElement("tr");
+    const fila =
+      document.createElement("tr");
 
-    const filial = alumno.filial?.nombre || alumno.filial_nombre || alumno.filial || "-";
 
-    const instrumento = alumno.instrumento || "Sin asignar";
+    const filial =
+      alumno.filial?.nombre ||
+      alumno.filial_nombre ||
+      alumno.filial ||
+      "-";
+
+
+    const instrumento =
+      alumno.instrumento ||
+      "Sin asignar";
 
 
     fila.innerHTML = `
+
       <td>
-        ${escaparHTML(alumno.apellido)}, ${escaparHTML(alumno.nombre)}
+        ${escaparHTML(
+          alumno.apellido
+        )},
+        ${escaparHTML(
+          alumno.nombre
+        )}
       </td>
 
       <td>
-        ${escaparHTML(alumno.dni || "Sin DNI")}
+        ${escaparHTML(
+          alumno.dni || "Sin DNI"
+        )}
       </td>
 
       <td>
@@ -231,194 +748,526 @@ function renderizarAlumnos(listaAlumnos) {
       </td>
 
       <td>
+
         <div class="action-group">
-          <a class="action-link" href="alumno.html?id=${alumno.id}">
-            Editar
+
+          <a
+            class="action-link"
+            href="alumno.html?id=${alumno.id}"
+          >
+            Ver/Editar
           </a>
+
         </div>
+
       </td>
+
     `;
 
 
-    elementos.tablaAlumnos.appendChild(fila);
+    elementos.tablaAlumnos.appendChild(
+      fila
+    );
 
   });
+
 }
 
-function mostrarEstadoTabla(mensaje, esError = false) {
+
+// =====================================
+// ESTADO TABLA
+// =====================================
+
+function mostrarEstadoTabla(
+  mensaje,
+  esError = false
+) {
+
   elementos.tablaAlumnos.innerHTML = `
+
     <tr>
-      <td colspan="5" class="${esError ? "error-state" : "empty-state"}">${mensaje}</td>
+
+      <td
+        colspan="5"
+        class="${
+          esError
+            ? "error-state"
+            : "empty-state"
+        }"
+      >
+        ${mensaje}
+      </td>
+
     </tr>
+
   `;
+
 }
+
+
+// =====================================
+// ESCAPAR HTML
+// =====================================
 
 function escaparHTML(valor) {
-  return String(valor ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-async function cargarInstrumentos(){
 
-  const respuesta = await fetch(`${API_BASE_URL}/instrumentos`);
-  const datos = await respuesta.json();
+  return String(
+    valor ?? ""
+  )
 
-  elementos.instrumentoSelect.innerHTML =
-  `<option value="">Seleccione instrumento</option>`;
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
 
-  datos.forEach(item=>{
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
 
-    elementos.instrumentoSelect.innerHTML +=
-    `
-    <option value="${item.id}">
-      ${item.nombre}
-    </option>
-    `;
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
 
-  });
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
 
-}
-
-
-
-async function cargarNivelesInstrumento(){
-
-  const respuesta = await fetch(`${API_BASE_URL}/niveles-instrumento`);
-  const datos = await respuesta.json();
-
-  elementos.nivelInstrumentoSelect.innerHTML =
-  `<option value="">Seleccione nivel</option>`;
-
-  datos.forEach(item=>{
-
-    elementos.nivelInstrumentoSelect.innerHTML +=
-    `
-    <option value="${item.id}">
-      ${item.nombre}
-    </option>
-    `;
-
-  });
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
 
+// =====================================
+// CARGAR INSTRUMENTOS
+// =====================================
 
-async function cargarNivelesTeoria(){
+async function cargarInstrumentos() {
 
-  const respuesta = await fetch(`${API_BASE_URL}/niveles-teoria`);
-  const datos = await respuesta.json();
+  try {
 
-  elementos.nivelTeoriaSelect.innerHTML =
-  `<option value="">Seleccione nivel</option>`;
-
-  datos.forEach(item=>{
-
-    elementos.nivelTeoriaSelect.innerHTML +=
-    `
-    <option value="${item.id}">
-      ${item.nombre}
-    </option>
-    `;
-
-  });
-
-}
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/instrumentos`
+      );
 
 
-
-async function cargarInstructores(){
-
-  const respuesta = await fetch(`${API_BASE_URL}/instructores`);
-  const datos = await respuesta.json();
+    const datos =
+      await respuesta.json();
 
 
-  const opciones =
-  `<option value="">Seleccione instructor</option>`;
+    elementos.instrumentoSelect.innerHTML = `
 
+      <option value="">
+        No pertenece
+      </option>
 
-  elementos.instructorInstrumentoSelect.innerHTML = opciones;
-  elementos.instructorTeoriaSelect.innerHTML = opciones;
-
-
-  datos.forEach(item=>{
-
-
-    const opcion =
-    `
-    <option value="${item.id}">
-      ${item.nombre}
-    </option>
     `;
 
 
-    elementos.instructorInstrumentoSelect.innerHTML += opcion;
-    elementos.instructorTeoriaSelect.innerHTML += opcion;
+    datos.forEach(item => {
+
+      elementos.instrumentoSelect.innerHTML += `
+
+        <option value="${item.id}">
+          ${item.nombre}
+        </option>
+
+      `;
+
+    });
 
 
-  });
+  } catch (error) {
+
+    console.error(
+      "Error cargando instrumentos:",
+      error
+    );
+
+  }
 
 }
 
-async function editarAlumno(id){
 
-  console.log("Editando alumno:", id);
+// =====================================
+// CARGAR NIVELES INSTRUMENTO
+// =====================================
+
+async function cargarNivelesInstrumento() {
+
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/niveles-instrumento`
+      );
+
+
+    const datos =
+      await respuesta.json();
+
+
+    elementos.nivelInstrumentoSelect.innerHTML = `
+
+      <option value="">
+        No pertenece
+      </option>
+
+    `;
+
+
+    datos.forEach(item => {
+
+      elementos.nivelInstrumentoSelect.innerHTML += `
+
+        <option value="${item.id}">
+          ${item.nombre}
+        </option>
+
+      `;
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando niveles de instrumento:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================
+// CARGAR NIVELES TEORÍA
+// =====================================
+
+async function cargarNivelesTeoria() {
+
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/niveles-teoria`
+      );
+
+
+    const datos =
+      await respuesta.json();
+
+
+    elementos.nivelTeoriaSelect.innerHTML = `
+
+      <option value="">
+        No pertenece
+      </option>
+
+    `;
+
+
+    datos.forEach(item => {
+
+      elementos.nivelTeoriaSelect.innerHTML += `
+
+        <option value="${item.id}">
+          ${item.nombre}
+        </option>
+
+      `;
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando niveles de teoría:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================
+// CARGAR INSTRUCTORES DE TEORÍA
+// =====================================
+
+async function cargarInstructoresTeoria() {
+
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/instructores/teoria`
+      );
+
+
+    const datos =
+      await respuesta.json();
+
+
+    elementos.instructorTeoriaSelect.innerHTML = `
+
+      <option value="">
+        No pertenece
+      </option>
+
+    `;
+
+
+    datos.forEach(item => {
+
+      elementos.instructorTeoriaSelect.innerHTML += `
+
+        <option value="${item.id}">
+          ${item.apellido}, ${item.nombre}
+        </option>
+
+      `;
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando instructores de teoría:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================
+// CARGAR INSTRUCTORES SEGÚN INSTRUMENTO
+// =====================================
+
+async function cargarInstructoresInstrumento(
+  instrumentoId
+) {
+
+  elementos.instructorInstrumentoSelect.innerHTML = `
+
+    <option value="">
+      No pertenece
+    </option>
+
+  `;
+
+
+  if (!instrumentoId) {
+
+    return;
+
+  }
+
+
+  try {
+
+    console.log(
+      "Buscando instructores para instrumento:",
+      instrumentoId
+    );
+
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/instructores/instrumento/${instrumentoId}`
+      );
+
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        "No se pudieron obtener los instructores"
+      );
+
+    }
+
+
+    const instructores =
+      await respuesta.json();
+
+
+    console.log(
+      "Instructores encontrados:",
+      instructores
+    );
+
+
+    instructores.forEach(item => {
+
+      elementos.instructorInstrumentoSelect.innerHTML += `
+
+        <option value="${item.id}">
+          ${item.apellido}, ${item.nombre}
+        </option>
+
+      `;
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Error cargando instructores del instrumento:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================
+// EDITAR ALUMNO
+// =====================================
+
+async function editarAlumno(id) {
+
+  console.log(
+    "Editando alumno:",
+    id
+  );
+
 
   alumnoEditando = id;
 
 
-  const respuesta = await fetch(
-    `${API_BASE_URL}/alumnos/${id}`
-  );
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/alumnos/${id}`
+      );
 
 
-  if(!respuesta.ok){
-    alert("No se pudo cargar el alumno");
-    return;
+    if (!respuesta.ok) {
+
+      throw new Error(
+        "No se pudo cargar el alumno"
+      );
+
+    }
+
+
+    const alumno =
+      await respuesta.json();
+
+
+    document.getElementById(
+      "dni"
+    ).value =
+      alumno.dni || "";
+
+
+    document.getElementById(
+      "nombre"
+    ).value =
+      alumno.nombre || "";
+
+
+    document.getElementById(
+      "apellido"
+    ).value =
+      alumno.apellido || "";
+
+
+    document.getElementById(
+      "telefono"
+    ).value =
+      alumno.telefono || "";
+
+
+    document.getElementById(
+      "telefono_tutor"
+    ).value =
+      alumno.telefono_tutor || "";
+
+
+    document.getElementById(
+      "correo"
+    ).value =
+      alumno.correo || "";
+
+
+    document.getElementById(
+      "filial_id"
+    ).value =
+      alumno.filial_id || "";
+
+
+    // Instrumento
+
+    elementos.instrumentoSelect.value =
+      alumno.instrumento_id || "";
+
+
+    elementos.nivelInstrumentoSelect.value =
+      alumno.nivel_instrumento_id || "";
+
+
+    await cargarInstructoresInstrumento(
+      alumno.instrumento_id
+    );
+
+
+    elementos.instructorInstrumentoSelect.value =
+      alumno.instructor_instrumento_id || "";
+
+
+    // Teoría
+
+    elementos.nivelTeoriaSelect.value =
+      alumno.nivel_teoria_id || "";
+
+
+    elementos.instructorTeoriaSelect.value =
+      alumno.instructor_teoria_id || "";
+
+
+    elementos.formularioAlumno.classList.remove(
+      "hidden"
+    );
+
+
+    const titulo =
+      document.getElementById(
+        "tituloFormulario"
+      );
+
+
+    if (titulo) {
+
+      titulo.textContent =
+        "Editar alumno";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    alert(
+      "No se pudo cargar el alumno"
+    );
+
   }
-
-
-  const alumno = await respuesta.json();
-
-
-
-  document.getElementById("dni").value =
-    alumno.dni || "";
-
-
-  document.getElementById("nombre").value =
-    alumno.nombre || "";
-
-
-  document.getElementById("apellido").value =
-    alumno.apellido || "";
-
-
-  document.getElementById("telefono").value =
-    alumno.telefono || "";
-
-
-  document.getElementById("telefono_tutor").value =
-    alumno.telefono_tutor || "";
-
-
-  document.getElementById("correo").value =
-    alumno.correo || "";
-
-
-  document.getElementById("filial_id").value =
-    alumno.filial_id || "";
-
-
-
-  elementos.formularioAlumno.classList.remove("hidden");
-
-
-  document.getElementById("tituloFormulario")
-    .textContent = "Editar alumno";
-
 
 }

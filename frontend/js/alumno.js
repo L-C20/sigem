@@ -844,13 +844,6 @@ async function cargarInstrumentos(){
 
 }
 
-
-
-
-
-
-
-
 // =====================================
 // Cargar niveles instrumento
 // =====================================
@@ -985,6 +978,8 @@ async function cargarInstructores(){
 }
 async function cargarInstructoresInstrumento(instrumento_id){
 
+    console.log("Instrumento seleccionado:", instrumento_id);
+
 
     instructorInstrumentoSelect.innerHTML =
         `<option value="">
@@ -1005,6 +1000,9 @@ async function cargarInstructoresInstrumento(instrumento_id){
 
     const instructores =
         await respuesta.json();
+
+
+    console.log("Instructores recibidos:", instructores);
 
 
 

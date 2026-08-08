@@ -189,6 +189,76 @@ router.post("/", async(req,res)=>{
 });
 
 
+// =====================================
+// Obtener cursadas de teoría
+// =====================================
 
+router.get("/", async(req,res)=>{
+
+
+    try{
+
+
+        const resultado = await pool.query(
+
+            `
+            SELECT
+
+                ct.id,
+
+                a.nombre || ' ' || a.apellido AS alumno,
+
+                nt.nombre AS nivel,
+
+                ins.nombre || ' ' || ins.apellido AS instructor,
+
+                ct.estado
+
+
+            FROM cursadas_teoria ct
+
+
+            JOIN alumnos a
+            ON a.id = ct.alumno_id
+
+
+            JOIN niveles_teoria nt
+            ON nt.id = ct.nivel_id
+
+
+            JOIN instructores ins
+            ON ins.id = ct.instructor_id
+
+
+            ORDER BY 
+                nt.nombre,
+                a.apellido;
+
+            `
+
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+
+            error:"Error obteniendo teoría"
+
+        });
+
+
+    }
+
+
+});
 
 module.exports = router;

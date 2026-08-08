@@ -1,81 +1,1300 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIGEM | Asistencias</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-logo">SIGEM</div>
-        <p>Enseñanza de música</p>
-      </div>
 
-      <nav class="main-nav" aria-label="Menu principal">
-        <a class="nav-link" href="index.html">Inicio</a>
-        <a class="nav-link" href="alumnos.html">Alumnos</a>
-        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
-        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
-        <a class="nav-link" href="instructores.html">Instructores</a>
-        <a class="nav-link active" href="asistencias.html">Asistencias</a>
-      </nav>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SIGEM | Asistencias</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/asistencias.css">
+
+</head>
+
+
+<body>
+<button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+<div class="app-shell">
+
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                SIGEM
+            </div>
+
+            <p>
+                Enseñanza de música
+            </p>
+
+        </div>
+
+
+
+        <nav class="main-nav">
+
+
+            <a class="nav-link" href="index.html">
+                Inicio
+            </a>
+
+
+            <a class="nav-link" href="alumnos.html">
+                Alumnos
+            </a>
+
+
+            <a class="nav-link" href="instrumentos.html">
+                Instrumentos
+            </a>
+
+
+            <a class="nav-link" href="teoria.html">
+                Teoría y Solfeo
+            </a>
+<a class="nav-link" href="instructores.html">
+                Instructores
+            </a>    
+
+            <a class="nav-link active" href="asistencias.html">
+                Asistencias
+            </a>
+<a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
+
+        </nav>
+
+
     </aside>
 
+
+
+
+
     <main class="content">
-      <header class="page-header">
+
+
+
+        <header class="page-header" id="headerAsistencias">
+
+
+            <div>
+
+                <span class="eyebrow">
+                    Asistencias
+                </span>
+
+
+                <h1>
+                    Gestión de asistencias
+                </h1>
+
+
+            </div>
+
+
+        </header>
+
+
+
+
+
+        <!-- ==========================
+             VISTA PRINCIPAL
+        =========================== -->
+
+
+        <section id="vistaPrincipal">
+
+
+            <div class="cards-asistencias">
+
+
+                <div class="card card-asistencia">
+
+
+                    <h2>
+                        Teoría y Solfeo
+                    </h2>
+
+
+                    <p>
+                        Registrar y consultar asistencias por nivel.
+                    </p>
+
+
+                    <button
+                    id="btnTeoria"
+                    class="button">
+
+                        Ingresar
+
+                    </button>
+
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia">
+
+
+                    <h2>
+                        Instrumentos
+                    </h2>
+
+
+                    <p>
+                        Registrar y consultar asistencias por instrumento.
+                    </p>
+
+
+                    <button
+                    id="btnInstrumentos"
+                    class="button">
+
+                        Ingresar
+
+                    </button>
+
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia">
+
+
+                    <h2>
+                        Instructores
+                    </h2>
+
+
+                    <p>
+                        Registrar y consultar asistencias de instructores.
+                    </p>
+
+
+                    <button
+                    id="btnInstructores"
+                    class="button">
+
+                        Ingresar
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+
+
+
+
+        <!-- ==========================
+             TEORIA Y SOLFEO
+        =========================== -->
+
+
+        <section id="vistaTeoria" class="hidden">
+
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        Asistencias
+                    </span>
+
+
+                    <h2>
+                        Teoría y Solfeo
+                    </h2>
+
+
+                </div>
+
+
+
+                <button
+                id="volverPrincipal1"
+                class="button secondary">
+
+                    Volver
+
+                </button>
+
+
+            </div>
+
+
+
+
+
+            <div class="cards-asistencias cards-niveles">
+
+
+                <div class="card card-asistencia">
+
+                    <h2>
+                        Nivel 1
+                    </h2>
+
+
+                   <button
+    id="btnNivel1"
+    class="button">
+
+    Ingresar
+
+</button>
+
+                </div>
+
+
+                <div class="card card-asistencia">
+
+                    <h2>
+                        Nivel 2
+                    </h2>
+
+
+                    <button class="button abrirNivel" data-nivel="Nivel 2">
+                        Ingresar
+                    </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia">
+
+                    <h2>
+                        Nivel 3
+                    </h2>
+
+
+                    <button class="button abrirNivel" data-nivel="Nivel 3">
+                        Ingresar
+                    </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia">
+
+                    <h2>
+                        Nivel 4
+                    </h2>
+
+
+                    <button class="button abrirNivel" data-nivel="Nivel 4">
+                        Ingresar
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+<section id="vistaTeoriaAlumnos" class="hidden">
+
+    <div class="page-header">
+
         <div>
-          <span class="eyebrow">Asistencias</span>
-          <h1>Gestión de asistencias</h1>
+
+            <span class="eyebrow">
+                Asistencias
+            </span>
+
+            <h2 id="tituloTeoria">
+                Asistencia - Nivel 1
+            </h2>
+
         </div>
-        <button class="button primary" type="button">+ Cargar asistencia</button>
-      </header>
 
-      <section class="card">
-        <div class="section-heading table-heading">
-          <div>
-            <h2>Registro de asistencias</h2>
-            <p>Vista preparada para controlar asistencia por fecha, módulo, alumno e instructor.</p>
-          </div>
+        <button
+            id="volverTeoria"
+            class="button secondary">
 
-          <div class="table-tools">
-            <label class="search-box">
-              <span class="sr-only">Buscar asistencias</span>
-              <input type="search" placeholder="Buscar por alumno o DNI">
+            Volver
+
+        </button>
+
+    </div>
+
+    <section class="card filtros">
+
+        <div class="form-grid">
+
+            <label class="field">
+
+                <span>Fecha</span>
+
+                <input
+                    type="date"
+                    id="fechaTeoria">
+
             </label>
-            <select aria-label="Filtrar por módulo">
-              <option value="">Todos los módulos</option>
-              <option value="instrumento">Instrumento</option>
-              <option value="teoria">Teoría y Solfeo</option>
-            </select>
-            <input type="date" aria-label="Filtrar por fecha">
-            <button class="button secondary" type="button">Actualizar</button>
-          </div>
+
+            <label class="field">
+
+                <span>Buscar alumno</span>
+
+                <input
+                    id="buscarAlumnoTeoria"
+                    placeholder="Nombre o apellido">
+
+            </label>
+
+            <label class="field">
+
+                <span>Instrumento</span>
+
+                <select id="filtroInstrumentoTeoria">
+
+                    <option value="">Todos</option>
+
+                </select>
+
+            </label>
+
+            <label class="field">
+
+                <span>Instructor</span>
+
+                <select id="filtroInstructorTeoria">
+
+                    <option value="">Todos</option>
+
+                </select>
+
+            </label>
+
+            <label class="field">
+
+                <span>Nivel de instrumento</span>
+
+                <select id="filtroNivelInstrumentoTeoria">
+
+                    <option value="">Todos</option>
+                    <option>Nivel 1</option>
+                    <option>Nivel 2</option>
+                    <option>Nivel 3</option>
+                    <option>Nivel 4</option>
+                    <option>Nivel 5</option>
+                    <option>Nivel 6</option>
+                    <option>Perfeccionamiento</option>
+
+                </select>
+
+            </label>
+
+            <label class="field">
+
+                <span>Estado</span>
+
+                <select id="filtroEstadoTeoria">
+
+                    <option value="">Activo</option>
+                    <option>Todos</option>
+
+                </select>
+
+            </label>
+
         </div>
 
-        <div class="table-wrapper">
-          <table>
+    </section>
+
+    <div class="table-wrapper">
+
+        <table>
+
             <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Alumno</th>
-                <th>Módulo</th>
-                <th>Clase</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
+
+                <tr>
+
+                    <th>Asistencia</th>
+                    <th>Apellido y Nombre</th>
+                    <th>Instrumento</th>
+                    <th>Instructor</th>
+                    <th>Nivel Instrumento</th>
+                    <th>Acciones</th>
+
+                </tr>
+
             </thead>
-            <tbody>
-              <tr>
-                <td colspan="6" class="empty-state">Sin asistencias cargadas.</td>
-              </tr>
+
+            <tbody id="tablaTeoriaAlumnos">
+
             </tbody>
-          </table>
+
+        </table>
+<button
+        id="guardarAsistenciaTeoria"
+        class="button">
+
+        Guardar asistencia
+
+    </button>
+
+
+    </div>
+
+</section>
+<section id="vistaNivel1" class="hidden">
+
+    <div class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                Asistencias
+            </span>
+
+            <h2>
+                Nivel 1
+            </h2>
+
         </div>
-      </section>
+
+        <button
+            id="volverNiveles"
+            class="button secondary">
+
+            Volver
+
+        </button>
+
+    </div>
+
+    <div class="cards-asistencias">
+
+        <div class="card card-asistencia">
+
+            <h2>
+                Nivel 1 A
+            </h2>
+
+            <p>
+                Registrar asistencia del Nivel 1 A.
+            </p>
+
+            <button
+                class="button abrirNivel"
+                data-nivel="Nivel 1 A">
+
+                Ingresar
+
+            </button>
+
+        </div>
+
+        <div class="card card-asistencia">
+
+            <h2>
+                Nivel 1 B
+            </h2>
+
+            <p>
+                Registrar asistencia del Nivel 1 B.
+            </p>
+
+            <button
+                class="button abrirNivel"
+                data-nivel="Nivel 1 B">
+
+                Ingresar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+        <!-- ==========================
+             INSTRUMENTOS
+        =========================== -->
+
+
+        <section id="vistaInstrumentos" class="hidden">
+
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        Asistencias
+                    </span>
+
+
+                    <h2>
+                        Instrumentos
+                    </h2>
+
+
+                </div>
+
+
+
+                <button
+                id="volverPrincipal2"
+                class="button secondary">
+
+                    Volver
+
+                </button>
+
+
+            </div>
+
+
+
+
+
+            <div class="cards-asistencias">
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Órgano
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de órgano.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Órgano">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Bajo
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de bajo.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Bajo">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Violín
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de violín.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Violín">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Viola
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de viola.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Viola">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Violoncello
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de violoncello.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Violoncello">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Clarinete
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de clarinete.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Clarinet">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Flauta
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de flauta.
+                    </p>
+
+                    <button
+                class="button abrirInstrumento"
+            data-instrumento="Flauta">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Saxofón
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de saxofón.
+                    </p>
+
+                       <button
+                class="button abrirInstrumento"
+            data-instrumento="Saxofón">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Oboe
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de oboe.
+                    </p>
+
+                        <button
+                class="button abrirInstrumento"
+            data-instrumento="Oboe">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Trompeta
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de trompeta.
+                    </p>
+
+                     <button
+                class="button abrirInstrumento"
+            data-instrumento="Trompeta">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Corno
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de corno.
+                    </p>
+
+                        <button
+                class="button abrirInstrumento"
+            data-instrumento="Corno">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+
+
+                <div class="card card-asistencia instrumento-card">
+
+                    <h2>
+                        Trombón / Tuba
+                    </h2>
+
+                    <p>
+                        Asistencia de alumnos de trombón y tuba.
+                    </p>
+
+                        <button
+                class="button abrirInstrumento"
+            data-instrumento="Trombón / Tuba">
+                Ingresar
+                </button>
+
+                </div>
+
+
+
+            </div>
+
+
+        </section>
+
+        <!-- ==========================
+     ALUMNOS POR INSTRUMENTO
+=========================== -->
+
+
+<section id="vistaInstrumentoAlumnos" class="hidden">
+
+
+    <div class="page-header">
+
+
+        <div>
+
+
+            <span class="eyebrow">
+                Asistencias
+            </span>
+
+
+            <h2 id="tituloInstrumento">
+                Violín
+            </h2>
+
+
+        </div>
+
+
+
+        <button
+        id="volverInstrumentos"
+        class="button secondary">
+
+            Volver
+
+        </button>
+
+
+    </div>
+
+
+
+
+
+    <!-- FILTROS -->
+
+
+    <section class="card filtros">
+
+
+        <div class="form-grid">
+
+
+
+            <label class="field">
+
+
+                <span>
+                    Buscar alumno
+                </span>
+
+
+                <input
+                id="buscarAlumnoInstrumento"
+                placeholder="Nombre o apellido">
+
+
+            </label>
+
+
+
+
+
+            <label class="field">
+
+
+                <span>
+                    Nivel instrumento
+                </span>
+
+
+                <select id="filtroNivelInstrumento">
+
+
+                    <option value="">
+                        Todos
+                    </option>
+
+
+                    <option>
+                        Nivel 1
+                    </option>
+
+
+                    <option>
+                        Nivel 2
+                    </option>
+
+
+                    <option>
+                        Nivel 3
+                    </option>
+
+
+                    <option>
+                        Nivel 4
+                    </option>
+
+
+                    <option>
+                        Nivel 5
+                    </option>
+
+
+                    <option>
+                        Nivel 6
+                    </option>
+
+
+                    <option>
+                        Perfeccionamiento
+                    </option>
+
+
+                </select>
+
+
+            </label>
+
+
+
+
+
+            <label class="field">
+
+
+                <span>
+                    Instructor
+                </span>
+
+
+                <select id="filtroInstructorInstrumento">
+
+
+                    <option value="">
+                        Todos
+                    </option>
+
+
+                </select>
+
+
+            </label>
+
+
+
+
+
+            <label class="field">
+
+
+                <span>
+                    Estado
+                </span>
+
+
+                <select id="filtroEstadoInstrumento">
+
+
+                    <option value="">
+                        Activo
+                    </option>
+
+
+                    <option value="">
+                        Todos
+                    </option>
+
+
+                </select>
+
+
+            </label>
+
+
+
+            <label class="field">
+
+
+                <span>
+                    Fecha
+                </span>
+
+
+                <input
+                type="date"
+                id="fechaInstrumento">
+
+
+            </label>
+
+
+        </div>
+
+
+    </section>
+
+    <!-- TABLA -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Asistencia
+                    </th>
+
+                    <th>
+                        Apellido y Nombre
+                    </th>
+
+                    <th>
+                        Instructor
+                    </th>
+
+                    <th>
+                        Nivel Teoría
+                    </th>
+
+                    <th>
+                        Nivel Instrumento
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaInstrumentoAlumnos">
+
+            </tbody>
+
+        </table>
+<button id="guardarAsistenciaInstrumento">
+    Guardar asistencia
+</button>
+    </div>
+
+</section>
+<!-- ==========================
+     ALUMNOS POR TEORÍA
+=========================== -->
+
+
+
+<!-- ==========================
+     INSTRUCTORES
+=========================== -->
+
+
+<!-- ==========================
+     INSTRUCTORES
+=========================== -->
+
+<section id="vistaInstructores" class="hidden">
+
+
+    <div class="page-header">
+
+
+        <div>
+
+            <span class="eyebrow">
+                Asistencias
+            </span>
+
+
+            <h2>
+                Control de instructores
+            </h2>
+
+        </div>
+
+
+        <button
+            id="volverPrincipal3"
+            class="button secondary">
+
+            Volver
+
+        </button>
+
+
+    </div>
+
+
+    <!-- ==========================
+         FILTROS
+    =========================== -->
+
+
+    <section class="card filtros">
+
+
+        <div class="form-grid">
+
+
+            <label class="field">
+
+                <span>
+                    Buscar instructor
+                </span>
+
+                <input
+                    id="buscarInstructor"
+                    placeholder="Nombre o apellido">
+
+            </label>
+
+
+            <label class="field">
+
+                <span>
+                    Instrumento / Área
+                </span>
+
+                <select id="filtroArea">
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label class="field">
+
+                <span>
+                    Fecha
+                </span>
+
+                <input
+                    type="date"
+                    id="fechaInstructor">
+
+            </label>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================
+         TABLA
+    =========================== -->
+
+
+    <div class="table-wrapper">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Asistencia
+                    </th>
+
+                    <th>
+                        Apellido y Nombre
+                    </th>
+
+                    <th>
+                        Instrumento / Área
+                    </th>
+
+                    <th>
+                        Teléfono
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="tablaInstructores">
+
+            </tbody>
+
+
+        </table>
+
+
+        <button
+    id="guardarAsistenciaInstructor"
+    class="button">
+
+    Guardar asistencia
+
+</button>
+
+    </div>
+
+
+</section>
+
     </main>
-  </div>
+
+
+</div>
+
+
+
+<script src="js/asistencias.js"></script>
+
+<script src="js/menu.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
 </body>
+
 </html>
+

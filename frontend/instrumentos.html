@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -21,6 +31,7 @@
         <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
         <a class="nav-link" href="instructores.html">Instructores</a>
         <a class="nav-link" href="asistencias.html">Asistencias</a>
+        <a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
       </nav>
     </aside>
 
@@ -30,29 +41,124 @@
           <span class="eyebrow">Instrumentos</span>
           <h1>Gestión de instrumentos</h1>
         </div>
-        <button class="button primary" type="button">+ Nuevo instrumento</button>
+        
       </header>
+      
+<section class="card filtros">
 
-      <section class="card">
-        <div class="section-heading table-heading">
-          <div>
-            <h2>Listado de instrumentos</h2>
-            <p>Interfaz preparada para consultar instrumentos, niveles y alumnos asignados.</p>
-          </div>
+    <div class="form-grid">
 
-          <div class="table-tools">
-            <label class="search-box">
-              <span class="sr-only">Buscar instrumentos</span>
-              <input type="search" placeholder="Buscar por instrumento o alumno">
-            </label>
-            <select aria-label="Filtrar por estado">
-              <option value="">Todos los estados</option>
-              <option value="activo">Activos</option>
-              <option value="pausado">Inactivo</option>
+
+        <label class="field">
+
+            <span>
+                Buscar alumno
+            </span>
+
+            <input 
+            id="buscarAlumno"
+            placeholder="Nombre o apellido">
+
+        </label>
+
+
+
+        <label class="field">
+
+            <span>
+                Instrumento
+            </span>
+
+            <select id="filtroInstrumento">
+
+                <option value="">
+                    Todos
+                </option>
+
             </select>
-            <button class="button secondary" type="button">Actualizar</button>
-          </div>
-        </div>
+
+        </label>
+
+
+
+
+        <label class="field">
+
+            <span>
+                Nivel
+            </span>
+
+            <select id="filtroNivel">
+
+                <option value="">
+                    Todos
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+
+        <label class="field">
+
+            <span>
+                Instructor
+            </span>
+
+            <select id="filtroInstructor">
+
+                <option value="">
+                    Todos
+                </option>
+
+            </select>
+
+        </label>
+
+
+
+
+        <label class="field">
+
+            <span>
+                Estado
+            </span>
+
+
+            <select id="filtroEstado">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="Activo">
+                    Activo
+                </option>
+
+                <option value="Finalizado">
+                    Finalizado
+                </option>
+
+            </select>
+
+
+        </label>
+
+<button 
+    id="btnLimpiarFiltros"
+    class="button secondary"
+    type="button">
+    
+    Limpiar filtros
+
+</button>
+
+    </div>
+
+</section>
+    
 
         <div class="table-wrapper">
           <table>
@@ -76,5 +182,13 @@
       </section>
     </main>
   </div>
+  <script src="js/auth.js"></script>
+<script src="js/instrumentos.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
 </body>
 </html>
