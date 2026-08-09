@@ -516,7 +516,7 @@ async function cargarAlumnosInstrumento(
 
         const respuesta =
             await fetch(
-                `http://localhost:3000/asistencias/instrumento/${encodeURIComponent(instrumento)}`
+                `https://sigem-backend.onrender.com/asistencias/instrumento/${encodeURIComponent(instrumento)}`
             );
 
         if (!respuesta.ok) {
@@ -764,7 +764,7 @@ async function guardarAsistenciaInstrumento() {
 
             const respuesta =
                 await fetch(
-                    "http://localhost:3000/asistencias/instrumento",
+                    "https://sigem-backend.onrender.com/asistencias/instrumento",
                     {
 
                         method: "POST",
@@ -836,7 +836,7 @@ async function cargarAlumnosTeoria(
 
         const respuesta =
             await fetch(
-                `http://localhost:3000/asistencias/teoria/${encodeURIComponent(nivel)}`
+                `https://sigem-backend.onrender.com/asistencias/teoria/${encodeURIComponent(nivel)}`
             );
 
         if (!respuesta.ok) {
@@ -985,7 +985,7 @@ async function guardarAsistenciaTeoria() {
 
             const respuesta =
                 await fetch(
-                    "http://localhost:3000/asistencias/teoria",
+                    "https://sigem-backend.onrender.com/asistencias/teoria",
                     {
 
                         method: "POST",
@@ -1055,7 +1055,7 @@ async function cargarInstructores() {
 
         const respuesta =
             await fetch(
-                "http://localhost:3000/asistencias/instructores"
+                "https://sigem-backend.onrender.com/asistencias/instructores"
             );
 
         if (!respuesta.ok) {
@@ -1403,7 +1403,7 @@ async function guardarAsistenciaInstructores() {
 
             const respuesta =
                 await fetch(
-                    "http://localhost:3000/asistencias/instructores",
+                    "https://sigem-backend.onrender.com/asistencias/instructores",
                     {
 
                         method: "POST",
