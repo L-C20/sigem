@@ -7,6 +7,56 @@ const parametros = new URLSearchParams(
 
 const alumnoId = parametros.get("id");
 
+function calcularEdadEdicion() {
+
+    const fechaNacimiento =
+        document.getElementById("fecha_nacimiento").value;
+
+    const campoEdad =
+        document.getElementById("edad");
+
+
+    if (!fechaNacimiento) {
+
+        campoEdad.value = "";
+
+        return;
+
+    }
+
+
+    const hoy = new Date();
+
+    const nacimiento =
+        new Date(fechaNacimiento + "T00:00:00");
+
+
+    let edad =
+        hoy.getFullYear() -
+        nacimiento.getFullYear();
+
+
+    const mes =
+        hoy.getMonth() -
+        nacimiento.getMonth();
+
+
+    if (
+        mes < 0 ||
+        (
+            mes === 0 &&
+            hoy.getDate() < nacimiento.getDate()
+        )
+    ) {
+
+        edad--;
+
+    }
+
+
+    campoEdad.value = edad;
+
+}
 
 // Campos que se pueden editar
 
