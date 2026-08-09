@@ -16,6 +16,9 @@ const elementos = {
   formularioAlumno:
     document.getElementById("formularioAlumno"),
 
+    listadoAlumnos:
+  document.getElementById("listadoAlumnos"),
+
   alumnoForm:
     document.getElementById("alumnoForm"),
 
@@ -55,6 +58,7 @@ const elementos = {
     document.getElementById("instructor_teoria_id")
 
 };
+
 
 
 let alumnos = [];
@@ -140,6 +144,8 @@ function mostrarFormulario() {
 
   elementos.formularioAlumno.classList.remove("hidden");
 
+  elementos.listadoAlumnos.classList.add("hidden");
+
   document.getElementById("dni").focus();
 
 }
@@ -154,6 +160,8 @@ function ocultarFormulario() {
   elementos.alumnoForm.reset();
 
   elementos.formularioAlumno.classList.add("hidden");
+
+  elementos.listadoAlumnos.classList.remove("hidden");
 
   alumnoEditando = null;
 
@@ -1243,6 +1251,9 @@ async function editarAlumno(id) {
     elementos.formularioAlumno.classList.remove(
       "hidden"
     );
+    elementos.listadoAlumnos.classList.add(
+  "hidden"
+  );
 
 
     const titulo =
