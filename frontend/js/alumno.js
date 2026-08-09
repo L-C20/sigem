@@ -14,6 +14,8 @@ const camposEditables = [
     "dni",
     "apellido",
     "nombre",
+    "fecha_nacimiento",
+    "edad",
     "telefono",
     "telefono_tutor",
     "correo",
@@ -198,8 +200,16 @@ async function cargarAlumno(){
 
         document.getElementById("nombre").value =
             alumno.nombre || "";
-
-
+            document.getElementById("fecha_nacimiento").value =
+        alumno.fecha_nacimiento || "";
+        document.getElementById("edad").value =
+            alumno.edad ??"";
+document
+    .getElementById("fecha_nacimiento")
+    .addEventListener(
+        "change",
+        calcularEdadEdicion
+    );
         document.getElementById("telefono").value =
             alumno.telefono || "";
 
@@ -461,6 +471,17 @@ async function guardarCambios(){
         nombre:
             document.getElementById("nombre")
             .value,
+            fecha_nacimiento:
+    document.getElementById("fecha_nacimiento")
+    .value || null,
+
+edad:
+    document.getElementById("edad")
+    .value
+    ? Number(
+        document.getElementById("edad").value
+      )
+    : null,
 
 
         telefono:

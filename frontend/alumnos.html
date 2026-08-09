@@ -95,6 +95,26 @@
             >
         </label>
 
+        <label class="field">
+    <span>Fecha de nacimiento</span>
+    <input 
+        type="date" 
+        id="fecha_nacimiento" 
+        name="fecha_nacimiento"
+    >
+</label>
+
+
+<label class="field">
+    <span>Edad</span>
+    <input 
+        type="number" 
+        id="edad" 
+        name="edad"
+        readonly
+    >
+</label>
+
 
         <label class="field">
             <span>Teléfono</span>
@@ -291,7 +311,76 @@
 
 </div>
 
+<!-- =========================
+     INSTRUCCIÓN MINISTERIAL
+========================= -->
 
+<div class="form-section">
+
+    <h3 class="form-section-title">
+        Instrucción Ministerial
+    </h3>
+
+
+    <div class="form-grid">
+
+
+        <label class="field">
+
+            <span>Estado</span>
+
+            <select
+                id="estado_ministerial"
+                name="estado_ministerial"
+            >
+
+                <option value="No pertenece">
+                    No pertenece
+                </option>
+
+                <option value="Activo">
+                    Activo
+                </option>
+
+                <option value="Finalizado">
+                    Finalizado
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <label class="field">
+
+            <span>Fecha de inicio</span>
+
+            <input
+                type="date"
+                id="fecha_inicio_ministerial"
+                name="fecha_inicio_ministerial"
+            >
+
+        </label>
+
+
+        <label class="field">
+
+            <span>Fecha de finalización</span>
+
+            <input
+                type="date"
+                id="fecha_fin_ministerial"
+                name="fecha_fin_ministerial"
+            >
+
+        </label>
+
+
+    </div>
+
+
+</div>
 
 <!-- =========================
      OBSERVACIONES

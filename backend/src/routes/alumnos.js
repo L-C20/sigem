@@ -279,7 +279,8 @@ router.post("/", async (req, res) => {
             apellido,
             telefono,
             telefono_tutor,
-            filial_id
+            filial_id,
+            fecha_nacimiento,
         } = req.body;
 
 
@@ -292,7 +293,8 @@ router.post("/", async (req, res) => {
                 apellido,
                 telefono,
                 telefono_tutor,
-                filial_id
+                filial_id,
+                fecha_nacimiento
             )
             VALUES ($1,$2,$3,$4,$5,$6)
             RETURNING *
@@ -303,7 +305,8 @@ router.post("/", async (req, res) => {
                 apellido,
                 telefono,
                 telefono_tutor,
-                filial_id
+                filial_id,
+                fecha_nacimiento
             ]
         );
 
@@ -333,7 +336,6 @@ router.put("/:id", async (req, res) => {
 
         const { id } = req.params;
 
-
         const {
             dni,
             nombre,
@@ -344,10 +346,9 @@ router.put("/:id", async (req, res) => {
             filial_id,
             iglesia,
             anciano_autoriza,
-            observaciones
+            observaciones,
+            fecha_nacimiento
         } = req.body;
-
-
 
         const resultado = await pool.query(
             `
@@ -363,9 +364,10 @@ router.put("/:id", async (req, res) => {
                 filial_id = $7,
                 iglesia = $8,
                 anciano_autoriza = $9,
-                observaciones = $10
+                observaciones = $10,
+                fecha_nacimiento = $11
 
-            WHERE id = $11
+            WHERE id = $12
 
             RETURNING *
             `,
@@ -380,16 +382,16 @@ router.put("/:id", async (req, res) => {
                 iglesia,
                 anciano_autoriza,
                 observaciones,
+                fecha_nacimiento,
                 id
             ]
-
         );
 
 
-        if(resultado.rows.length === 0){
+        if (resultado.rows.length === 0) {
 
             return res.status(404).json({
-                error:"Alumno no encontrado"
+                error: "Alumno no encontrado"
             });
 
         }
@@ -398,13 +400,12 @@ router.put("/:id", async (req, res) => {
         res.json(resultado.rows[0]);
 
 
-    } catch(error){
+    } catch (error) {
 
         console.error(error);
 
-
         res.status(500).json({
-            error:"Error al actualizar alumno"
+            error: "Error al actualizar alumno"
         });
 
     }

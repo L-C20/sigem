@@ -28,6 +28,21 @@ const elementos = {
   buscadorAlumnos:
     document.getElementById("buscadorAlumnos"),
 
+    fechaNacimiento: document.getElementById("fecha_nacimiento"),
+edad: document.getElementById("edad"),
+
+estadoMinisterial:
+  document.getElementById("estado_ministerial"),
+
+fechaInicioMinisterial:
+  document.getElementById("fecha_inicio_ministerial"),
+
+fechaFinMinisterial:
+  document.getElementById("fecha_fin_ministerial"),
+
+observacionesMinisterial:
+  document.getElementById("observaciones_ministerial"),
+
   // Formulario
 
   filialSelect:
@@ -59,6 +74,32 @@ const elementos = {
 
 };
 
+
+function calcularEdad() {
+
+    const fechaNacimiento = elementos.fechaNacimiento.value;
+
+    if (!fechaNacimiento) {
+        elementos.edad.value = "";
+        return;
+    }
+
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento + "T00:00:00");
+
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+
+    if (
+        mes < 0 ||
+        (mes === 0 && hoy.getDate() < nacimiento.getDate())
+    ) {
+        edad--;
+    }
+
+    elementos.edad.value = edad;
+}
 
 
 let alumnos = [];
@@ -114,6 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     buscarAlumnos
   );
 
+  elementos.fechaNacimiento.addEventListener(
+    "change",
+    calcularEdad
+);
 
   // =====================================
   // CAMBIO DE INSTRUMENTO
@@ -356,6 +401,9 @@ async function guardarAlumno(evento) {
     apellido:
       formData.get("apellido")?.trim(),
 
+    fecha_nacimiento:
+      formData.get("fecha_nacimiento")?.trim() || null,
+
     telefono:
       formData.get("telefono")?.trim() || "",
 
@@ -447,6 +495,15 @@ async function guardarAlumno(evento) {
       );
 
     }
+
+
+    // =====================================
+    // GUARDAR INSTRUCCIÓN MINISTERIAL
+    // =====================================
+
+    await guardarInstruccionMinisterial(
+      nuevoAlumnoId
+    );
 
 
     alert(
@@ -630,6 +687,72 @@ async function guardarTeoria(
 
 }
 
+// =====================================
+// GUARDAR INSTRUCCIÓN MINISTERIAL
+// =====================================
+
+async function guardarInstruccionMinisterial(
+  alumnoId
+) {
+
+  const datos = {
+
+    alumno_id:
+      Number(alumnoId),
+
+    estado:
+      elementos.estadoMinisterial.value,
+
+    fecha_inicio:
+      elementos.fechaInicioMinisterial.value ||
+      null,
+
+    fecha_fin:
+      elementos.fechaFinMinisterial.value ||
+      null,
+
+  };
+
+
+  console.log(
+    "Guardando instrucción ministerial:",
+    datos
+  );
+
+
+  const respuesta =
+    await fetch(
+      `${API_BASE_URL}/instruccion-ministerial`,
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body:
+          JSON.stringify(datos)
+
+      }
+    );
+
+
+  if (!respuesta.ok) {
+
+    const error =
+      await respuesta.text();
+
+    console.error(error);
+
+
+    throw new Error(
+      "El alumno se creó, pero hubo un error guardando la instrucción ministerial."
+    );
+
+  }
+
+}
 
 // =====================================
 // BUSCAR ALUMNOS
@@ -1194,6 +1317,11 @@ async function editarAlumno(id) {
     ).value =
       alumno.apellido || "";
 
+      elementos.fechaNacimiento.value =
+      alumno.fecha_nacimiento || "";
+
+      calcularEdad();
+
 
     document.getElementById(
       "telefono"
@@ -1246,7 +1374,39 @@ async function editarAlumno(id) {
 
     elementos.instructorTeoriaSelect.value =
       alumno.instructor_teoria_id || "";
+      
+// =====================================
+// INSTRUCCIÓN MINISTERIAL
+// =====================================
 
+const respuestaMinisterial =
+  await fetch(
+    `${API_BASE_URL}/instruccion-ministerial/${id}`
+  );
+
+
+if (respuestaMinisterial.ok) {
+
+  const instruccionMinisterial =
+    await respuestaMinisterial.json();
+
+
+  if (instruccionMinisterial) {
+
+    elementos.estadoMinisterial.value =
+      instruccionMinisterial.estado || "No pertenece";
+
+
+    elementos.fechaInicioMinisterial.value =
+      instruccionMinisterial.fecha_inicio || "";
+
+
+    elementos.fechaFinMinisterial.value =
+      instruccionMinisterial.fecha_finalizacion || "";
+
+  }
+
+}
 
     elementos.formularioAlumno.classList.remove(
       "hidden"
