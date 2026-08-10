@@ -195,9 +195,59 @@ async function cargarListas(){
 
 
 }
+
+// =====================================
+// CALCULAR EDAD EN EDICIÓN
+// =====================================
+
+function calcularEdadEdicion() {
+
+    const fecha =
+        document.getElementById("fecha_nacimiento").value;
+
+    const campoEdad =
+        document.getElementById("edad");
+
+    if (!fecha) {
+
+        campoEdad.value = "";
+
+        return;
+    }
+
+    const hoy = new Date();
+
+    const nacimiento =
+        new Date(fecha + "T00:00:00");
+
+    let edad =
+        hoy.getFullYear() -
+        nacimiento.getFullYear();
+
+    const mes =
+        hoy.getMonth() -
+        nacimiento.getMonth();
+
+    if (
+        mes < 0 ||
+        (
+            mes === 0 &&
+            hoy.getDate() < nacimiento.getDate()
+        )
+    ) {
+
+        edad--;
+
+    }
+
+    campoEdad.value = edad;
+}
+
+
 // =====================================
 // Cargar alumno
 // =====================================
+
 
 
 async function cargarAlumno(){
@@ -235,59 +285,14 @@ async function cargarAlumno(){
 
 
 
-        // ==========================
-        // DATOS PERSONALES
-        // ==========================
-
-
-        document.getElementById("dni").value =
-            alumno.dni || "";
-
-
-        document.getElementById("apellido").value =
-            alumno.apellido || "";
-
-
-        document.getElementById("nombre").value =
-            alumno.nombre || "";
-        
-       document.getElementById("fecha_nacimiento").value =
-    alumno.fecha_nacimiento
-        ? alumno.fecha_nacimiento.substring(0, 10)
-        : "";
-
-
-        document.getElementById("edad").value =
-            alumno.edad ??"";document
-
-
-    .getElementById("fecha_nacimiento")
-    .addEventListener(
-        "change",
-        calcularEdadEdicion
-    );
-        document.getElementById("telefono").value =
-            alumno.telefono || "";
-
-
-        document.getElementById("telefono_tutor").value =
-            alumno.telefono_tutor || "";
-
-
-        document.getElementById("correo").value =
-            alumno.correo || "";
-
-
-        document.getElementById("anciano_autoriza").value =
-            alumno.anciano_autoriza || "";
-
-
-        document.getElementById("observaciones").value =
-            alumno.observaciones || "";
-
-
-
-
+       // ===================================== // DATOS PERSONALES // ===================================== 
+       //
+       document.getElementById("dni").value = alumno.dni || ""; document.getElementById("apellido").value = alumno.apellido || ""; document.getElementById("nombre").value = alumno.nombre || ""; document.getElementById("fecha_nacimiento").value = alumno.fecha_nacimiento ? alumno.fecha_nacimiento.substring(0, 10) : ""; 
+       
+       // La edad se calcula automáticamente 
+       // 
+       
+       calcularEdadEdicion(); document.getElementById("telefono").value = alumno.telefono || ""; document.getElementById("telefono_tutor").value = alumno.telefono_tutor || ""; document.getElementById("correo").value = alumno.correo || ""; document.getElementById("anciano_autoriza").value = alumno.anciano_autoriza || ""; document.getElementById("observaciones").value = alumno.observaciones || "";
 
         // ==========================
         // IGLESIAS
