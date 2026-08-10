@@ -140,6 +140,7 @@ SELECT
     a.dni,
     a.nombre,
     a.apellido,
+    a.fecha_nacimiento,
     a.telefono,
     a.telefono_tutor,
     a.correo,
