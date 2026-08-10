@@ -400,15 +400,15 @@ router.put("/:id", async (req, res) => {
         res.json(resultado.rows[0]);
 
 
-    } catch (error) {
+   } catch (error) {
 
-        console.error(error);
+    console.error("ERROR ACTUALIZANDO ALUMNO:", error);
 
-        res.status(500).json({
-            error: "Error al actualizar alumno"
-        });
+    res.status(500).json({
+        error: error.message
+    });
 
-    }
+}
 
 });
 module.exports = router;
