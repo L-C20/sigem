@@ -392,6 +392,26 @@ if (volverPrincipal3) {
 
 }
 
+// ==========================================
+// ABRIR ASISTENCIA DE INSTRUCTORES
+// ==========================================
+
+if (btnInstructores) {
+
+    btnInstructores.addEventListener(
+        "click",
+        () => {
+
+            headerAsistencias.classList.add("hidden");
+
+            mostrarVista(vistaInstructores);
+
+            cargarInstructores();
+
+        }
+    );
+
+}
 
 // =====================================================
 // ABRIR PLANILLA DE INSTRUMENTO

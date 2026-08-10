@@ -98,78 +98,72 @@ router.get("/instrumento/:instrumento", async (req,res)=>{
 
 
 // ==========================================
-// GUARDAR ASISTENCIA INSTRUMENTO
+// GUARDAR / ACTUALIZAR ASISTENCIA INSTRUMENTO
 // ==========================================
 
+router.post("/instrumento", async (req, res) => {
 
-router.post("/instrumento", async(req,res)=>{
-
-
-    try{
-
+    try {
 
         const {
-
             alumno_id,
             cursada_instrumento_id,
             fecha,
             presente
-
         } = req.body;
 
 
+        const resultado = await pool.query(`
 
-        const resultado = await pool.query(
+            INSERT INTO asistencias_instrumento
+            (
+                alumno_id,
+                cursada_instrumento_id,
+                fecha,
+                presente
+            )
 
-        `
+            VALUES
+            ($1, $2, $3, $4)
 
-        INSERT INTO asistencias_instrumento
+            ON CONFLICT (
+                alumno_id,
+                cursada_instrumento_id,
+                fecha
+            )
 
-        (
+            DO UPDATE SET
+                presente = EXCLUDED.presente
+
+            RETURNING *
+
+        `, [
+
             alumno_id,
             cursada_instrumento_id,
             fecha,
             presente
-        )
 
-
-        VALUES
-
-        ($1,$2,$3,$4)
-
-
-        RETURNING *
-
-        `,
-
-        [
-
-            alumno_id,
-            cursada_instrumento_id,
-            fecha,
-            presente
-
-        ]
-
-        );
+        ]);
 
 
         res.json(resultado.rows[0]);
 
 
-    }catch(error){
+    } catch (error) {
 
-        console.error(error);
+        console.error(
+            "ERROR GUARDANDO ASISTENCIA INSTRUMENTO:",
+            error
+        );
 
         res.status(500).json({
-            error:"Error guardando asistencia"
+            error: "Error guardando asistencia de instrumento"
         });
 
     }
 
-
 });
-
 // ==========================================
 // OBTENER ALUMNOS POR NIVEL DE TEORÍA
 // ==========================================
