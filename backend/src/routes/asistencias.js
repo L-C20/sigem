@@ -371,7 +371,7 @@ router.post("/instructores", async (req, res) => {
 
 });
 // ==========================================
-// GUARDAR ASISTENCIA TEORÍA
+// GUARDAR / ACTUALIZAR ASISTENCIA TEORÍA
 // ==========================================
 
 router.post("/teoria", async(req,res)=>{
@@ -387,6 +387,7 @@ router.post("/teoria", async(req,res)=>{
 
         } = req.body;
 
+
         const resultado = await pool.query(
 
         `
@@ -401,32 +402,55 @@ router.post("/teoria", async(req,res)=>{
         VALUES
         ($1,$2,$3,$4)
 
+        ON CONFLICT
+        (
+            alumno_id,
+            cursada_teoria_id,
+            fecha
+        )
+
+        DO UPDATE SET
+            presente = EXCLUDED.presente
+
         RETURNING *
+
         `,
 
         [
+
             alumno_id,
             cursada_teoria_id,
             fecha,
             presente
+
         ]
 
         );
 
-        res.json(resultado.rows[0]);
 
-    }catch(error){
+        res.json(
+            resultado.rows[0]
+        );
 
-        console.error(error);
+
+    }
+    catch(error){
+
+        console.error(
+            "ERROR GUARDANDO ASISTENCIA TEORÍA:",
+            error
+        );
 
         res.status(500).json({
-            error:"Error guardando asistencia"
+
+            error:
+                "Error guardando asistencia de teoría"
+
         });
 
     }
 
 });
-
 // ==========================================
 // HISTORIAL DE ASISTENCIA - INSTRUMENTO
 // ==========================================
