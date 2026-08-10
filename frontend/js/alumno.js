@@ -250,11 +250,17 @@ async function cargarAlumno(){
 
         document.getElementById("nombre").value =
             alumno.nombre || "";
-            document.getElementById("fecha_nacimiento").value =
-        alumno.fecha_nacimiento || "";
+        
+       document.getElementById("fecha_nacimiento").value =
+    alumno.fecha_nacimiento
+        ? alumno.fecha_nacimiento.substring(0, 10)
+        : "";
+
+
         document.getElementById("edad").value =
-            alumno.edad ??"";
-document
+            alumno.edad ??"";document
+
+
     .getElementById("fecha_nacimiento")
     .addEventListener(
         "change",
