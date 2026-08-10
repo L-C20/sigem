@@ -26,28 +26,32 @@ SELECT
     f.nombre AS filial_nombre,
 
 
-    -- Instrumento
+    -- ==========================
+    -- INSTRUMENTO ACTIVO
+    -- ==========================
 
-    i.id AS instrumento_id,
+    ci.instrumento_id,
+
+    ci.nivel_instrumento_id,
+
+    ci.instructor_id AS instructor_instrumento_id,
 
     i.nombre AS instrumento,
 
-    ni.id AS nivel_instrumento_id,
-
     ni.nombre AS nivel_instrumento,
-
-    instr.id AS instructor_instrumento_id,
 
     instr.nombre AS instructor_instrumento,
 
 
-    -- Teoría
+    -- ==========================
+    -- TEORÍA ACTIVA
+    -- ==========================
 
-    nt.id AS nivel_teoria_id,
+    ct.nivel_id AS nivel_teoria_id,
+
+    ct.instructor_id AS instructor_teoria_id,
 
     nt.nombre AS nivel_teoria,
-
-    instr_t.id AS instructor_teoria_id,
 
     instr_t.nombre AS instructor_teoria
 
@@ -55,54 +59,81 @@ SELECT
 FROM alumnos a
 
 
+-- ==========================
+-- FILIAL
+-- ==========================
+
+LEFT JOIN filiales f
+    ON a.filial_id = f.id
 
 
-        LEFT JOIN filiales f
-            ON a.filial_id = f.id
+-- ==========================
+-- INSTRUMENTO ACTIVO
+-- ==========================
+
+LEFT JOIN LATERAL (
+
+    SELECT *
+
+    FROM cursada_instrumento
+
+    WHERE alumno_id = a.id
+
+    AND estado = 'Activo'
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+) ci ON true
 
 
-
-        LEFT JOIN cursada_instrumento ci
-            ON a.id = ci.alumno_id
-
+LEFT JOIN instrumentos i
+    ON ci.instrumento_id = i.id
 
 
-        LEFT JOIN instrumentos i
-            ON ci.instrumento_id = i.id
+LEFT JOIN niveles_instrumento ni
+    ON ci.nivel_instrumento_id = ni.id
 
 
-
-        LEFT JOIN niveles_instrumento ni
-            ON ci.nivel_instrumento_id = ni.id
-
+LEFT JOIN instructores instr
+    ON ci.instructor_id = instr.id
 
 
-        LEFT JOIN instructores instr
-            ON ci.instructor_id = instr.id
+-- ==========================
+-- TEORÍA ACTIVA
+-- ==========================
+
+LEFT JOIN LATERAL (
+
+    SELECT *
+
+    FROM cursadas_teoria
+
+    WHERE alumno_id = a.id
+
+    AND estado = 'Activo'
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+) ct ON true
 
 
+LEFT JOIN niveles_teoria nt
+    ON ct.nivel_id = nt.id
 
 
-        LEFT JOIN cursadas_teoria ct
-            ON a.id = ct.alumno_id
+LEFT JOIN instructores instr_t
+    ON ct.instructor_id = instr_t.id
 
 
+ORDER BY
+    a.apellido,
+    a.nombre
 
-        LEFT JOIN niveles_teoria nt
-            ON ct.nivel_id = nt.id
-
-
-
-        LEFT JOIN instructores instr_t
-            ON ct.instructor_id = instr_t.id
-
-
-
-        ORDER BY 
-            a.apellido,
-            a.nombre
-
-        `);
+`);
 
 
         res.json(resultado.rows);
