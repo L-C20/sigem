@@ -78,7 +78,14 @@ await fetch(
             datosTeoria
         );
 
+datosTeoria =
+await respuesta.json();
 
+console.log("DATOS TEORIA RECIBIDOS:", datosTeoria);
+
+mostrarTeoria(
+    datosTeoria
+);
 
         cargarFiltros();
 
