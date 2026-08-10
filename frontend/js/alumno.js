@@ -637,13 +637,15 @@ if (instrumentoSelect.value) {
 
         // Teoría
 
-        if(
-            nivelTeoriaSelect.value
-        ){
+if (nivelTeoriaSelect.value) {
 
-            await guardarTeoria();
+    await guardarTeoria();
 
-        }
+} else {
+
+    await finalizarTeoria();
+
+}
         // Instrucción Ministerial
 
 console.log("Estado ministerial:", estadoMinisterial.value);
@@ -857,7 +859,47 @@ async function guardarTeoria(){
 
 } // ← termina guardarTeoria
 
+// =====================================
+// Finalizar teoría
+// =====================================
 
+async function finalizarTeoria(){
+
+    const respuesta = await fetch(
+
+        `${API_BASE_URL}/cursadas-teoria/finalizar/${alumnoId}`,
+
+        {
+            method: "PUT"
+        }
+
+    );
+
+
+    if (!respuesta.ok) {
+
+        const error = await respuesta.text();
+
+        console.error(error);
+
+
+        // El alumno simplemente no tenía
+        // una teoría activa.
+
+        if (respuesta.status === 404) {
+
+            return;
+
+        }
+
+
+        throw new Error(
+            "Error finalizando teoría"
+        );
+
+    }
+
+}
 
 // ===============================
 // INSTRUCCIÓN MINISTERIAL

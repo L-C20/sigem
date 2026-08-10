@@ -261,4 +261,60 @@ router.get("/", async(req,res)=>{
 
 });
 
+// =====================================
+// Finalizar teoría de un alumno
+// =====================================
+
+router.put("/finalizar/:alumno_id", async (req, res) => {
+
+    try {
+
+        const { alumno_id } = req.params;
+
+        const resultado = await pool.query(
+
+            `
+            UPDATE cursadas_teoria
+
+            SET estado = 'Finalizado'
+
+            WHERE alumno_id = $1
+            AND estado = 'Activo'
+
+            RETURNING *
+            `,
+
+            [alumno_id]
+
+        );
+
+
+        if (resultado.rows.length === 0) {
+
+            return res.status(404).json({
+
+                error: "El alumno no tiene teoría activa"
+
+            });
+
+        }
+
+
+        res.json(resultado.rows[0]);
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            error: "Error al finalizar teoría"
+
+        });
+
+    }
+
+});
+
 module.exports = router;
