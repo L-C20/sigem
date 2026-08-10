@@ -64,9 +64,9 @@ async function cargarTeoria(){
 
 
         const respuesta =
-        await fetch(
-            `${API_BASE_URL}/teoria`
-        );
+await fetch(
+    `${API_BASE_URL}/cursadas-teoria`
+);
 
 
         datosTeoria =
