@@ -593,11 +593,21 @@ edad:
 
 
 
-        if(!respuesta.ok){
+        if (!respuesta.ok) {
 
-            throw new Error();
+    const errorTexto =
+        await respuesta.text();
 
-        }
+    console.error(
+        "Error del servidor:",
+        errorTexto
+    );
+
+    throw new Error(
+        "No se pudieron guardar los cambios."
+    );
+
+}
 
 
 
