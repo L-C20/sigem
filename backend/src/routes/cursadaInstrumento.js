@@ -147,6 +147,61 @@ router.post("/", async(req,res)=>{
 
 });
 
+// =====================================
+// Finalizar instrumento de un alumno
+// =====================================
 
+router.put("/finalizar/:alumno_id", async (req, res) => {
+
+    try {
+
+        const { alumno_id } = req.params;
+
+        const resultado = await pool.query(
+
+            `
+            UPDATE cursada_instrumento
+
+            SET estado = 'Finalizado'
+
+            WHERE alumno_id = $1
+            AND estado = 'Activo'
+
+            RETURNING *
+            `,
+
+            [alumno_id]
+
+        );
+
+
+        if (resultado.rows.length === 0) {
+
+            return res.status(404).json({
+
+                error: "El alumno no tiene un instrumento activo"
+
+            });
+
+        }
+
+
+        res.json(resultado.rows[0]);
+
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            error: "Error al finalizar instrumento"
+
+        });
+
+    }
+
+});
 
 module.exports = router;

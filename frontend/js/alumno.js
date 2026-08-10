@@ -288,7 +288,7 @@ async function cargarAlumno(){
        // ===================================== // DATOS PERSONALES // ===================================== 
        //
        document.getElementById("dni").value = alumno.dni || ""; document.getElementById("apellido").value = alumno.apellido || ""; document.getElementById("nombre").value = alumno.nombre || ""; document.getElementById("fecha_nacimiento").value = alumno.fecha_nacimiento ? alumno.fecha_nacimiento.substring(0, 10) : ""; 
-       
+
        // La edad se calcula automáticamente 
        // 
        
@@ -623,17 +623,17 @@ edad:
 
 
 
-        // Instrumento
+       // Instrumento
 
-        if(
-            instrumentoSelect.value
-        ){
+if (instrumentoSelect.value) {
 
-            await guardarInstrumento();
+    await guardarInstrumento();
 
-        }
+} else {
 
+    await finalizarInstrumento();
 
+}
 
         // Teoría
 
@@ -755,6 +755,44 @@ async function guardarInstrumento(){
 
     }
 
+
+}
+
+// =====================================
+// Finalizar instrumento
+// =====================================
+
+async function finalizarInstrumento(){
+
+    const respuesta = await fetch(
+
+        `${API_BASE_URL}/cursada-instrumento/finalizar/${alumnoId}`,
+
+        {
+            method: "PUT"
+        }
+
+    );
+
+
+    if (!respuesta.ok) {
+
+        const error = await respuesta.text();
+
+        console.error(error);
+
+        // Si no tenía instrumento activo,
+        // no es un error real.
+
+        if (respuesta.status === 404) {
+            return;
+        }
+
+        throw new Error(
+            "Error finalizando instrumento"
+        );
+
+    }
 
 }
 // =====================================
