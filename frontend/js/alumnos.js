@@ -551,9 +551,10 @@ async function guardarAlumno(evento) {
     );
 
 
-    alert(
-      "Alumno guardado correctamente"
-    );
+    mostrarNotificacion(
+    "Alumno guardado correctamente",
+    "exito"
+);
 
 
     ocultarFormulario();
@@ -566,10 +567,11 @@ async function guardarAlumno(evento) {
     console.error(error);
 
 
-    alert(
-      error.message ||
-      "No se pudo guardar el alumno."
-    );
+    mostrarNotificacion(
+    error.message ||
+    "No se pudo guardar el alumno.",
+    "error"
+);
 
   }
 
@@ -1488,92 +1490,16 @@ if (respuestaMinisterial.ok) {
     console.error(error);
 
 
-    alert(
-      "No se pudo cargar el alumno"
-    );
-
-  }
-
-}
-
-// =====================================
-// ELIMINAR ALUMNO
-// =====================================
-
-async function eliminarAlumno(id) {
-
-  const alumno =
-    alumnos.find(
-      alumno => Number(alumno.id) === Number(id)
-    );
-
-  if (!alumno) {
-    return;
-  }
-
-  const nombreCompleto =
-    `${alumno.apellido}, ${alumno.nombre}`;
-
-
-  const confirmar =
-    confirm(
-      `¿Está seguro de eliminar al alumno?\n\n${nombreCompleto}\n\nEsta acción no se puede deshacer.`
-    );
-
-
-  if (!confirmar) {
-    return;
-  }
-
-
-  try {
-
-    const respuesta =
-      await fetch(
-        `${API_BASE_URL}/alumnos/${id}`,
-        {
-          method: "DELETE"
-        }
-      );
-
-
-    if (!respuesta.ok) {
-
-      const errorTexto =
-        await respuesta.text();
-
-      console.error(
-        "ERROR ELIMINANDO ALUMNO:",
-        errorTexto
-      );
-
-      throw new Error(
-  errorTexto
+    mostrarNotificacion(
+  "No se pudo cargar el alumno",
+  "error"
 );
 
-    }
-
-
-    alert(
-      "Alumno eliminado correctamente."
-    );
-
-
-    await cargarAlumnos();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "No se pudo eliminar el alumno."
-    );
-
   }
 
 }
+
+
 
 // =====================================
 // ABRIR MODAL ELIMINAR
@@ -1677,7 +1603,7 @@ async function confirmarEliminarAlumno() {
 
     mostrarNotificacion(
       "Alumno eliminado correctamente.",
-      "success"
+      "exito"
     );
 
 

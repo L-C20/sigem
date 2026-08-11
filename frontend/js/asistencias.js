@@ -742,10 +742,10 @@ async function guardarAsistenciaInstrumento() {
 
     if (!fecha) {
 
-        alert(
-            "Seleccione una fecha antes de guardar la asistencia"
-        );
-
+        mostrarNotificacion(
+    "Seleccione una fecha antes de guardar la asistencia",
+    "error"
+);
         return;
 
     }
@@ -826,9 +826,10 @@ async function guardarAsistenciaInstrumento() {
 
     }
 
-    alert(
-        "Asistencia guardada correctamente"
-    );
+    mostrarNotificacion(
+    "Asistencia guardada correctamente",
+    "exito"
+);
 
 }
 
@@ -963,9 +964,10 @@ async function guardarAsistenciaTeoria() {
 
     if (!fecha) {
 
-        alert(
-            "Seleccione una fecha antes de guardar la asistencia"
-        );
+        mostrarNotificacion(
+    "Seleccione una fecha antes de guardar la asistencia",
+    "error"
+);
 
         return;
 
@@ -1047,9 +1049,10 @@ async function guardarAsistenciaTeoria() {
 
     }
 
-    alert(
-        "Asistencia de Teoría guardada correctamente"
-    );
+    mostrarNotificacion(
+    "Asistencia guardada correctamente",
+    "exito"
+);
 
 }
 
@@ -1362,9 +1365,10 @@ async function guardarAsistenciaInstructores() {
 
     if (!fecha) {
 
-        alert(
-            "Seleccione una fecha antes de guardar la asistencia"
-        );
+       mostrarNotificacion(
+    "Seleccione una fecha antes de guardar la asistencia",
+    "error"
+);
 
         return;
 
@@ -1381,9 +1385,10 @@ async function guardarAsistenciaInstructores() {
         checkboxes.length === 0
     ) {
 
-        alert(
-            "No hay instructores para guardar"
-        );
+        mostrarNotificacion(
+    "No hay instructores para guardar",
+    "error"
+);
 
         return;
 
@@ -1469,9 +1474,10 @@ async function guardarAsistenciaInstructores() {
     }
 
 
-    alert(
-        "Asistencia de instructores guardada correctamente"
-    );
+   mostrarNotificacion(
+    "Asistencia de instructores guardada correctamente",
+    "success"
+);
 
 }
 

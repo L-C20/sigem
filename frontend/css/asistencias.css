@@ -328,3 +328,167 @@
     }
 
 }
+
+/* ==========================================
+   NOTIFICACIONES SIGEM
+========================================== */
+
+#notificacionSIGEM {
+
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    width: 360px;
+    max-width: calc(100vw - 40px);
+
+    min-height: 64px;
+
+    padding: 14px 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.16);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    z-index: 99999;
+
+    opacity: 0;
+
+    transform:
+        translateY(-10px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* ==========================================
+   NOTIFICACIÓN VISIBLE
+========================================== */
+
+#notificacionSIGEM.mostrar {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* ==========================================
+   ICONO
+========================================== */
+
+#notificacionIcono {
+
+    width: 30px;
+    height: 30px;
+
+    min-width: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 16px;
+    font-weight: 700;
+
+}
+
+
+/* ==========================================
+   MENSAJE
+========================================== */
+
+#notificacionMensaje {
+
+    flex: 1;
+
+    color: #1e293b;
+
+    line-height: 1.45;
+
+}
+
+
+/* ==========================================
+   ÉXITO
+========================================== */
+
+#notificacionSIGEM.exito {
+
+    border-left:
+        4px solid #22c55e;
+
+}
+
+
+#notificacionSIGEM.exito #notificacionIcono {
+
+    background: #dcfce7;
+
+    color: #16a34a;
+
+}
+
+
+/* ==========================================
+   ERROR
+========================================== */
+
+#notificacionSIGEM.error {
+
+    border-left:
+        4px solid #ef4444;
+
+}
+
+
+#notificacionSIGEM.error #notificacionIcono {
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+}
+
+
+/* ==========================================
+   CELULAR
+========================================== */
+
+@media (max-width: 700px) {
+
+    #notificacionSIGEM {
+
+        top: 15px;
+        right: 15px;
+
+        width:
+            calc(100vw - 30px);
+
+    }
+
+}
