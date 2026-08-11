@@ -80,32 +80,52 @@ document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
+        // ==========================================
+        // CONFIGURACIÓN INICIAL
+        // ==========================================
+
         establecerMesActual();
 
         actualizarInterfaz();
 
-        await cargarFiltros();
 
-        await cargarHistorial();
-
+        // ==========================================
+        // BOTONES DE TIPO DE ASISTENCIA
+        // ==========================================
 
         btnInstrumento.addEventListener(
             "click",
-            () => cambiarTipo("instrumento")
+            () => {
+
+                cambiarTipo("instrumento");
+
+            }
         );
 
 
         btnTeoria.addEventListener(
             "click",
-            () => cambiarTipo("teoria")
+            () => {
+
+                cambiarTipo("teoria");
+
+            }
         );
 
 
         btnInstructores.addEventListener(
             "click",
-            () => cambiarTipo("instructores")
+            () => {
+
+                cambiarTipo("instructores");
+
+            }
         );
 
+
+        // ==========================================
+        // ACTUALIZAR
+        // ==========================================
 
         btnActualizar.addEventListener(
             "click",
@@ -113,11 +133,19 @@ document.addEventListener(
         );
 
 
+        // ==========================================
+        // BUSCADOR
+        // ==========================================
+
         buscadorHistorial.addEventListener(
             "input",
             aplicarFiltros
         );
 
+
+        // ==========================================
+        // FILTROS
+        // ==========================================
 
         filtroMes.addEventListener(
             "change",
@@ -149,10 +177,116 @@ document.addEventListener(
         );
 
 
+        // ==========================================
+        // LIMPIAR FILTROS
+        // ==========================================
+
         btnLimpiarFiltros.addEventListener(
             "click",
             limpiarFiltros
         );
+
+
+        // ==========================================
+        // CARGAR DATOS INICIALES
+        // ==========================================
+
+        await cargarFiltros();
+
+        await cargarHistorial();
+
+    }
+    
+);
+// ==========================================
+// EDITAR ASISTENCIA DE INSTRUCTOR
+// ==========================================
+
+tablaHistorial.addEventListener(
+    "click",
+    async (event) => {
+
+        const boton =
+            event.target.closest(
+                ".asistencia-editable"
+            );
+
+
+        if (!boton) {
+            return;
+        }
+
+
+        const asistenciaId =
+            boton.dataset.asistenciaId;
+
+
+        const presenteActual =
+            boton.dataset.presente === "true";
+
+
+        const nuevoPresente =
+            !presenteActual;
+
+
+        try {
+
+    const respuesta =
+        await fetch(
+            `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    presente:
+                        nuevoPresente
+                })
+            }
+        );
+
+
+    const datos =
+        await respuesta.json();
+
+
+    console.log(
+        "RESPUESTA DEL SERVIDOR:",
+        respuesta.status,
+        datos
+    );
+
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            datos.error ||
+            "No se pudo actualizar la asistencia"
+        );
+
+    }
+
+
+    await cargarHistorial();
+
+
+}
+catch (error) {
+
+    console.error(
+        "Error editando asistencia:",
+        error
+    );
+
+    alert(
+        error.message
+    );
+
+}
 
     }
 );
@@ -1055,9 +1189,13 @@ function renderizarHistorialMensual(lista) {
             ).substring(0, 10);
 
 
-        personas[id]
-            .asistencias[fecha] =
-            registro.presente;
+       personas[id].asistencias[fecha] = {
+
+    id: registro.id,
+
+    presente: registro.presente
+
+};
 
     });
 
@@ -1088,126 +1226,133 @@ function renderizarHistorialMensual(lista) {
         });
 
 
+// ======================================
+// CREAR FILAS
+// ======================================
+
+listaPersonas.forEach(persona => {
+
+    const fila =
+        document.createElement("tr");
+
+
+    let html = `
+
+        <td>
+            <strong>
+                ${escaparHTML(
+                    persona.apellido
+                )},
+                ${escaparHTML(
+                    persona.nombre
+                )}
+            </strong>
+        </td>
+
+    `;
+
+
     // ======================================
-    // CREAR FILAS
+    // DATOS ADICIONALES
     // ======================================
 
-    listaPersonas.forEach(persona => {
+    if (
+        tipoActual ===
+        "instrumento"
+    ) {
 
-        const fila =
-            document.createElement("tr");
-
-
-        let html = `
+        html += `
 
             <td>
-                <strong>
-                    ${escaparHTML(
-                        persona.apellido
-                    )},
-                    ${escaparHTML(
-                        persona.nombre
-                    )}
-                </strong>
+                ${escaparHTML(
+                    persona.detalle1
+                )}
+            </td>
+
+            <td>
+                ${escaparHTML(
+                    persona.detalle2
+                )}
             </td>
 
         `;
 
-
-        // Datos adicionales
-
-        if (
-            tipoActual ===
-            "instrumento"
-        ) {
-
-            html += `
-
-                <td>
-                    ${escaparHTML(
-                        persona.detalle1
-                    )}
-                </td>
-
-                <td>
-                    ${escaparHTML(
-                        persona.detalle2
-                    )}
-                </td>
-
-            `;
-
-        }
+    }
 
 
-        if (
-            tipoActual ===
-            "teoria"
-        ) {
+    if (
+        tipoActual ===
+        "teoria"
+    ) {
 
-            html += `
+        html += `
 
-                <td>
-                    ${escaparHTML(
-                        persona.detalle1
-                    )}
-                </td>
+            <td>
+                ${escaparHTML(
+                    persona.detalle1
+                )}
+            </td>
 
-            `;
+        `;
 
-        }
-
-
-        if (
-            tipoActual ===
-            "instructores"
-        ) {
-
-            html += `
-
-                <td>
-                    ${escaparHTML(
-                        persona.detalle1
-                    )}
-                </td>
-
-            `;
-
-        }
+    }
 
 
-        // Sábados
+    if (
+        tipoActual ===
+        "instructores"
+    ) {
 
-        sabados.forEach(sabado => {
+        html += `
 
-            const asistencia =
-                persona.asistencias[
-                    sabado
-                ];
+            <td>
+                ${escaparHTML(
+                    persona.detalle1
+                )}
+            </td>
 
+        `;
 
-            html += `
-
-                <td class="asistencia-celda">
-                    ${mostrarAsistenciaMensual(
-                        asistencia
-                    )}
-                </td>
-
-            `;
-
-        });
+    }
 
 
-        fila.innerHTML =
-            html;
+    // ======================================
+    // SÁBADOS
+    // ======================================
+
+    sabados.forEach(sabado => {
+
+        const asistencia =
+            persona.asistencias[
+                sabado
+            ];
 
 
-        tablaHistorial.appendChild(
-            fila
-        );
+        html += `
+
+            <td class="asistencia-celda">
+
+                ${mostrarAsistenciaMensual(
+                    asistencia,
+                    tipoActual
+                )}
+
+            </td>
+
+        `;
 
     });
+
+
+    fila.innerHTML =
+        html;
+
+
+    tablaHistorial.appendChild(
+        fila
+    );
+
+});
 
 }
 
@@ -1292,57 +1437,90 @@ function construirEncabezado(sabados) {
 
 
 // ==========================================
-// ASISTENCIA MENSUAL
+// MOSTRAR ASISTENCIA MENSUAL
 // ==========================================
 
 function mostrarAsistenciaMensual(
-    presente
+    asistencia,
+    tipo
 ) {
 
-    if (
-        presente === true ||
-        presente === "true"
-    ) {
+    // ==========================================
+    // SIN REGISTRO
+    // ==========================================
+
+    if (!asistencia) {
 
         return `
             <span
-                title="Presente"
-                style="font-weight:700;"
+                title="Sin registro"
             >
-                ✓
+                —
             </span>
         `;
 
     }
 
 
-    if (
-        presente === false ||
-        presente === "false"
-    ) {
+    // ==========================================
+    // OBTENER ESTADO
+    // ==========================================
+
+    const presente =
+        asistencia.presente === true ||
+        asistencia.presente === "true";
+
+
+    // ==========================================
+    // INSTRUCTORES
+    // ==========================================
+
+    if (tipo === "instructores") {
 
         return `
-            <span
-                title="Ausente"
-                style="font-weight:700;"
+
+            <button
+                type="button"
+                class="asistencia-editable"
+                data-asistencia-id="${asistencia.id}"
+                data-presente="${presente}"
+                title="Haga clic para cambiar la asistencia"
             >
-                ✕
-            </span>
+
+                ${
+                    presente
+                        ? "✓"
+                        : "✕"
+                }
+
+            </button>
+
         `;
 
     }
 
+
+    // ==========================================
+    // ALUMNOS
+    // ==========================================
 
     return `
+
         <span
-            title="Sin registro"
+            style="font-weight:700;"
         >
-            —
+
+            ${
+                presente
+                    ? "✓"
+                    : "✕"
+            }
+
         </span>
+
     `;
 
 }
-
 
 // ==========================================
 // FECHA CORTA

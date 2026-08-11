@@ -330,7 +330,6 @@ router.post("/instructores", async (req, res) => {
             presente
         } = req.body;
 
-
         const resultado = await pool.query(`
 
             INSERT INTO asistencias_instructores
@@ -343,6 +342,10 @@ router.post("/instructores", async (req, res) => {
             VALUES
             ($1, $2, $3)
 
+            ON CONFLICT (instructor_id, fecha)
+            DO UPDATE SET
+                presente = EXCLUDED.presente
+
             RETURNING *
 
         `, [
@@ -352,7 +355,6 @@ router.post("/instructores", async (req, res) => {
             presente
 
         ]);
-
 
         res.json(resultado.rows[0]);
 
@@ -370,6 +372,63 @@ router.post("/instructores", async (req, res) => {
     }
 
 });
+
+// ==========================================
+// EDITAR ASISTENCIA DE INSTRUCTOR
+// ==========================================
+
+router.put("/instructores/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+        const { presente } = req.body;
+
+        const resultado = await pool.query(`
+
+            UPDATE asistencias_instructores
+
+            SET presente = $1
+
+            WHERE id = $2
+
+            RETURNING *
+
+        `, [
+            presente,
+            id
+        ]);
+
+
+        if (resultado.rows.length === 0) {
+
+            return res.status(404).json({
+                error: "Asistencia no encontrada"
+            });
+
+        }
+
+
+        res.json(
+            resultado.rows[0]
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "ERROR EDITANDO ASISTENCIA INSTRUCTOR:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Error modificando la asistencia"
+        });
+
+    }
+
+});
+
 // ==========================================
 // GUARDAR / ACTUALIZAR ASISTENCIA TEORÍA
 // ==========================================
