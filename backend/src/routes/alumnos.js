@@ -443,4 +443,57 @@ router.put("/:id", async (req, res) => {
 }
 
 });
+
+// =======================
+// Eliminar alumno
+// =======================
+
+router.delete("/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        const resultado = await pool.query(
+            `
+            DELETE FROM alumnos
+            WHERE id = $1
+            RETURNING *
+            `,
+            [id]
+        );
+
+
+        if (resultado.rows.length === 0) {
+
+            return res.status(404).json({
+                error: "Alumno no encontrado"
+            });
+
+        }
+
+
+        res.json({
+            mensaje: "Alumno eliminado correctamente",
+            alumno: resultado.rows[0]
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR ELIMINANDO ALUMNO:",
+            error
+        );
+
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
+
 module.exports = router;

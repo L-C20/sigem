@@ -154,7 +154,24 @@ document.addEventListener("DOMContentLoaded", () => {
     "input",
     buscarAlumnos
   );
+elementos.tablaAlumnos.addEventListener(
+  "click",
+  (evento) => {
 
+    const boton =
+      evento.target.closest(".action-delete");
+
+    if (!boton) {
+      return;
+    }
+
+    const alumnoId =
+      boton.dataset.id;
+
+    eliminarAlumno(alumnoId);
+
+  }
+);
   elementos.fechaNacimiento.addEventListener(
     "change",
     calcularEdad
@@ -882,14 +899,22 @@ function renderizarAlumnos(
 
         <div class="action-group">
 
-          <a
-            class="action-link"
-            href="alumno.html?id=${alumno.id}"
-          >
-            Ver/Editar
-          </a>
+  <a
+    class="action-link"
+    href="alumno.html?id=${alumno.id}"
+  >
+    Ver/Editar
+  </a>
 
-        </div>
+  <button
+    type="button"
+    class="action-link action-delete"
+    data-id="${alumno.id}"
+  >
+    Eliminar
+  </button>
+
+</div>
 
       </td>
 
@@ -1437,6 +1462,85 @@ if (respuestaMinisterial.ok) {
 
     alert(
       "No se pudo cargar el alumno"
+    );
+
+  }
+
+}
+
+// =====================================
+// ELIMINAR ALUMNO
+// =====================================
+
+async function eliminarAlumno(id) {
+
+  const alumno =
+    alumnos.find(
+      alumno => Number(alumno.id) === Number(id)
+    );
+
+  if (!alumno) {
+    return;
+  }
+
+  const nombreCompleto =
+    `${alumno.apellido}, ${alumno.nombre}`;
+
+
+  const confirmar =
+    confirm(
+      `¿Está seguro de eliminar al alumno?\n\n${nombreCompleto}\n\nEsta acción no se puede deshacer.`
+    );
+
+
+  if (!confirmar) {
+    return;
+  }
+
+
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/alumnos/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+
+    if (!respuesta.ok) {
+
+      const errorTexto =
+        await respuesta.text();
+
+      console.error(
+        "ERROR ELIMINANDO ALUMNO:",
+        errorTexto
+      );
+
+      throw new Error(
+  errorTexto
+);
+
+    }
+
+
+    alert(
+      "Alumno eliminado correctamente."
+    );
+
+
+    await cargarAlumnos();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      error.message ||
+      "No se pudo eliminar el alumno."
     );
 
   }
