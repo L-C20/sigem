@@ -1514,3 +1514,198 @@ span:first-child {
     color: #dc2626 !important;
     font-weight: 700;
 }
+
+/* ==========================================
+   MODAL CONFIRMACIÓN
+   ========================================== */
+
+.modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.55);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+
+}
+
+
+.modal-overlay.hidden {
+
+    display: none;
+
+}
+
+
+.modal-confirmacion {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 32px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.18);
+
+    text-align: center;
+
+    animation:
+        modalEntrada 0.18s ease-out;
+
+}
+
+
+.modal-icono {
+
+    width: 52px;
+
+    height: 52px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+}
+
+
+.modal-confirmacion h2 {
+
+    margin: 0 0 12px;
+
+    font-size: 22px;
+
+}
+
+
+.modal-confirmacion p {
+
+    margin: 8px 0;
+
+    color: #475569;
+
+    line-height: 1.5;
+
+}
+
+
+.modal-confirmacion strong {
+
+    color: #0f172a;
+
+}
+
+
+.modal-advertencia {
+
+    font-size: 14px;
+
+    color: #dc2626 !important;
+
+    font-weight: 600;
+
+}
+
+
+
+.modal-acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.modal-acciones .button {
+    min-width: 140px;
+    text-align: center;
+}
+
+.button.danger {
+
+    background: #dc2626;
+
+    color: #ffffff;
+
+    border: none;
+
+}
+
+
+.button.danger:hover {
+
+    background: #b91c1c;
+
+}
+
+
+.button.danger:disabled {
+
+    opacity: 0.6;
+
+    cursor: wait;
+
+}
+
+
+.action-delete {
+
+    color: #dc2626 !important;
+
+}
+
+
+.action-delete:hover {
+
+    color: #b91c1c !important;
+
+}
+
+
+@keyframes modalEntrada {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-8px) scale(0.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}

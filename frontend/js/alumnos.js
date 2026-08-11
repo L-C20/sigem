@@ -1,6 +1,7 @@
 const API_BASE_URL = "https://sigem-backend.onrender.com";
 
 let alumnoEditando = null;
+let alumnoEliminando = null;
 
 const elementos = {
 
@@ -70,7 +71,19 @@ observacionesMinisterial:
     document.getElementById("nivel_teoria_id"),
 
   instructorTeoriaSelect:
-    document.getElementById("instructor_teoria_id")
+    document.getElementById("instructor_teoria_id"), 
+
+modalEliminarAlumno:
+  document.getElementById("modalEliminarAlumno"),
+
+nombreAlumnoEliminar:
+  document.getElementById("nombreAlumnoEliminar"),
+
+btnCancelarEliminar:
+  document.getElementById("btnCancelarEliminar"),
+
+btnConfirmarEliminar:
+  document.getElementById("btnConfirmarEliminar"),
 
 };
 
@@ -154,6 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "input",
     buscarAlumnos
   );
+
+
 elementos.tablaAlumnos.addEventListener(
   "click",
   (evento) => {
@@ -168,13 +183,26 @@ elementos.tablaAlumnos.addEventListener(
     const alumnoId =
       boton.dataset.id;
 
-    eliminarAlumno(alumnoId);
+    abrirModalEliminarAlumno(
+      alumnoId
+    );
 
   }
 );
+
+
   elementos.fechaNacimiento.addEventListener(
     "change",
     calcularEdad
+);
+elementos.btnCancelarEliminar.addEventListener(
+  "click",
+  cerrarModalEliminarAlumno
+);
+
+elementos.btnConfirmarEliminar.addEventListener(
+  "click",
+  confirmarEliminarAlumno
 );
 
   // =====================================
@@ -1542,6 +1570,141 @@ async function eliminarAlumno(id) {
       error.message ||
       "No se pudo eliminar el alumno."
     );
+
+  }
+
+}
+
+// =====================================
+// ABRIR MODAL ELIMINAR
+// =====================================
+
+function abrirModalEliminarAlumno(id) {
+
+  const alumno =
+    alumnos.find(
+      alumno =>
+        Number(alumno.id) === Number(id)
+    );
+
+
+  if (!alumno) {
+    return;
+  }
+
+
+  alumnoEliminando =
+    alumno.id;
+
+
+  elementos.nombreAlumnoEliminar.textContent =
+    `${alumno.apellido}, ${alumno.nombre}`;
+
+
+  elementos.modalEliminarAlumno.classList.remove(
+    "hidden"
+  );
+
+}
+// =====================================
+// CERRAR MODAL ELIMINAR
+// =====================================
+
+function cerrarModalEliminarAlumno() {
+
+  elementos.modalEliminarAlumno.classList.add(
+    "hidden"
+  );
+
+  alumnoEliminando = null;
+
+}
+// =====================================
+// CONFIRMAR ELIMINACIÓN
+// =====================================
+
+async function confirmarEliminarAlumno() {
+
+  if (!alumnoEliminando) {
+    return;
+  }
+
+
+  const id =
+    alumnoEliminando;
+
+
+  const boton =
+    elementos.btnConfirmarEliminar;
+
+
+  boton.disabled = true;
+
+  boton.textContent =
+    "Eliminando...";
+
+
+  try {
+
+    const respuesta =
+      await fetch(
+        `${API_BASE_URL}/alumnos/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+
+    if (!respuesta.ok) {
+
+      const errorTexto =
+        await respuesta.text();
+
+      console.error(
+        "ERROR ELIMINANDO ALUMNO:",
+        errorTexto
+      );
+
+      throw new Error(
+        "No se pudo eliminar el alumno."
+      );
+
+    }
+
+
+    cerrarModalEliminarAlumno();
+
+
+    mostrarNotificacion(
+      "Alumno eliminado correctamente.",
+      "success"
+    );
+
+
+    await cargarAlumnos();
+
+
+  } catch (error) {
+
+    console.error(
+      "ERROR COMPLETO:",
+      error
+    );
+
+
+    mostrarNotificacion(
+      error.message ||
+      "No se pudo eliminar el alumno.",
+      "error"
+    );
+
+
+  } finally {
+
+    boton.disabled = false;
+
+    boton.textContent =
+      "Eliminar alumno";
 
   }
 
