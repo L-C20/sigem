@@ -438,10 +438,17 @@ mostrarNotificacion(
     "Teoría actualizada correctamente",
     "exito"
 );
+campos.forEach(id => {
 
-setTimeout(() => {
-    location.reload();
-}, 800);
+    document.getElementById(id).disabled = true;
+
+});
+
+btnEditar.classList.remove("hidden");
+btnGuardar.classList.add("hidden");
+btnCancelar.classList.add("hidden");
+
+cancelarEdicion();
 
 
     }

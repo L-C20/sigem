@@ -557,9 +557,15 @@ async function guardarCambios(){
     "exito"
 );
 
-setTimeout(() => {
-    location.reload();
-}, 800);
+campos.forEach(id => {
+
+    document.getElementById(id).disabled = true;
+
+});
+
+btnEditar.classList.remove("hidden");
+btnGuardar.classList.add("hidden");
+btnCancelar.classList.add("hidden");
 
 
 
