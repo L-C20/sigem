@@ -243,6 +243,8 @@ tablaHistorial.addEventListener(
 
         const nuevoPresente =
             !estadoAnterior;
+            const tipoAsistencia =
+    tipoActual;
 
 
         // ==========================================
@@ -295,22 +297,29 @@ boton.classList.add(
 
        try {
 
-    const respuesta =
-        await fetch(
-            `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
-            {
-                method: "PUT",
+   const endpoint =
+    tipoAsistencia === "instructores"
+        ? `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`
+        : `${API_BASE_URL}/asistencias/instrumento/${asistenciaId}`;
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
 
-                body: JSON.stringify({
-                    presente: nuevoPresente
-                })
-            }
-        );
+const respuesta =
+    await fetch(
+        endpoint,
+        {
+            method: "PUT",
 
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+                presente:
+                    nuevoPresente
+            })
+        }
+    );
 
     console.log(
         "RESPUESTA PUT:",
