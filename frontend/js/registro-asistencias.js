@@ -231,16 +231,18 @@ tablaHistorial.addEventListener(
         }
 
 
+        // ==========================================
+        // DATOS
+        // ==========================================
+
         const asistenciaId =
             boton.dataset.asistenciaId;
 
-
-        const presenteAnterior =
+        const estadoAnterior =
             boton.dataset.presente === "true";
 
-
         const nuevoPresente =
-            !presenteAnterior;
+            !estadoAnterior;
 
 
         // ==========================================
@@ -250,113 +252,159 @@ tablaHistorial.addEventListener(
         boton.dataset.presente =
             String(nuevoPresente);
 
-
         boton.textContent =
             nuevoPresente
                 ? "✓"
                 : "✕";
+// ==========================================
+// ACTUALIZAR COLOR
+// ==========================================
+                boton.classList.remove(
+    "asistencia-presente",
+    "asistencia-ausente"
+);
 
+boton.classList.add(
+    nuevoPresente
+        ? "asistencia-presente"
+        : "asistencia-ausente"
+);
+
+        // ==========================================
+        // DESHABILITAR MOMENTÁNEAMENTE
+        // ==========================================
 
         boton.disabled = true;
 
 
-        try {
+        // ==========================================
+        // NOTIFICACIÓN INMEDIATA
+        // ==========================================
 
-            const respuesta =
-                await fetch(
-                    `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
-                    {
-                        method: "PUT",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            presente:
-                                nuevoPresente
-                        })
-                    }
-                );
+        mostrarNotificacion(
+            nuevoPresente
+                ? "Asistencia marcada como presente."
+                : "Asistencia marcada como ausente.",
+            "exito"
+        );
 
 
-            if (!respuesta.ok) {
+        // ==========================================
+        // GUARDAR EN SEGUNDO PLANO
+        // ==========================================
 
-                let mensaje =
-                    "No se pudo actualizar la asistencia.";
+       try {
 
-                try {
+    const respuesta =
+        await fetch(
+            `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
+            {
+                method: "PUT",
 
-                    const datos =
-                        await respuesta.json();
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                    mensaje =
-                        datos.error ||
-                        mensaje;
-
-                }
-                catch (error) {
-
-                    console.error(
-                        "No se pudo leer el error del servidor:",
-                        error
-                    );
-
-                }
-
-                throw new Error(mensaje);
-
+                body: JSON.stringify({
+                    presente: nuevoPresente
+                })
             }
+        );
 
 
-            // ==========================================
-            // GUARDADO CORRECTO
-            // ==========================================
-
-            boton.disabled = false;
-
-
-            mostrarNotificacion(
-                "Asistencia actualizada correctamente."
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-                "Error editando asistencia:",
-                error
-            );
+    console.log(
+        "RESPUESTA PUT:",
+        respuesta.status,
+        respuesta.statusText
+    );
 
 
-            // ==========================================
-            // RESTAURAR ESTADO ANTERIOR
-            // ==========================================
-
-            boton.dataset.presente =
-                String(presenteAnterior);
+    const texto =
+        await respuesta.text();
 
 
+    console.log(
+        "RESPUESTA SERVIDOR:",
+        texto
+    );
+
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            texto ||
+            "El servidor rechazó la actualización."
+        );
+
+    }
+
+
+    // ==========================================
+    // GUARDADO CORRECTO
+    // ==========================================
+
+    mostrarNotificacion(
+        nuevoPresente
+            ? "Asistencia marcada como presente."
+            : "Asistencia marcada como ausente.",
+        "exito"
+    );
+
+
+    boton.disabled = false;
+
+
+}
+catch (error) {
+
+    console.error(
+        "ERROR COMPLETO:",
+        error
+    );
+
+
+    // ==========================================
+    // REVERTIR CAMBIO VISUAL
+    // ==========================================
+
+    boton.dataset.presente =
+        String(estadoAnterior);
+
+
+    boton.textContent =
+        estadoAnterior
+            ? "✓"
+            : "✕";
             boton.textContent =
-                presenteAnterior
-                    ? "✓"
-                    : "✕";
+    estadoAnterior
+        ? "✓"
+        : "✕";
 
 
-            boton.disabled = false;
+boton.classList.remove(
+    "asistencia-presente",
+    "asistencia-ausente"
+);
+
+boton.classList.add(
+    estadoAnterior
+        ? "asistencia-presente"
+        : "asistencia-ausente"
+);
 
 
-            mostrarNotificacion(
-                "No se pudo actualizar la asistencia.",
-                "error"
-            );
+    boton.disabled = false;
 
-        }
+
+    mostrarNotificacion(
+        "No se pudo guardar la asistencia.",
+        "error"
+    );
+
+}
 
     }
 );
-
 // ==========================================
 // MES ACTUAL
 // ==========================================
@@ -1542,49 +1590,51 @@ function mostrarAsistenciaMensual(
 
     if (tipo === "instructores") {
 
-        return `
-
-            <button
-                type="button"
-                class="asistencia-editable"
-                data-asistencia-id="${asistencia.id}"
-                data-presente="${presente}"
-                title="Haga clic para cambiar la asistencia"
-            >
-
-                ${
-                    presente
-                        ? "✓"
-                        : "✕"
-                }
-
-            </button>
-
-        `;
+      return `
+    <button
+        type="button"
+        class="asistencia-editable ${
+            presente
+                ? "asistencia-presente"
+                : "asistencia-ausente"
+        }"
+        data-asistencia-id="${asistencia.id}"
+        data-presente="${presente}"
+        title="Haga clic para cambiar la asistencia"
+    >
+        ${presente ? "✓" : "✕"}
+    </button>
+`;
 
     }
 
 
-    // ==========================================
-    // ALUMNOS
-    // ==========================================
+// ==========================================
+// ALUMNOS
+// ==========================================
 
-    return `
+return `
 
-        <span
-            style="font-weight:700;"
-        >
+    <button
+        type="button"
+        class="asistencia-editable ${
+            presente
+                ? "asistencia-presente"
+                : "asistencia-ausente"
+        }"
+        data-asistencia-id="${asistencia.id}"
+        data-presente="${presente}"
+        data-tipo="${tipo}"
+        title="Haga clic para cambiar la asistencia"
+    >
+        ${
+            presente
+                ? "✓"
+                : "✕"
+        }
+    </button>
 
-            ${
-                presente
-                    ? "✓"
-                    : "✕"
-            }
-
-        </span>
-
-    `;
-
+`;
 }
 
 // ==========================================
@@ -1706,59 +1756,3 @@ function mostrarCargando() {
 
 }
 
-// ==========================================
-// NOTIFICACIÓN SIGEM
-// ==========================================
-
-let temporizadorNotificacion = null;
-
-
-function mostrarNotificacion(
-    mensaje,
-    tipo = "exito"
-) {
-
-    clearTimeout(
-        temporizadorNotificacion
-    );
-
-
-    notificacionMensaje.textContent =
-        mensaje;
-
-
-    notificacionSIGEM.classList.remove(
-        "exito",
-        "error"
-    );
-
-
-    notificacionSIGEM.classList.add(
-        tipo
-    );
-
-
-    notificacionIcono.textContent =
-        tipo === "exito"
-            ? "✓"
-            : "✕";
-
-
-    notificacionSIGEM.classList.add(
-        "mostrar"
-    );
-
-
-    temporizadorNotificacion =
-        setTimeout(
-            () => {
-
-                notificacionSIGEM.classList.remove(
-                    "mostrar"
-                );
-
-            },
-            3000
-        );
-
-}

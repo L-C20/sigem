@@ -1493,3 +1493,24 @@ span:first-child {
     color: #b91c1c;
 
 }
+/* ==========================================
+   ASISTENCIA GUARDANDO
+   ========================================== */
+
+.asistencia-editable.guardando {
+    opacity: 0.6;
+    cursor: wait;
+}
+/* ==========================================
+   ESTADOS DE ASISTENCIA
+   ========================================== */
+
+.asistencia-presente {
+    color: #16a34a !important;
+    font-weight: 700;
+}
+
+.asistencia-ausente {
+    color: #dc2626 !important;
+    font-weight: 700;
+}
