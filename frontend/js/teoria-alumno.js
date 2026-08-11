@@ -364,37 +364,29 @@ function cancelarEdicion(){
 
 async function guardarCambios(){
 
+    const nivelValor =
+        document.getElementById("nivel_id").value;
+
+    const instructorValor =
+        document.getElementById("instructor_id").value;
 
 
     const datos = {
 
-
         nivel_id:
-        Number(
-            document.getElementById(
-                "nivel_id"
-            ).value
-        ),
-
-
+            nivelValor
+                ? Number(nivelValor)
+                : null,
 
         instructor_id:
-        Number(
-            document.getElementById(
-                "instructor_id"
-            ).value
-        ),
-
-
+            instructorValor
+                ? Number(instructorValor)
+                : null,
 
         estado:
-        document.getElementById(
-            "estado"
-        ).value
-
+            document.getElementById("estado").value
 
     };
-
 
 
     console.log(
@@ -403,68 +395,65 @@ async function guardarCambios(){
     );
 
 
-
     try{
 
-
         const respuesta =
-        await fetch(
+            await fetch(
 
-            `${API_BASE_URL}/teoria/${teoriaId}`,
+                `${API_BASE_URL}/teoria/${teoriaId}`,
 
-            {
+                {
 
-                method:"PUT",
+                    method: "PUT",
 
-                headers:{
+                    headers: {
 
-                    "Content-Type":
-                    "application/json"
+                        "Content-Type":
+                            "application/json"
 
-                },
+                    },
 
+                    body:
+                        JSON.stringify(datos)
 
-                body:
-                JSON.stringify(datos)
+                }
 
-            }
-
-        );
-
+            );
 
 
         if(!respuesta.ok){
 
-            throw new Error();
+            const error =
+                await respuesta.text();
+
+            console.error(error);
+
+            throw new Error(
+                "Error guardando cambios"
+            );
 
         }
 
+mostrarNotificacion(
+    "Teoría actualizada correctamente",
+    "exito"
+);
 
-
-        mostrarNotificacion(
-            "Teoría actualizada correctamente",
-            "exito"
-        );
-
-
-        location.reload();
-
+setTimeout(() => {
+    location.reload();
+}, 3000);
 
 
     }
     catch(error){
 
-
         console.error(error);
-
 
         mostrarNotificacion(
             "Error guardando cambios",
             "error"
         );
 
-
     }
-
 
 }
