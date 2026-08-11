@@ -18,8 +18,7 @@ const totalTeoria =
     document.getElementById("totalTeoria");
 
 const totalInstruccionMinisterial =
-document.getElementById(
-"totalInstruccionMinisterial");
+document.getElementById("totalInstruccionMinisterial");
 
 // ==========================================
 // CARGAR RESUMEN
@@ -63,6 +62,8 @@ async function cargarResumen() {
 
         totalTeoria.textContent =
             datos.alumnosTeoria;
+        totalInstruccionMinisterial.textContent =
+    datos.instruccionMinisterial;
 
 
     }
