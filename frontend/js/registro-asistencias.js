@@ -62,7 +62,20 @@ const contenedorNivelTeoria =
 const contenedorInstructor =
     document.getElementById("contenedorInstructor");
 
+const notificacionSIGEM =
+    document.getElementById(
+        "notificacionSIGEM"
+    );
 
+const notificacionIcono =
+    document.getElementById(
+        "notificacionIcono"
+    );
+
+const notificacionMensaje =
+    document.getElementById(
+        "notificacionMensaje"
+    );
 // ==========================================
 // VARIABLES
 // ==========================================
@@ -198,6 +211,7 @@ document.addEventListener(
     }
     
 );
+
 // ==========================================
 // EDITAR ASISTENCIA DE INSTRUCTOR
 // ==========================================
@@ -221,76 +235,127 @@ tablaHistorial.addEventListener(
             boton.dataset.asistenciaId;
 
 
-        const presenteActual =
+        const presenteAnterior =
             boton.dataset.presente === "true";
 
 
         const nuevoPresente =
-            !presenteActual;
+            !presenteAnterior;
+
+
+        // ==========================================
+        // CAMBIO VISUAL INMEDIATO
+        // ==========================================
+
+        boton.dataset.presente =
+            String(nuevoPresente);
+
+
+        boton.textContent =
+            nuevoPresente
+                ? "✓"
+                : "✕";
+
+
+        boton.disabled = true;
 
 
         try {
 
-    const respuesta =
-        await fetch(
-            `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
-            {
-                method: "PUT",
+            const respuesta =
+                await fetch(
+                    `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`,
+                    {
+                        method: "PUT",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
 
-                body: JSON.stringify({
-                    presente:
-                        nuevoPresente
-                })
+                        body: JSON.stringify({
+                            presente:
+                                nuevoPresente
+                        })
+                    }
+                );
+
+
+            if (!respuesta.ok) {
+
+                let mensaje =
+                    "No se pudo actualizar la asistencia.";
+
+                try {
+
+                    const datos =
+                        await respuesta.json();
+
+                    mensaje =
+                        datos.error ||
+                        mensaje;
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "No se pudo leer el error del servidor:",
+                        error
+                    );
+
+                }
+
+                throw new Error(mensaje);
+
             }
-        );
 
 
-    const datos =
-        await respuesta.json();
+            // ==========================================
+            // GUARDADO CORRECTO
+            // ==========================================
+
+            boton.disabled = false;
 
 
-    console.log(
-        "RESPUESTA DEL SERVIDOR:",
-        respuesta.status,
-        datos
-    );
+            mostrarNotificacion(
+                "Asistencia actualizada correctamente."
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error editando asistencia:",
+                error
+            );
 
 
-    if (!respuesta.ok) {
+            // ==========================================
+            // RESTAURAR ESTADO ANTERIOR
+            // ==========================================
 
-        throw new Error(
-            datos.error ||
-            "No se pudo actualizar la asistencia"
-        );
-
-    }
+            boton.dataset.presente =
+                String(presenteAnterior);
 
 
-    await cargarHistorial();
+            boton.textContent =
+                presenteAnterior
+                    ? "✓"
+                    : "✕";
 
 
-}
-catch (error) {
+            boton.disabled = false;
 
-    console.error(
-        "Error editando asistencia:",
-        error
-    );
 
-    alert(
-        error.message
-    );
+            mostrarNotificacion(
+                "No se pudo actualizar la asistencia.",
+                "error"
+            );
 
-}
+        }
 
     }
 );
-
 
 // ==========================================
 // MES ACTUAL
@@ -1638,5 +1703,62 @@ function mostrarCargando() {
         </tr>
 
     `;
+
+}
+
+// ==========================================
+// NOTIFICACIÓN SIGEM
+// ==========================================
+
+let temporizadorNotificacion = null;
+
+
+function mostrarNotificacion(
+    mensaje,
+    tipo = "exito"
+) {
+
+    clearTimeout(
+        temporizadorNotificacion
+    );
+
+
+    notificacionMensaje.textContent =
+        mensaje;
+
+
+    notificacionSIGEM.classList.remove(
+        "exito",
+        "error"
+    );
+
+
+    notificacionSIGEM.classList.add(
+        tipo
+    );
+
+
+    notificacionIcono.textContent =
+        tipo === "exito"
+            ? "✓"
+            : "✕";
+
+
+    notificacionSIGEM.classList.add(
+        "mostrar"
+    );
+
+
+    temporizadorNotificacion =
+        setTimeout(
+            () => {
+
+                notificacionSIGEM.classList.remove(
+                    "mostrar"
+                );
+
+            },
+            3000
+        );
 
 }

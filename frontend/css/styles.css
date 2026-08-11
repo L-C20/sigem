@@ -1389,3 +1389,107 @@ input[type="checkbox"] {
     }
 
 }
+
+/* ==========================================
+   NOTIFICACIONES SIGEM
+   ========================================== */
+
+.notificacion-sigem {
+
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 280px;
+    max-width: 380px;
+
+    padding: 14px 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.15);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #1e293b;
+
+    opacity: 0;
+
+    transform:
+        translateY(20px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+
+    z-index: 9999;
+}
+
+
+/* Visible */
+
+.notificacion-sigem.mostrar {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* Icono */
+
+.notificacion-sigem
+span:first-child {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    font-size: 15px;
+
+}
+
+
+/* Éxito */
+
+.notificacion-sigem.exito
+span:first-child {
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+}
+
+
+/* Error */
+
+.notificacion-sigem.error
+span:first-child {
+
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+}
