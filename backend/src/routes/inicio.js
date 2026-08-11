@@ -96,6 +96,21 @@ router.get("/resumen", async (req, res) => {
 
             `);
 
+            // ======================================
+// ALUMNOS CON INSTRUCCIÓN MINISTERIAL
+// ======================================
+
+const instruccionMinisterial =
+    await pool.query(`
+
+        SELECT COUNT(DISTINCT alumno_id) AS total
+
+        FROM instruccion_ministerial
+
+        WHERE estado = 'Activo'
+
+    `);
+
 
         // ======================================
         // RESPUESTA
@@ -121,6 +136,11 @@ router.get("/resumen", async (req, res) => {
             alumnosTeoria:
                 Number(
                     alumnosTeoria.rows[0].total
+                ),
+
+            instruccionMinisterial:
+                Number(
+                    instruccionMinisterial.rows[0].total
                 )
 
         });

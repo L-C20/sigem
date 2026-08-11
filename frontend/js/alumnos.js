@@ -643,16 +643,18 @@ async function guardarInstrumento(
     );
 
 
-  if (!respuesta.ok) {
+if (!respuesta.ok) {
 
     const error =
-      await respuesta.text();
+        await respuesta.text();
 
-    console.error(error);
-
+    console.error(
+        "ERROR DEL BACKEND AL GUARDAR INSTRUMENTO:",
+        error
+    );
 
     throw new Error(
-      "El alumno se creó, pero hubo un error guardando el instrumento."
+        `Error guardando instrumento: ${error}`
     );
 
   }

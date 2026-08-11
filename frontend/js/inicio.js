@@ -17,6 +17,9 @@ const totalInstrumento =
 const totalTeoria =
     document.getElementById("totalTeoria");
 
+const totalInstruccionMinisterial =
+document.getElementById(
+"totalInstruccionMinisterial");
 
 // ==========================================
 // CARGAR RESUMEN
@@ -75,6 +78,7 @@ async function cargarResumen() {
         totalInstructores.textContent = "—";
         totalInstrumento.textContent = "—";
         totalTeoria.textContent = "—";
+        totalInstruccionMinisterial.textContent = "—";
 
     }
 

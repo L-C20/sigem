@@ -613,13 +613,15 @@ async function guardarCambios(){
 }
 
 
-
+console.log("INSTRUMENTO:", instrumentoSelect.value);
+console.log("NIVEL:", nivelInstrumentoSelect.value);
+console.log("INSTRUCTOR:", instructorInstrumentoSelect.value);
 
        // Instrumento
 
 if (instrumentoSelect.value) {
-
-    await guardarInstrumento();
+console.log("VOY A GUARDAR INSTRUMENTO");
+await guardarInstrumento(alumnoId);
 
 } else {
 
@@ -635,17 +637,14 @@ if (nivelTeoriaSelect.value) {
 
 } else {
 
-    await finalizarTeoria();
-
 }
         // Instrucción Ministerial
 
-console.log("Estado ministerial:", estadoMinisterial.value);
+
 
 if (estadoMinisterial.value) {
 
-    console.log("Entró a guardar ministerial");
-
+    
     await guardarInstruccionMinisterial();
 
 }
@@ -655,9 +654,16 @@ if (estadoMinisterial.value) {
     "exito"
 );
 
+await cargarAlumno();
 
+camposEditables.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) campo.disabled = true;
+});
 
-        cancelarEdicion();
+btnEditar.classList.remove("hidden");
+btnGuardar.classList.add("hidden");
+btnCancelar.classList.add("hidden");
 
 
     }
@@ -679,34 +685,92 @@ if (estadoMinisterial.value) {
 // =====================================
 // Guardar instrumento
 // =====================================
-
+// =====================================
+// Guardar instrumento
+// =====================================
 
 async function guardarInstrumento(){
 
+    const instrumentoId =
+        instrumentoSelect.value
+        ? Number(instrumentoSelect.value)
+        : null;
+
+
+    const nivelId =
+        nivelInstrumentoSelect.value
+        ? Number(nivelInstrumentoSelect.value)
+        : null;
+
+
+    const instructorId =
+        instructorInstrumentoSelect.value
+        ? Number(instructorInstrumentoSelect.value)
+        : null;
+
+
+
+    // ===============================
+    // VALIDACIONES
+    // ===============================
+
+    if(!instrumentoId){
+
+        mostrarNotificacion(
+            "Debe seleccionar un instrumento",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!nivelId){
+
+        mostrarNotificacion(
+            "Debe seleccionar un nivel",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!instructorId){
+
+        mostrarNotificacion(
+            "Debe seleccionar un instructor",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+
+    // ===============================
+    // DATOS
+    // ===============================
 
     const datos = {
 
-
-        alumno_id: Number(alumnoId),
-
+        alumno_id:
+            Number(alumnoId),
 
         instrumento_id:
-            Number(instrumentoSelect.value),
-
+            instrumentoId,
 
         nivel_instrumento_id:
-            Number(nivelInstrumentoSelect.value),
-
+            nivelId,
 
         instructor_id:
-            instructorInstrumentoSelect.value 
-            ? Number(instructorInstrumentoSelect.value)
-            : null,
-
+            instructorId,
 
         anio:
             new Date().getFullYear(),
-
 
         estado:
             "Activo"
@@ -715,47 +779,72 @@ async function guardarInstrumento(){
 
 
 
-    console.log("Guardando instrumento:", datos);
+    
 
 
 
-    const respuesta = await fetch(
+    // ===============================
+    // GUARDAR
+    // ===============================
 
-        `${API_BASE_URL}/cursada-instrumento`,
+    try{
 
-        {
+        const respuesta =
+            await fetch(
 
-            method:"POST",
+                `${API_BASE_URL}/cursada-instrumento`,
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(datos)
+
+                }
+
+            );
 
 
-            body:
-                JSON.stringify(datos)
+
+        if(!respuesta.ok){
+
+            const error =
+                await respuesta.text();
+
+            console.error(
+                "Error guardando instrumento:",
+                error
+            );
+
+            throw new Error(
+                "Error guardando instrumento"
+            );
 
         }
 
-    );
 
 
 
-    if(!respuesta.ok){
 
-        const error = await respuesta.text();
+        return true;
+
+
+    }
+    catch(error){
 
         console.error(error);
 
-        throw new Error(
-            "Error guardando instrumento"
-        );
+        throw error;
 
     }
 
-
 }
-
 // =====================================
 // Finalizar instrumento
 // =====================================
@@ -923,12 +1012,7 @@ async function guardarInstruccionMinisterial(){
 
     };
     
-    console.log("Estado seleccionado:", estadoMinisterial.value);
-
-    console.log(
-        "Guardando ministerial:",
-        datos
-    );
+    
 
 
     const respuesta = await fetch(
@@ -1146,7 +1230,7 @@ async function cargarInstructores(){
 }
 async function cargarInstructoresInstrumento(instrumento_id){
 
-    console.log("Instrumento seleccionado:", instrumento_id);
+   
 
 
     instructorInstrumentoSelect.innerHTML =
@@ -1170,7 +1254,7 @@ async function cargarInstructoresInstrumento(instrumento_id){
         await respuesta.json();
 
 
-    console.log("Instructores recibidos:", instructores);
+  
 
 
 
@@ -1199,8 +1283,7 @@ async function cargarInstruccionMinisterial(){
         const respuesta = await fetch(
             `${API_BASE_URL}/instruccion-ministerial/${alumnoId}`
         );
-        console.log("ID recibido:", alumnoId);
-        ;
+       
 
         if(!respuesta.ok){
             return;
