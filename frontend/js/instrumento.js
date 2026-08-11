@@ -559,7 +559,7 @@ async function guardarCambios(){
 
 setTimeout(() => {
     location.reload();
-}, 3000);
+}, 800);
 
 
 
