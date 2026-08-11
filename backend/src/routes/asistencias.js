@@ -773,7 +773,10 @@ router.get("/historial/instructores", async (req, res) => {
 
     try {
 
-        const resultado = await pool.query(`
+        const { mes } = req.query;
+
+
+        let consulta = `
 
             SELECT
 
@@ -791,18 +794,54 @@ router.get("/historial/instructores", async (req, res) => {
             INNER JOIN instructores i
                 ON i.id = ai.instructor_id
 
+        `;
+
+
+        const parametros = [];
+
+
+        // ==========================================
+        // FILTRAR POR MES
+        // ==========================================
+
+        if (mes) {
+
+            consulta += `
+
+                WHERE
+                    TO_CHAR(ai.fecha, 'YYYY-MM') = $1
+
+            `;
+
+            parametros.push(mes);
+
+        }
+
+
+        consulta += `
+
             ORDER BY
                 ai.fecha DESC,
                 i.apellido ASC,
                 i.nombre ASC
 
-        `);
+        `;
 
 
-        res.json(resultado.rows);
+        const resultado =
+            await pool.query(
+                consulta,
+                parametros
+            );
 
 
-    } catch (error) {
+        res.json(
+            resultado.rows
+        );
+
+
+    }
+    catch (error) {
 
         console.error(
             "ERROR HISTORIAL INSTRUCTORES:",
@@ -810,7 +849,8 @@ router.get("/historial/instructores", async (req, res) => {
         );
 
         res.status(500).json({
-            error: "Error obteniendo historial de instructores"
+            error:
+                "Error obteniendo historial de instructores"
         });
 
     }

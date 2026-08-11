@@ -964,10 +964,10 @@ async function cargarHistorial() {
 
     if (tipoActual === "instructores") {
 
-        endpoint =
-            `${API_BASE_URL}/asistencias/historial/instructores`;
+    endpoint =
+        `${API_BASE_URL}/asistencias/historial/instructores?mes=${filtroMes.value}`;
 
-    }
+}
 
 
     try {
