@@ -572,22 +572,29 @@ async function cargarFiltros() {
 
         if (tipoActual === "instrumento") {
 
-            await cargarInstrumentosFiltro();
+    await Promise.all([
 
-            await cargarNivelesInstrumentoFiltro();
+        cargarInstrumentosFiltro(),
 
-            await cargarInstructoresFiltro();
+        cargarNivelesInstrumentoFiltro(),
 
-        }
+        cargarInstructoresFiltro()
 
+    ]);
 
-        if (tipoActual === "teoria") {
+}
 
-            await cargarNivelesTeoriaFiltro();
+      if (tipoActual === "teoria") {
 
-            await cargarInstructoresFiltro();
+    await Promise.all([
 
-        }
+        cargarNivelesTeoriaFiltro(),
+
+        cargarInstructoresFiltro()
+
+    ]);
+
+}
 
 
         if (tipoActual === "instructores") {
