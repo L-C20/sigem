@@ -167,7 +167,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "input",
     buscarAlumnos
   );
-
+elementos.filtroFilial.addEventListener(
+  "change",
+  buscarAlumnos
+);
 
 elementos.tablaAlumnos.addEventListener(
   "click",
@@ -804,7 +807,7 @@ async function guardarInstruccionMinisterial(
 }
 
 // =====================================
-// BUSCAR ALUMNOS
+// BUSCAR Y FILTRAR ALUMNOS
 // =====================================
 
 function buscarAlumnos() {
@@ -814,41 +817,41 @@ function buscarAlumnos() {
       .trim()
       .toLowerCase();
 
-
-  if (!termino) {
-
-    renderizarAlumnos(alumnos);
-
-    return;
-
-  }
+  const filialSeleccionada =
+    elementos.filtroFilial.value;
 
 
   const alumnosFiltrados =
     alumnos.filter((alumno) => {
 
       const dni =
-        String(
-          alumno.dni || ""
-        ).toLowerCase();
-
+        String(alumno.dni || "").toLowerCase();
 
       const nombre =
-        String(
-          alumno.nombre || ""
-        ).toLowerCase();
-
+        String(alumno.nombre || "").toLowerCase();
 
       const apellido =
-        String(
-          alumno.apellido || ""
-        ).toLowerCase();
+        String(alumno.apellido || "").toLowerCase();
+
+
+      // Filtro de texto
+      const coincideTexto =
+        !termino ||
+        dni.includes(termino) ||
+        nombre.includes(termino) ||
+        apellido.includes(termino);
+
+
+      // Filtro de iglesia
+      const coincideFilial =
+        !filialSeleccionada ||
+        Number(alumno.filial_id) ===
+        Number(filialSeleccionada);
 
 
       return (
-        dni.includes(termino) ||
-        nombre.includes(termino) ||
-        apellido.includes(termino)
+        coincideTexto &&
+        coincideFilial
       );
 
     });
@@ -859,8 +862,6 @@ function buscarAlumnos() {
   );
 
 }
-
-
 // =====================================
 // RENDERIZAR ALUMNOS
 // =====================================
