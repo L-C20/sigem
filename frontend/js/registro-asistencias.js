@@ -297,10 +297,12 @@ boton.classList.add(
 
        try {
 
-   const endpoint =
+  const endpoint =
     tipoAsistencia === "instructores"
         ? `${API_BASE_URL}/asistencias/instructores/${asistenciaId}`
-        : `${API_BASE_URL}/asistencias/instrumento/${asistenciaId}`;
+        : tipoAsistencia === "teoria"
+            ? `${API_BASE_URL}/asistencias/teoria/${asistenciaId}`
+            : `${API_BASE_URL}/asistencias/instrumento/${asistenciaId}`;
 
 
 const respuesta =

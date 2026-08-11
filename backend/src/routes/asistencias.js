@@ -569,6 +569,64 @@ router.post("/teoria", async(req,res)=>{
     }
 
 });
+
+// ==========================================
+// EDITAR ASISTENCIA DE TEORÍA
+// ==========================================
+
+router.put("/teoria/:id", async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+        const { presente } = req.body;
+
+
+        const resultado = await pool.query(`
+
+            UPDATE asistencias_teoria
+
+            SET presente = $1
+
+            WHERE id = $2
+
+            RETURNING *
+
+        `, [
+            presente,
+            id
+        ]);
+
+
+        if (resultado.rows.length === 0) {
+
+            return res.status(404).json({
+                error: "Asistencia no encontrada"
+            });
+
+        }
+
+
+        res.json(
+            resultado.rows[0]
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "ERROR EDITANDO ASISTENCIA TEORÍA:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Error modificando la asistencia de teoría"
+        });
+
+    }
+
+});
+
 // ==========================================
 // HISTORIAL DE ASISTENCIA - INSTRUMENTO
 // ==========================================
