@@ -84,6 +84,16 @@ let historial = [];
 
 let tipoActual = "instrumento";
 
+// ==========================================
+// CACHE DE FILTROS
+// ==========================================
+
+let cacheInstrumentos = null;
+let cacheNivelesInstrumento = null;
+let cacheNivelesTeoria = null;
+let cacheInstructoresInstrumento = null;
+let cacheInstructoresTeoria = null;
+let cacheTodosInstructores = null;
 
 // ==========================================
 // INICIAR
@@ -622,6 +632,20 @@ async function cargarFiltros() {
 
 async function cargarInstrumentosFiltro() {
 
+    if (cacheInstrumentos) {
+
+        llenarSelect(
+            filtroInstrumento,
+            cacheInstrumentos,
+            "Todos",
+            "nombre",
+            "nombre"
+        );
+
+        return;
+    }
+
+
     const respuesta =
         await fetch(
             `${API_BASE_URL}/instrumentos`
@@ -632,22 +656,17 @@ async function cargarInstrumentosFiltro() {
         await respuesta.json();
 
 
-    filtroInstrumento.innerHTML = `
-        <option value="">
-            Todos
-        </option>
-    `;
+    cacheInstrumentos =
+        datos;
 
 
-    datos.forEach(item => {
-
-        filtroInstrumento.innerHTML += `
-            <option value="${item.nombre}">
-                ${item.nombre}
-            </option>
-        `;
-
-    });
+    llenarSelect(
+        filtroInstrumento,
+        datos,
+        "Todos",
+        "nombre",
+        "nombre"
+    );
 
 }
 
@@ -657,6 +676,20 @@ async function cargarInstrumentosFiltro() {
 // ==========================================
 
 async function cargarNivelesInstrumentoFiltro() {
+
+    if (cacheNivelesInstrumento) {
+
+        llenarSelect(
+            filtroNivelInstrumento,
+            cacheNivelesInstrumento,
+            "Todos",
+            "nombre",
+            "nombre"
+        );
+
+        return;
+    }
+
 
     const respuesta =
         await fetch(
@@ -668,31 +701,38 @@ async function cargarNivelesInstrumentoFiltro() {
         await respuesta.json();
 
 
-    filtroNivelInstrumento.innerHTML = `
-        <option value="">
-            Todos
-        </option>
-    `;
+    cacheNivelesInstrumento =
+        datos;
 
 
-    datos.forEach(item => {
-
-        filtroNivelInstrumento.innerHTML += `
-            <option value="${item.nombre}">
-                ${item.nombre}
-            </option>
-        `;
-
-    });
+    llenarSelect(
+        filtroNivelInstrumento,
+        datos,
+        "Todos",
+        "nombre",
+        "nombre"
+    );
 
 }
-
-
 // ==========================================
 // NIVELES TEORÍA
 // ==========================================
 
 async function cargarNivelesTeoriaFiltro() {
+
+    if (cacheNivelesTeoria) {
+
+        llenarSelect(
+            filtroNivelTeoria,
+            cacheNivelesTeoria,
+            "Todos",
+            "nombre",
+            "nombre"
+        );
+
+        return;
+    }
+
 
     const respuesta =
         await fetch(
@@ -704,39 +744,77 @@ async function cargarNivelesTeoriaFiltro() {
         await respuesta.json();
 
 
-    filtroNivelTeoria.innerHTML = `
-        <option value="">
-            Todos
-        </option>
-    `;
+    cacheNivelesTeoria =
+        datos;
 
 
-    datos.forEach(item => {
-
-        filtroNivelTeoria.innerHTML += `
-            <option value="${item.nombre}">
-                ${item.nombre}
-            </option>
-        `;
-
-    });
+    llenarSelect(
+        filtroNivelTeoria,
+        datos,
+        "Todos",
+        "nombre",
+        "nombre"
+    );
 
 }
-
-
 // ==========================================
 // INSTRUCTORES
 // ==========================================
 
 async function cargarInstructoresFiltro() {
 
+    let cacheActual = null;
+
+
+    if (tipoActual === "instrumento") {
+
+        cacheActual =
+            cacheInstructoresInstrumento;
+
+    }
+
+
+    if (tipoActual === "teoria") {
+
+        cacheActual =
+            cacheInstructoresTeoria;
+
+    }
+
+
+    if (tipoActual === "instructores") {
+
+        cacheActual =
+            cacheTodosInstructores;
+
+    }
+
+
+    // ==========================================
+    // USAR CACHE
+    // ==========================================
+
+    if (cacheActual) {
+
+        llenarSelect(
+            filtroInstructor,
+            cacheActual,
+            "Todos",
+            "apellido",
+            "nombre"
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // URL
+    // ==========================================
+
     let url =
         `${API_BASE_URL}/instructores`;
 
-
-    // ======================================
-    // FILTRAR SEGÚN EL TIPO DE ASISTENCIA
-    // ======================================
 
     if (tipoActual === "instrumento") {
 
@@ -752,6 +830,10 @@ async function cargarInstructoresFiltro() {
     }
 
 
+    // ==========================================
+    // CONSULTAR SERVIDOR
+    // ==========================================
+
     const respuesta =
         await fetch(url);
 
@@ -760,18 +842,91 @@ async function cargarInstructoresFiltro() {
         await respuesta.json();
 
 
-    filtroInstructor.innerHTML = `
+    // ==========================================
+    // GUARDAR CACHE
+    // ==========================================
+
+    if (tipoActual === "instrumento") {
+
+        cacheInstructoresInstrumento =
+            datos;
+
+    }
+
+
+    if (tipoActual === "teoria") {
+
+        cacheInstructoresTeoria =
+            datos;
+
+    }
+
+
+    if (tipoActual === "instructores") {
+
+        cacheTodosInstructores =
+            datos;
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR
+    // ==========================================
+
+    llenarSelect(
+        filtroInstructor,
+        datos,
+        "Todos",
+        "apellido",
+        "nombre"
+    );
+
+}
+// ==========================================
+// LLENAR SELECT
+// ==========================================
+
+function llenarSelect(
+    select,
+    datos,
+    textoTodos,
+    campoValor,
+    campoTexto
+) {
+
+    select.innerHTML = `
         <option value="">
-            Todos
+            ${textoTodos}
         </option>
     `;
 
 
     datos.forEach(item => {
 
-        filtroInstructor.innerHTML += `
-            <option value="${item.id}">
-                ${item.apellido}, ${item.nombre}
+        let texto;
+
+
+        if (
+            campoValor === "apellido" &&
+            campoTexto === "nombre"
+        ) {
+
+            texto =
+                `${item.apellido}, ${item.nombre}`;
+
+        }
+        else {
+
+            texto =
+                item[campoTexto];
+
+        }
+
+
+        select.innerHTML += `
+            <option value="${item[campoValor]}">
+                ${texto}
             </option>
         `;
 
