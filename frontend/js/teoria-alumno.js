@@ -133,8 +133,9 @@ async function cargarTeoria(){
 
         console.error(error);
 
-        alert(
-            "Error cargando teoría"
+        mostrarNotificacion(
+            "Error cargando teoría",
+            "error"
         );
 
     }
@@ -440,8 +441,9 @@ async function guardarCambios(){
 
 
 
-        alert(
-            "Teoría actualizada correctamente"
+        mostrarNotificacion(
+            "Teoría actualizada correctamente",
+            "exito"
         );
 
 
@@ -456,8 +458,9 @@ async function guardarCambios(){
         console.error(error);
 
 
-        alert(
-            "Error guardando cambios"
+        mostrarNotificacion(
+            "Error guardando cambios",
+            "error"
         );
 
 

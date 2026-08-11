@@ -292,7 +292,9 @@ async function cargarAlumno(){
        // La edad se calcula automáticamente 
        // 
        
-       calcularEdadEdicion(); document.getElementById("telefono").value = alumno.telefono || ""; document.getElementById("telefono_tutor").value = alumno.telefono_tutor || ""; document.getElementById("correo").value = alumno.correo || ""; document.getElementById("anciano_autoriza").value = alumno.anciano_autoriza || ""; document.getElementById("observaciones").value = alumno.observaciones || "";
+       calcularEdadEdicion(); document.getElementById("telefono").value = alumno.telefono || ""; 
+       
+       document.getElementById("telefono_tutor").value = alumno.telefono_tutor || ""; document.getElementById("correo").value = alumno.correo || ""; document.getElementById("anciano_autoriza").value = alumno.anciano_autoriza || ""; document.getElementById("observaciones").value = alumno.observaciones || "";
 
         // ==========================
         // IGLESIAS
@@ -347,9 +349,10 @@ document.getElementById("instructor_teoria_id").value =
         console.error(error);
 
 
-        alert(
-            "No se pudieron cargar los datos del alumno"
-        );
+        mostrarNotificacion(
+    "No se pudieron cargar los datos del alumno",
+    "error"
+);
 
 
     }
@@ -518,66 +521,55 @@ async function guardarCambios(){
 
     const alumno = {
 
+    dni:
+        document.getElementById("dni")
+        .value.trim() || null,
 
-        dni:
-            document.getElementById("dni")
-            .value.trim() || null,
+    apellido:
+        document.getElementById("apellido")
+        .value,
 
+    nombre:
+        document.getElementById("nombre")
+        .value,
 
-        apellido:
-            document.getElementById("apellido")
-            .value,
+    fecha_nacimiento:
+        document.getElementById("fecha_nacimiento")
+        .value || null,
 
+    edad:
+        document.getElementById("edad")
+        .value
+        ? Number(
+            document.getElementById("edad").value
+          )
+        : null,
 
-        nombre:
-            document.getElementById("nombre")
-            .value,
-            fecha_nacimiento:
-    document.getElementById("fecha_nacimiento")
-    .value || null,
+    telefono:
+        document.getElementById("telefono")
+        .value,
 
-edad:
-    document.getElementById("edad")
-    .value
-    ? Number(
-        document.getElementById("edad").value
-      )
-    : null,
+    telefono_tutor:
+        document.getElementById("telefono_tutor")
+        .value,
 
+    correo:
+        document.getElementById("correo")
+        .value,
 
-        telefono:
-            document.getElementById("telefono")
-            .value,
+    filial_id:
+        Number(
+            document.getElementById("filial_id").value
+        ),
 
+    anciano_autoriza:
+        document.getElementById("anciano_autoriza")
+        .value.trim(),
 
-        telefono_tutor:
-            document.getElementById("telefono_tutor")
-            .value,
-
-
-        correo:
-            document.getElementById("correo")
-            .value,
-
-
-        filial_id:
-            Number(
-                document.getElementById("filial_id").value
-            ),
-
-
-        anciano_autoriza:
-            document.getElementById("anciano_autoriza")
-            .value,
-
-
-        observaciones:
-            document.getElementById("observaciones")
-            .value
-
-
-    };
-
+    observaciones:
+        document.getElementById("observaciones")
+        .value.trim()
+};
 
 
 
@@ -658,9 +650,10 @@ if (estadoMinisterial.value) {
 
 }
 
-        alert(
-            "Alumno actualizado correctamente"
-        );
+        mostrarNotificacion(
+    "Alumno actualizado correctamente",
+    "exito"
+);
 
 
 
@@ -672,7 +665,10 @@ if (estadoMinisterial.value) {
 
     console.error(error);
 
-    alert(error.message);
+    mostrarNotificacion(
+        "Error al actualizar el alumno",
+        "error"
+    );
 
 }
 

@@ -152,9 +152,10 @@ async function guardarFilial(evento){
 
 
 
-        alert(
-            "Filial creada correctamente"
-        );
+        mostrarNotificacion(
+    "Filial creada correctamente",
+    "exito"
+);
 
 
         cerrarFormulario();
@@ -169,8 +170,9 @@ async function guardarFilial(evento){
         console.error(error);
 
 
-        alert(
-            "Error al crear filial"
+        mostrarNotificacion(
+            "Error al crear filial",
+            "error"
         );
 
     }

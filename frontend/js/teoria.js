@@ -91,8 +91,9 @@ await fetch(
         console.error(error);
 
 
-        alert(
-            "Error cargando teoría"
+        mostrarNotificacion(
+            "Error cargando teoría",
+            "error"
         );
 
 

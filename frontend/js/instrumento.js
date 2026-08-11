@@ -167,8 +167,9 @@ async function cargarInstrumento(){
 
         console.error(error);
 
-        alert(
-            "Error cargando instrumento"
+        mostrarNotificacion(
+            "Error cargando instrumento",
+            "error"
         );
 
     }
@@ -551,13 +552,14 @@ async function guardarCambios(){
 
 
 
-        alert(
-            "Instrumento actualizado correctamente"
-        );
+       mostrarNotificacion(
+    "Instrumento actualizado correctamente",
+    "exito"
+);
 
-
-
-        location.reload();
+setTimeout(() => {
+    location.reload();
+}, 3000);
 
 
 
@@ -568,8 +570,9 @@ async function guardarCambios(){
         console.error(error);
 
 
-        alert(
-            "Error guardando cambios"
+        mostrarNotificacion(
+            "Error guardando cambios",
+            "error"
         );
 
 
