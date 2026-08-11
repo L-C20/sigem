@@ -38,36 +38,40 @@ router.get("/cursadas", async (req,res)=>{
         const resultado = await pool.query(
             `
             SELECT
-    ci.id,
+                ci.id,
 
-    a.nombre || ' ' || a.apellido AS alumno,
+                a.nombre || ' ' || a.apellido AS alumno,
 
-    ci.instrumento_id,
-    i.nombre AS instrumento,
+                ci.instrumento_id,
+                i.nombre AS instrumento,
 
-    ci.nivel_instrumento_id,
-    ni.nombre AS nivel,
+                ci.nivel_instrumento_id,
+                ni.nombre AS nivel,
 
-    ci.instructor_id,
-    ins.nombre || ' ' || ins.apellido AS instructor,
+                ci.instructor_id,
+                ins.nombre || ' ' || ins.apellido AS instructor,
 
-    ci.estado
+                ci.estado
 
             FROM cursada_instrumento ci
 
             JOIN alumnos a
-            ON a.id = ci.alumno_id
+                ON a.id = ci.alumno_id
 
             JOIN instrumentos i
-            ON i.id = ci.instrumento_id
+                ON i.id = ci.instrumento_id
 
             JOIN niveles_instrumento ni
-            ON ni.id = ci.nivel_instrumento_id
+                ON ni.id = ci.nivel_instrumento_id
 
             JOIN instructores ins
-            ON ins.id = ci.instructor_id
+                ON ins.id = ci.instructor_id
 
-            ORDER BY i.nombre, a.apellido;
+            WHERE ci.estado = 'Activo'
+
+            ORDER BY
+                i.nombre,
+                a.apellido;
             `
         );
 
