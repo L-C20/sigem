@@ -1546,9 +1546,68 @@ if (
 // CARGAR FECHAS AL INICIAR
 // ======================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-        llenarSelectsFechas();
+function llenarSelectsFechas() {
+
+    const meses = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 
+        'Mayo', 'Junio', 'Julio', 'Agosto', 
+        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    const sabadosPorMes = {};
+
+    const hoy = new Date();
+    
+    // Generar sábados para los próximos 12 meses
+    for (let i = 0; i < 12; i++) {
+        const anio = hoy.getFullYear();
+        const mes = (hoy.getMonth() + i) % 12;
+        const mesAjustado = hoy.getMonth() + i;
+        
+        const primerDia = new Date(anio, mesAjustado, 1);
+        const ultimoDia = new Date(anio, mesAjustado + 1, 0);
+
+        let primerSabado = new Date(primerDia);
+        primerSabado.setDate(
+            primerDia.getDate() + (6 - primerDia.getDay() + 7) % 7
+        );
+
+        const sabados = [];
+
+        while (primerSabado <= ultimoDia) {
+            sabados.push(new Date(primerSabado));
+            primerSabado.setDate(primerSabado.getDate() + 7);
+        }
+
+        const nombreMes = meses[mes];
+        sabadosPorMes[nombreMes] = sabados;
     }
-);
+
+    const selects = [
+        'fechaTeoria',
+        'fechaInstrumento',
+        'fechaInstructor'
+    ];
+
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">Seleccione fecha</option>';
+
+        Object.keys(sabadosPorMes).forEach(nombreMes => {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = nombreMes;
+
+            sabadosPorMes[nombreMes].forEach(sabado => {
+                const fecha = sabado.toISOString().split('T')[0];
+                const dia = sabado.getDate();
+                
+                const opcion = document.createElement('option');
+                opcion.value = fecha;
+                opcion.textContent = `${dia} de ${nombreMes}`;
+                optgroup.appendChild(opcion);
+            });
+
+            select.appendChild(optgroup);
+        });
+    });
+}
