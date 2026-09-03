@@ -1,9 +1,8 @@
-const API_BASE_URL = "https://sigem-backend.onrender.com";
+const API_BASE_URL = "http://localhost:3000";
 
 
-const email =
-document.getElementById("email");
-
+const username =
+document.getElementById("username");
 
 const password =
 document.getElementById("password");
@@ -39,11 +38,11 @@ btnIngresar.addEventListener(
 
                     body:JSON.stringify({
 
-                        email:email.value,
+                    username:username.value,
 
-                        password:password.value
+                    password:password.value
 
-                    })
+                })
 
                 }
             );
