@@ -13,17 +13,20 @@ router.post("/login", async (req,res)=>{
 
     try{
 
-        const {email,password} = req.body;
+        const {email,username,password} = req.body;
 
+
+        const campoValor = username || email;
+        const campo = username ? 'username' : 'email';
 
         const resultado = await pool.query(
             `
             SELECT *
             FROM usuarios
-            WHERE email = $1
+            WHERE ${campo} = $1
             AND estado = 'Activo'
             `,
-            [email]
+            [campoValor]
         );
 
 

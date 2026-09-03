@@ -29,35 +29,62 @@ async function crearUsuarios() {
                  email: "matiscacciante123@gmail.com",
                  password: "Matias2026!",
              }
+            
+            ,{
+    nombre: "Marcelo",
+    apellido: "Borgia",
+    email: "marcelo26@sigem.local",
+    username: "Marcelo26",
+    password: "Marcelo26!",
+},
+
+{
+    nombre: "Melany",
+    apellido: "Borgia",
+    email: "melany26@sigem.local",
+    username: "Melany26",
+    password: "Melany26!",
+},
+
+{
+    nombre: "Eliana",
+    apellido: "Sabatini",
+    email: "eliana26@sigem.local",
+    username: "Eliana26",
+    password: "Eliana26!",
+}
 
         ];
+        
 
 
         for (const usuario of usuarios) {
 
             // =====================================
-            // VERIFICAR SI YA EXISTE
-            // =====================================
+// VERIFICAR SI YA EXISTE
+// =====================================
 
-            const existe = await pool.query(
-                `
-                SELECT id
-                FROM usuarios
-                WHERE email = $1
-                `,
-                [usuario.email]
-            );
+const campo = usuario.username ? 'username' : 'email';
+const valor = usuario.username || usuario.email;
 
+const existe = await pool.query(
+    `
+    SELECT id
+    FROM usuarios
+    WHERE ${campo} = $1
+    `,
+    [valor]
+);
 
-            if (existe.rows.length > 0) {
+if (existe.rows.length > 0) {
 
-                console.log(
-                    `El usuario ${usuario.email} ya existe.`
-                );
+    console.log(
+        `El usuario ${valor} ya existe.`
+    );
 
-                continue;
+    continue;
 
-            }
+}
 
 
             // =====================================
@@ -69,33 +96,33 @@ async function crearUsuarios() {
                 10
             );
 
+// =====================================
+// CREAR USUARIO
+// =====================================
 
-            // =====================================
-            // CREAR USUARIO
-            // =====================================
-
-            await pool.query(
-                `
-                INSERT INTO usuarios
-                (
-                    nombre,
-                    apellido,
-                    email,
-                    password,
-                    rol,
-                    estado
-                )
-                VALUES
-                ($1,$2,$3,$4,'Usuario','Activo')
-                `,
-                [
-                    usuario.nombre,
-                    usuario.apellido,
-                    usuario.email,
-                    hash
-                ]
-            );
-
+await pool.query(
+    `
+    INSERT INTO usuarios
+    (
+        nombre,
+        apellido,
+        email,
+        username,
+        password,
+        rol,
+        estado
+    )
+    VALUES
+    ($1,$2,$3,$4,$5,'Usuario','Activo')
+    `,
+    [
+        usuario.nombre,
+        usuario.apellido,
+        usuario.email,
+        usuario.username || null,
+        hash
+    ]
+);
 
             console.log(
                 `Usuario ${usuario.email} creado correctamente.`
