@@ -1394,89 +1394,75 @@ async function guardarAsistenciaInstructores() {
 
     }
 
+const promesas = [];
 
-    for (
-        const checkbox of checkboxes
-    ) {
+for (const checkbox of checkboxes) {
 
-        const datos = {
+    const datos = {
 
-            instructor_id:
-                Number(
-                    checkbox.dataset.instructor
-                ),
+        instructor_id:
+            Number(
+                checkbox.dataset.instructor
+            ),
 
-            fecha:
-                fecha,
+        fecha:
+            fecha,
 
-            presente:
-                checkbox.checked,
+        presente:
+            checkbox.checked,
 
-            observacion:
-                null
+        observacion:
+            null
 
-        };
+    };
 
+    console.log(
+        "Guardando asistencia instructor:",
+        datos
+    );
 
-        console.log(
-            "Guardando asistencia instructor:",
-            datos
-        );
+    const promesa = fetch(
+        "https://sigem-backend.onrender.com/asistencias/instructores",
+        {
 
+            method: "POST",
 
-        try {
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
 
-            const respuesta =
-                await fetch(
-                    "https://sigem-backend.onrender.com/asistencias/instructores",
-                    {
+            body:
+                JSON.stringify(datos)
 
-                        method: "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify(
-                                datos
-                            )
-
-                    }
-                );
-
-
-            if (!respuesta.ok) {
-
-                const error =
-                    await respuesta.text();
-
+        }
+    )
+    .then(respuesta => {
+        if (!respuesta.ok) {
+            return respuesta.text().then(error => {
                 console.error(
                     "Error guardando instructor:",
                     error
                 );
-
-            }
-
+            });
         }
-        catch (error) {
+    })
+    .catch(error => {
+        console.error(
+            "Error de conexión:",
+            error
+        );
+    });
 
-            console.error(
-                "Error de conexión:",
-                error
-            );
+    promesas.push(promesa);
 
-        }
+}
 
-    }
-
+await Promise.all(promesas);
 
    mostrarNotificacion(
     "Asistencia de instructores guardada correctamente",
-    "success"
+    "exito"
 );
 
 }
