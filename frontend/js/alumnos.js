@@ -226,11 +226,20 @@ elementos.btnConfirmarEliminar.addEventListener(
       elementos.instructorInstrumentoSelect.disabled = esCoRo;
 
       if (esCoRo) {
-        elementos.nivelInstrumentoSelect.value = "";
-        elementos.instructorInstrumentoSelect.value = "";
-      } else {
-        cargarInstructoresInstrumento(instrumentoId);
-      }
+    elementos.nivelInstrumentoSelect.value = "";
+    elementos.instructorInstrumentoSelect.value = "";
+    
+    // Deshabilitar teoría
+    elementos.nivelTeoriaSelect.disabled = true;
+    elementos.instructorTeoriaSelect.disabled = true;
+    elementos.nivelTeoriaSelect.value = "";
+    elementos.instructorTeoriaSelect.value = "";
+} else {
+    // Habilitar teoría
+    elementos.nivelTeoriaSelect.disabled = false;
+    elementos.instructorTeoriaSelect.disabled = false;
+    cargarInstructoresInstrumento(instrumentoId);
+}
 
     }
 );

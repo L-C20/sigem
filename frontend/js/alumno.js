@@ -124,7 +124,16 @@ const instructorInstrumentoSelect =
         if (esCoRo) {
             nivelInstrumentoSelect.value = "";
             instructorInstrumentoSelect.value = "";
+            
+            // Deshabilitar teoría
+            nivelTeoriaSelect.disabled = true;
+            instructorTeoriaSelect.disabled = true;
+            nivelTeoriaSelect.value = "";
+            instructorTeoriaSelect.value = "";
         } else {
+            // Habilitar teoría
+            nivelTeoriaSelect.disabled = false;
+            instructorTeoriaSelect.disabled = false;
             cargarInstructoresInstrumento(instrumentoId);
         }
 
