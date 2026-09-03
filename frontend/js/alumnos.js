@@ -219,12 +219,21 @@ elementos.btnConfirmarEliminar.addEventListener(
       const instrumentoId =
         elementos.instrumentoSelect.value;
 
-      cargarInstructoresInstrumento(
-        instrumentoId
-      );
+      // Si es CORO (id 13), deshabilitar nivel e instructor
+      const esCoRo = Number(instrumentoId) === 13;
+
+      elementos.nivelInstrumentoSelect.disabled = esCoRo;
+      elementos.instructorInstrumentoSelect.disabled = esCoRo;
+
+      if (esCoRo) {
+        elementos.nivelInstrumentoSelect.value = "";
+        elementos.instructorInstrumentoSelect.value = "";
+      } else {
+        cargarInstructoresInstrumento(instrumentoId);
+      }
 
     }
-  );
+);
 
 });
 

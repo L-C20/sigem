@@ -112,9 +112,21 @@ const instructorInstrumentoSelect =
     "change",
     ()=>{
 
-        cargarInstructoresInstrumento(
-            instrumentoSelect.value
-        );
+        const instrumentoId =
+            instrumentoSelect.value;
+
+        // Si es CORO (id 13), deshabilitar nivel e instructor
+        const esCoRo = Number(instrumentoId) === 13;
+
+        nivelInstrumentoSelect.disabled = esCoRo;
+        instructorInstrumentoSelect.disabled = esCoRo;
+
+        if (esCoRo) {
+            nivelInstrumentoSelect.value = "";
+            instructorInstrumentoSelect.value = "";
+        } else {
+            cargarInstructoresInstrumento(instrumentoId);
+        }
 
     }
 );
@@ -571,7 +583,7 @@ async function guardarCambios(){
     observaciones:
         document.getElementById("observaciones")
         .value.trim(),
-        
+
     bautizado_agua:
     document.getElementById("bautizado_agua")
     .value || null,
