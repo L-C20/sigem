@@ -71,6 +71,7 @@ const camposEditables = [
     "correo",
     "filial_id",
     "anciano_autoriza",
+    "bautizado_agua",
     "observaciones",
     "instrumento_id",
     "nivel_instrumento_id",
@@ -295,6 +296,7 @@ async function cargarAlumno(){
        calcularEdadEdicion(); document.getElementById("telefono").value = alumno.telefono || ""; 
        
        document.getElementById("telefono_tutor").value = alumno.telefono_tutor || ""; document.getElementById("correo").value = alumno.correo || ""; document.getElementById("anciano_autoriza").value = alumno.anciano_autoriza || ""; document.getElementById("observaciones").value = alumno.observaciones || "";
+       document.getElementById("bautizado_agua").value = alumno.bautizado_agua || "";
 
         // ==========================
         // IGLESIAS
@@ -568,7 +570,12 @@ async function guardarCambios(){
 
     observaciones:
         document.getElementById("observaciones")
-        .value.trim()
+        .value.trim(),
+        
+    bautizado_agua:
+    document.getElementById("bautizado_agua")
+    .value || null,
+    
 };
 
 
