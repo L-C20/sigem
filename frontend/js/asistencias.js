@@ -199,23 +199,20 @@ function generarSabadosDelMes() {
 function llenarSelectsFechas() {
 
     const meses = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 
-        'Mayo', 'Junio', 'Julio', 'Agosto', 
-        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        'Marzo', 'Abril', 'Mayo', 'Junio', 
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'
     ];
 
     const sabadosPorMes = {};
 
     const hoy = new Date();
     
-    // Generar sábados para los próximos 12 meses
-    for (let i = 0; i < 12; i++) {
-        const anio = hoy.getFullYear();
-        const mes = (hoy.getMonth() + i) % 12;
-        const mesAjustado = hoy.getMonth() + i;
+    // Generar sábados de marzo a noviembre
+    for (let i = 0; i < 9; i++) {
+        const mesAjustado = 2 + i; // 2 = marzo (0-indexed)
         
-        const primerDia = new Date(anio, mesAjustado, 1);
-        const ultimoDia = new Date(anio, mesAjustado + 1, 0);
+        const primerDia = new Date(hoy.getFullYear(), mesAjustado, 1);
+        const ultimoDia = new Date(hoy.getFullYear(), mesAjustado + 1, 0);
 
         let primerSabado = new Date(primerDia);
         primerSabado.setDate(
@@ -229,7 +226,7 @@ function llenarSelectsFechas() {
             primerSabado.setDate(primerSabado.getDate() + 7);
         }
 
-        const nombreMes = meses[mes];
+        const nombreMes = meses[i];
         sabadosPorMes[nombreMes] = sabados;
     }
 
@@ -249,11 +246,13 @@ function llenarSelectsFechas() {
 
             sabadosPorMes[nombreMes].forEach(sabado => {
                 const fecha = sabado.toISOString().split('T')[0];
-                const dia = sabado.getDate();
+                const dia = String(sabado.getDate()).padStart(2, '0');
+                const mes = String(sabado.getMonth() + 1).padStart(2, '0');
+                const anio = sabado.getFullYear();
                 
                 const opcion = document.createElement('option');
                 opcion.value = fecha;
-                opcion.textContent = `${dia} de ${nombreMes}`;
+                opcion.textContent = `${dia}/${mes}/${anio}`;
                 optgroup.appendChild(opcion);
             });
 
