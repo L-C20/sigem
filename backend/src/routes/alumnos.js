@@ -178,6 +178,7 @@ SELECT
     a.filial_id,
     a.iglesia,
     a.anciano_autoriza,
+    a.bautizado_agua,
     a.observaciones,
 
     f.nombre AS filial_nombre,
@@ -315,7 +316,8 @@ router.post("/", async (req, res) => {
     fecha_nacimiento,
     correo,
     anciano_autoriza,
-    observaciones
+    observaciones,
+    bautizado_agua
 } = req.body;
 
 
@@ -332,9 +334,10 @@ router.post("/", async (req, res) => {
         fecha_nacimiento,
         correo,
         anciano_autoriza,
-        observaciones
+        observaciones,
+        bautizado_agua
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
     RETURNING *
     `,
     [
@@ -347,7 +350,8 @@ router.post("/", async (req, res) => {
         fecha_nacimiento,
         correo,
         anciano_autoriza,
-        observaciones
+        observaciones,
+        bautizado_agua
     ]
 );
 
@@ -388,6 +392,7 @@ router.put("/:id", async (req, res) => {
             iglesia,
             anciano_autoriza,
             observaciones,
+            bautizado_agua,
             fecha_nacimiento
         } = req.body;
 
@@ -406,9 +411,10 @@ router.put("/:id", async (req, res) => {
                 iglesia = $8,
                 anciano_autoriza = $9,
                 observaciones = $10,
-                fecha_nacimiento = $11
+                fecha_nacimiento = $11,
+                bautizado_agua = $12
 
-            WHERE id = $12
+            WHERE id = $13
 
             RETURNING *
             `,
@@ -424,6 +430,7 @@ router.put("/:id", async (req, res) => {
                 anciano_autoriza,
                 observaciones,
                 fecha_nacimiento,
+                bautizado_agua,
                 id
             ]
         );

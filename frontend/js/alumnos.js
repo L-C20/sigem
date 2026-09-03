@@ -460,8 +460,9 @@ async function guardarAlumno(evento) {
 
     filial_id:
       Number(
-        formData.get("filial_id")
-      )
+        formData.get("filial_id")),
+    bautizado_agua: formData.get("bautizado_agua") || null,
+      
 
   };
 
