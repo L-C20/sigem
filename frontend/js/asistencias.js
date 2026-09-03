@@ -168,6 +168,65 @@ let listaAlumnosInstrumento = [];
 
 let listaAlumnosTeoria = [];
 
+// ======================================
+// GENERAR SÁBADOS DEL MES
+// ======================================
+
+function generarSabadosDelMes() {
+
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = hoy.getMonth();
+
+    const primerDia = new Date(anio, mes, 1);
+    const ultimoDia = new Date(anio, mes + 1, 0);
+
+    let primerSabado = new Date(primerDia);
+    
+    primerSabado.setDate(
+        primerDia.getDate() + (6 - primerDia.getDay())
+    );
+
+    const sabados = [];
+
+    while (primerSabado <= ultimoDia) {
+        sabados.push(new Date(primerSabado));
+        primerSabado.setDate(primerSabado.getDate() + 7);
+    }
+
+    return sabados;
+}
+
+function llenarSelectsFechas() {
+
+    const sabados = generarSabadosDelMes();
+
+    const selects = [
+        'fechaTeoria',
+        'fechaInstrumento',
+        'fechaInstructor'
+    ];
+
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">Seleccione fecha</option>';
+
+        sabados.forEach(sabado => {
+            const fecha = sabado.toISOString().split('T')[0];
+            const formateada = sabado.toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            const opcion = document.createElement('option');
+            opcion.value = fecha;
+            opcion.textContent = formateada;
+            select.appendChild(opcion);
+        });
+    });
+}
 
 // ======================================
 // MOSTRAR VISTA
@@ -1464,6 +1523,10 @@ await Promise.all(promesas);
     "Asistencia de instructores guardada correctamente",
     "exito"
 );
+// Limpiar checkboxes
+checkboxes.forEach(checkbox => {
+    checkbox.checked = false;
+});
 
 }
 
@@ -1478,3 +1541,14 @@ if (
     );
 
 }
+
+// ======================================
+// CARGAR FECHAS AL INICIAR
+// ======================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        llenarSelectsFechas();
+    }
+);
