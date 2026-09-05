@@ -32,6 +32,9 @@ const btnTeoria =
 const btnInstructores =
     document.getElementById("btnInstructores");
 
+const btnMinisterial =
+    document.getElementById("btnMinisterial");
+
 const filtroMes =
     document.getElementById("filtroMes");
 
@@ -144,6 +147,14 @@ document.addEventListener(
 
             }
         );
+        btnMinisterial.addEventListener(
+    "click",
+    () => {
+
+        cambiarTipo("ministerial");
+
+    }
+);
 
 
         // ==========================================
@@ -467,6 +478,9 @@ async function cambiarTipo(tipo) {
     btnInstructores.classList.remove("primary");
     btnInstructores.classList.add("secondary");
 
+    btnMinisterial.classList.remove("primary");
+    btnMinisterial.classList.add("secondary");
+
 
     if (tipo === "instrumento") {
 
@@ -490,6 +504,12 @@ async function cambiarTipo(tipo) {
         btnInstructores.classList.add("primary");
 
     }
+    if (tipo === "ministerial") {
+
+    btnMinisterial.classList.remove("secondary");
+    btnMinisterial.classList.add("primary");
+
+}
 
 
     actualizarInterfaz();
@@ -568,6 +588,19 @@ function actualizarInterfaz() {
         contenedorInstructor.classList.remove("hidden");
 
     }
+
+    if (tipoActual === "ministerial") {
+
+    tituloHistorial.textContent =
+        "Asistencia de Instrucción Ministerial";
+
+    descripcionHistorial.textContent =
+        "Registro mensual de asistencia de instrucción ministerial.";
+
+    buscadorHistorial.placeholder =
+        "Buscar alumno...";
+
+}
 
 }
 
@@ -966,6 +999,13 @@ async function cargarHistorial() {
 
     endpoint =
         `${API_BASE_URL}/asistencias/historial/instructores?mes=${filtroMes.value}`;
+
+}
+
+if (tipoActual === "ministerial") {
+
+    endpoint =
+        `${API_BASE_URL}/asistencias/historial/ministerial?mes=${filtroMes.value}`;
 
 }
 
@@ -1696,6 +1736,14 @@ function construirEncabezado(sabados) {
         `;
 
     }
+
+    if (tipoActual === "ministerial") {
+
+    html += `
+        <th>Estado</th>
+    `;
+
+}
 
 
     sabados.forEach(sabado => {

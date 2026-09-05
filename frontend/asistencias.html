@@ -202,6 +202,26 @@
 
 
                 </div>
+            
+                <div class="card card-asistencia">
+
+                <h2>
+                    Instrucción Ministerial
+                </h2>
+
+                <p>
+                    Registrar y consultar asistencias de instrucción ministerial.
+                </p>
+
+                <button
+                id="btnInstruccionMinisterial"
+                class="button">
+
+                    Ingresar
+
+                </button>
+
+            </div>
 
 
             </div>
@@ -1255,8 +1275,103 @@
 
     </div>
 
+        </section>
+    <!-- ==========================
+     INSTRUCCIÓN MINISTERIAL
+=========================== -->
+
+<section id="vistaInstruccionMinisterial" class="hidden">
+
+    <div class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                Asistencias
+            </span>
+
+            <h2>
+                Instrucción Ministerial
+            </h2>
+
+        </div>
+
+        <button
+            id="volverPrincipal4"
+            class="button secondary">
+
+            Volver
+
+        </button>
+
+    </div>
+
+    <!-- FILTROS -->
+
+    <section class="card filtros">
+
+        <div class="form-grid">
+
+            <label class="field">
+
+                <span>Buscar alumno</span>
+
+                <input
+                    id="buscarAlumnoMinisterial"
+                    placeholder="Nombre o apellido">
+
+            </label>
+
+            <label class="field">
+
+                <span>Fecha</span>
+
+                <select id="fechaMinisterial">
+                    <option value="">Seleccione fecha</option>
+                </select>
+
+            </label>
+
+        </div>
+
+    </section>
+
+    <!-- TABLA -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Asistencia</th>
+                    <th>Apellido y Nombre</th>
+                    <th>Estado</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaMinisterial">
+
+            </tbody>
+
+        </table>
+
+        <button
+            id="guardarAsistenciaMinisterial"
+            class="button">
+
+            Guardar asistencia
+
+        </button>
+
+    </div>
 
 </section>
+        
 
     </main>
 

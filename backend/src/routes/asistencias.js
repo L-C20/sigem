@@ -857,4 +857,147 @@ router.get("/historial/instructores", async (req, res) => {
 
 });
 
+
+// ==========================================
+// GUARDAR / ACTUALIZAR ASISTENCIA MINISTERIAL
+// ==========================================
+
+router.post("/ministerial", async (req, res) => {
+
+    try {
+
+        const {
+            alumno_id,
+            fecha,
+            presente
+        } = req.body;
+
+        const resultado = await pool.query(`
+
+            INSERT INTO asistencias_ministerial
+            (
+                alumno_id,
+                fecha,
+                presente
+            )
+
+            VALUES
+            ($1, $2, $3)
+
+            ON CONFLICT (alumno_id, fecha)
+            DO UPDATE SET
+                presente = EXCLUDED.presente
+
+            RETURNING *
+
+        `, [
+
+            alumno_id,
+            fecha,
+            presente
+
+        ]);
+
+        res.json(resultado.rows[0]);
+
+    } catch (error) {
+
+        console.error(
+            "ERROR GUARDANDO ASISTENCIA MINISTERIAL:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Error guardando asistencia de instrucción ministerial"
+        });
+
+    }
+
+});
+
+// ==========================================
+// HISTORIAL DE ASISTENCIA - MINISTERIAL
+// ==========================================
+
+router.get("/historial/ministerial", async (req, res) => {
+
+    try {
+
+        const { mes } = req.query;
+
+        let consulta = `
+
+            SELECT
+
+                am.id,
+                am.fecha,
+                am.presente,
+
+                a.id AS alumno_id,
+                a.nombre AS alumno_nombre,
+                a.apellido AS alumno_apellido,
+                a.estado_ministerial
+
+            FROM asistencias_ministerial am
+
+            INNER JOIN alumnos a
+                ON a.id = am.alumno_id
+
+        `;
+
+        const parametros = [];
+
+        // ==========================================
+        // FILTRAR POR MES
+        // ==========================================
+
+        if (mes) {
+
+            consulta += `
+
+                WHERE
+                    TO_CHAR(am.fecha, 'YYYY-MM') = $1
+
+            `;
+
+            parametros.push(mes);
+
+        }
+
+        consulta += `
+
+            ORDER BY
+                am.fecha DESC,
+                a.apellido ASC,
+                a.nombre ASC
+
+        `;
+
+        const resultado =
+            await pool.query(
+                consulta,
+                parametros
+            );
+
+        res.json(
+            resultado.rows
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "ERROR HISTORIAL MINISTERIAL:",
+            error
+        );
+
+        res.status(500).json({
+            error:
+                "Error obteniendo historial de ministerial"
+        });
+
+    }
+
+});
+
 module.exports = router;

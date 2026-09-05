@@ -142,6 +142,33 @@ const tablaInstructores =
 const botonGuardarAsistenciaInstructor =
     document.getElementById("guardarAsistenciaInstructor");
 
+// ======================================
+// ELEMENTOS INSTRUCCIÓN MINISTERIAL
+// ======================================
+
+const buscarAlumnoMinisterial =
+    document.getElementById("buscarAlumnoMinisterial");
+
+const fechaMinisterial =
+    document.getElementById("fechaMinisterial");
+
+const tablaMinisterial =
+    document.getElementById("tablaMinisterial");
+
+const botonGuardarAsistenciaMinisterial =
+    document.getElementById("guardarAsistenciaMinisterial");
+
+const volverPrincipal4 =
+    document.getElementById("volverPrincipal4");
+
+const vistaInstruccionMinisterial =
+    document.getElementById("vistaInstruccionMinisterial");
+
+let btnInstruccionMinisterial =
+    document.getElementById("btnInstruccionMinisterial");
+
+let listaAlumnosMinisterial = [];
+
 
 // ======================================
 // BOTONES DINÁMICOS
@@ -233,7 +260,8 @@ function llenarSelectsFechas() {
     const selects = [
         'fechaTeoria',
         'fechaInstrumento',
-        'fechaInstructor'
+        'fechaInstructor',
+        'fechaMinisterial'
     ];
 
     selects.forEach(id => {
@@ -499,6 +527,42 @@ if (btnInstructores) {
             mostrarVista(vistaInstructores);
 
             cargarInstructores();
+
+        }
+    );
+
+}
+
+// ==========================================
+// INSTRUCCIÓN MINISTERIAL
+// ==========================================
+
+if (btnInstruccionMinisterial) {
+
+    btnInstruccionMinisterial.addEventListener(
+        "click",
+        () => {
+
+            headerAsistencias.classList.add("hidden");
+
+            mostrarVista(vistaInstruccionMinisterial);
+
+            cargarAlumnosMinisterial();
+
+        }
+    );
+
+}
+
+if (volverPrincipal4) {
+
+    volverPrincipal4.addEventListener(
+        "click",
+        () => {
+
+            mostrarVista(vistaPrincipal);
+
+            headerAsistencias.classList.remove("hidden");
 
         }
     );
@@ -1571,6 +1635,285 @@ if (
     botonGuardarAsistenciaInstructor.addEventListener(
         "click",
         guardarAsistenciaInstructores
+    );
+
+}
+
+// =====================================================
+// INSTRUCCIÓN MINISTERIAL
+// CARGAR ALUMNOS
+// =====================================================
+
+async function cargarAlumnosMinisterial() {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "https://sigem-backend.onrender.com/alumnos"
+            );
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "Error obteniendo alumnos"
+            );
+
+        }
+
+        const alumnos =
+            await respuesta.json();
+
+        // Filtrar solo alumnos con instrucción ministerial activa
+        listaAlumnosMinisterial =
+            alumnos.filter(alumno => 
+                alumno.estado_ministerial === 'Activo'
+            );
+
+        mostrarAlumnosMinisterial(
+            listaAlumnosMinisterial
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "ERROR CARGANDO ALUMNOS MINISTERIAL:",
+            error
+        );
+
+    }
+
+}
+
+// =====================================================
+// MOSTRAR ALUMNOS MINISTERIAL
+// =====================================================
+
+function mostrarAlumnosMinisterial(
+    alumnos
+) {
+
+    tablaMinisterial.innerHTML = "";
+
+    if (alumnos.length === 0) {
+
+        tablaMinisterial.innerHTML = `
+
+            <tr>
+
+                <td colspan="3">
+
+                    No hay alumnos con instrucción ministerial activa.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+    alumnos.forEach(
+        alumno => {
+
+            tablaMinisterial.innerHTML += `
+
+                <tr>
+
+                    <td>
+
+                        <input
+                            type="checkbox"
+                            class="checkAsistenciaMinisterial"
+                            data-alumno="${alumno.id}"
+                        >
+
+                    </td>
+
+                    <td>
+
+                        ${alumno.apellido},
+                        ${alumno.nombre}
+
+                    </td>
+
+                    <td>
+
+                        ${alumno.estado_ministerial || "-"}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+}
+
+// =====================================================
+// BUSCAR ALUMNO MINISTERIAL
+// =====================================================
+
+if (buscarAlumnoMinisterial) {
+
+    buscarAlumnoMinisterial.addEventListener(
+        "input",
+        filtrarAlumnosMinisterial
+    );
+
+}
+
+// =====================================================
+// FILTRAR ALUMNOS MINISTERIAL
+// =====================================================
+
+function filtrarAlumnosMinisterial() {
+
+    const texto =
+        buscarAlumnoMinisterial.value
+            .toLowerCase()
+            .trim();
+
+    const resultado =
+        listaAlumnosMinisterial.filter(
+            alumno => {
+
+                const nombreCompleto =
+                    `${alumno.apellido} ${alumno.nombre}`
+                        .toLowerCase();
+
+                return nombreCompleto.includes(texto);
+
+            }
+        );
+
+    mostrarAlumnosMinisterial(
+        resultado
+    );
+
+}
+
+// =====================================================
+// GUARDAR ASISTENCIA MINISTERIAL
+// =====================================================
+
+async function guardarAsistenciaMinisterial() {
+
+    const fecha =
+        fechaMinisterial.value;
+
+    if (!fecha) {
+
+        mostrarNotificacion(
+            "Seleccione una fecha antes de guardar la asistencia",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const checkboxes =
+        document.querySelectorAll(
+            ".checkAsistenciaMinisterial"
+        );
+
+    if (checkboxes.length === 0) {
+
+        mostrarNotificacion(
+            "No hay alumnos para guardar",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const promesas = [];
+
+    for (const checkbox of checkboxes) {
+
+        const datos = {
+
+            alumno_id:
+                Number(
+                    checkbox.dataset.alumno
+                ),
+
+            fecha:
+                fecha,
+
+            presente:
+                checkbox.checked
+
+        };
+
+        console.log(
+            "Guardando asistencia ministerial:",
+            datos
+        );
+
+        const promesa = fetch(
+            "https://sigem-backend.onrender.com/asistencias/ministerial",
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(datos)
+
+            }
+        )
+        .then(respuesta => {
+            if (!respuesta.ok) {
+                return respuesta.text().then(error => {
+                    console.error(
+                        "Error guardando asistencia ministerial:",
+                        error
+                    );
+                });
+            }
+        })
+        .catch(error => {
+            console.error(
+                "Error de conexión:",
+                error
+            );
+        });
+
+        promesas.push(promesa);
+
+    }
+
+    await Promise.all(promesas);
+
+    mostrarNotificacion(
+        "Asistencia guardada correctamente",
+        "exito"
+    );
+
+    // Limpiar checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+}
+
+if (botonGuardarAsistenciaMinisterial) {
+
+    botonGuardarAsistenciaMinisterial.addEventListener(
+        "click",
+        guardarAsistenciaMinisterial
     );
 
 }
