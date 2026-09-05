@@ -936,7 +936,7 @@ router.get("/historial/ministerial", async (req, res) => {
                 a.id AS alumno_id,
                 a.nombre AS alumno_nombre,
                 a.apellido AS alumno_apellido,
-                a.estado_ministerial
+                a.instruccion_ministerial
 
             FROM asistencias_ministerial am
 
