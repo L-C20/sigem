@@ -597,33 +597,43 @@ tbody tr:last-child td {
 ========================================================= */
 
 .filtros {
-    padding: 24px;
-    margin-bottom: 24px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    background: #f8fafc;
+    border-color: #e7eef6;
+    box-shadow: none;
 }
 
 .filtros::before {
     content: "Filtros de búsqueda";
     display: block;
-    margin-bottom: 18px;
-    color: var(--text);
-    font-size: 1rem;
-    font-weight: 800;
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .filtros .form-grid {
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 18px;
+    gap: 16px;
 }
 
 .filtros .field span {
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 .filtros input,
 .filtros select {
-    min-height: 44px;
+    min-height: 42px;
     border-radius: 10px;
+    border-color: #e2e9f1;
+}
+
+.filtros input:hover,
+.filtros select:hover {
+    border-color: #cbd8e6;
 }
 
 /* =========================================================
