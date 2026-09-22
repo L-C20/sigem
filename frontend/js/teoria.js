@@ -373,7 +373,7 @@ function mostrarAlumnos(datos){
 
 
             <td>
-                ${escaparHTML(item.estado)}
+                ${etiquetaEstado(item.estado)}
             </td>
 
 
@@ -650,6 +650,32 @@ function escaparHTML(valor){
         .replaceAll('"',"&quot;")
 
         .replaceAll("'","&#39;");
+
+
+}
+
+
+// ===============================
+// ETIQUETA DE ESTADO
+// ===============================
+
+function etiquetaEstado(estado){
+
+
+    const texto = estado || "Sin estado";
+
+
+    const clase =
+    texto === "Activo"
+        ? "estado-activo"
+        : "estado-inactivo";
+
+
+    return `
+    <span class="estado ${clase}">
+        ${escaparHTML(texto)}
+    </span>
+    `;
 
 
 }
