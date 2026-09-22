@@ -636,6 +636,36 @@ tbody tr:last-child td {
     border-color: #cbd8e6;
 }
 
+/* El boton vive dentro de la grilla de filtros: sin esto
+   se estira hasta ocupar todo el alto y ancho de su celda */
+
+.filtros .form-grid > .button {
+    align-self: end;
+    justify-self: start;
+    min-height: 42px;
+    padding: 10px 18px;
+}
+
+/* Filtros pegados a la tabla (Alumnos): mismo aire que el
+   bloque .filtros, aunque no tengan recuadro propio */
+
+.table-tools .field span,
+.table-tools .search-box span {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.table-tools input,
+.table-tools select {
+    border-color: #e2e9f1;
+}
+
+.table-tools input:hover,
+.table-tools select:hover {
+    border-color: #cbd8e6;
+}
+
 /* =========================================================
    CHECKBOX
 ========================================================= */
