@@ -50,6 +50,9 @@ async()=>{
     );
 
 
+    abrirEnModoEdicion(activarEdicion);
+
+
     btnGuardar.addEventListener(
         "click",
         guardarCambios

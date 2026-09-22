@@ -378,17 +378,10 @@ function mostrarAlumnos(datos){
 
 
             <td>
-
-                <div class="action-group">
-
-                    <a
-                    class="action-link"
-                    href="teoria-alumno.html?id=${item.id}">
-                        Ver/Editar
-                    </a>
-
-                </div>
-
+                ${botonesAccion({
+                    ficha: `teoria-alumno.html?id=${item.id}`,
+                    nombre: item.alumno
+                })}
             </td>
 
 

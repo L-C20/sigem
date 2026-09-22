@@ -489,17 +489,10 @@ function filaAlumno(item){
 
 
         <td>
-
-            <div class="action-group">
-
-                <a
-                class="action-link"
-                href="instrumento.html?id=${item.id}">
-                    Ver/Editar
-                </a>
-
-            </div>
-
+            ${botonesAccion({
+                ficha: `instrumento.html?id=${item.id}`,
+                nombre: item.alumno
+            })}
         </td>
 
 

@@ -162,17 +162,10 @@ function mostrarMinisterial(datos){
 
 
             <td>
-
-                <div class="action-group">
-
-                    <a
-                    class="action-link"
-                    href="alumno.html?id=${item.alumno_id}">
-                        Ver/Editar
-                    </a>
-
-                </div>
-
+                ${botonesAccion({
+                    ficha: `alumno.html?id=${item.alumno_id}`,
+                    nombre: item.alumno
+                })}
             </td>
 
 

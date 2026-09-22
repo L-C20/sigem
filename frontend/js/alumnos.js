@@ -964,24 +964,11 @@ function renderizarAlumnos(
 
       <td>
 
-        <div class="action-group">
-
-  <a
-    class="action-link"
-    href="alumno.html?id=${alumno.id}"
-  >
-    Ver/Editar
-  </a>
-
-  <button
-    type="button"
-    class="action-link action-delete"
-    data-id="${alumno.id}"
-  >
-    Eliminar
-  </button>
-
-</div>
+        ${botonesAccion({
+          ficha: `alumno.html?id=${alumno.id}`,
+          eliminarId: alumno.id,
+          nombre: alumno.apellido + ", " + alumno.nombre
+        })}
 
       </td>
 

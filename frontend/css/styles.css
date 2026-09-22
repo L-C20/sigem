@@ -455,11 +455,11 @@ td {
 }
 
 th {
-    background: var(--accent-soft);
-    color: var(--accent-dark);
+    background: #f1f5f9;
+    color: #55617a;
     font-size: 0.82rem;
     font-weight: 800;
-    border-bottom: 1px solid rgba(26, 161, 168, 0.25);
+    border-bottom: 1px solid #dde5ee;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     white-space: nowrap;
@@ -497,8 +497,8 @@ tbody tr:last-child td {
 .action-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 4px;
+    flex-wrap: nowrap;
 }
 
 .action-link {
@@ -509,6 +509,53 @@ tbody tr:last-child td {
 .action-link:hover {
     color: var(--primary-hover);
     text-decoration: underline;
+}
+
+/* Acciones con icono */
+
+.action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.action-icon svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.action-icon:hover {
+    background: var(--accent-soft);
+    border-color: rgba(26, 161, 168, 0.28);
+    color: var(--accent-dark);
+}
+
+.action-icon.action-editar:hover {
+    background: rgba(25, 71, 168, 0.10);
+    border-color: rgba(25, 71, 168, 0.28);
+    color: var(--primary);
+}
+
+.action-icon.action-eliminar:hover {
+    background: rgba(180, 35, 24, 0.10);
+    border-color: rgba(180, 35, 24, 0.28);
+    color: var(--danger);
+}
+
+.action-icon:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
 /* =========================================================
@@ -2094,9 +2141,10 @@ span:first-child {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 18px;
-    background: var(--accent-soft);
+    padding: 15px 18px;
+    background: rgba(26, 161, 168, 0.16);
     color: var(--accent-dark);
+    font-size: 1.02rem;
     font-weight: 700;
     cursor: pointer;
     list-style: none;

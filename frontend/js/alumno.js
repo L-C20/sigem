@@ -180,6 +180,9 @@ document.addEventListener(
         );
 
 
+        abrirEnModoEdicion(activarEdicion);
+
+
         btnGuardar.addEventListener(
             "click",
             guardarCambios
