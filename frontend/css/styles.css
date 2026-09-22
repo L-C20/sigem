@@ -17,6 +17,8 @@
     --line: #d9e2ec;
     --primary: #1947A8;
     --accent: #1AA1A8;
+    --accent-dark: #127a80;
+    --accent-soft: rgba(26, 161, 168, 0.10);
     --primary-hover: #143a8a;
     --secondary: #eef3f8;
     --danger: #b42318;
@@ -156,7 +158,7 @@ p {
 .nav-link.active {
     background: rgba(25, 71, 168, 0.30);
     color: #ffffff;
-    border-left: 3px solid var(--sidebar-active);
+    border-left: 3px solid var(--accent);
     padding-left: 11px;
 }
 
@@ -230,8 +232,8 @@ p {
 .eyebrow {
     display: block;
     margin-bottom: 7px;
-    color: var(--accent);
-    font-size: 0.78rem;
+    color: var(--accent-dark);
+    font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -453,11 +455,11 @@ td {
 }
 
 th {
-    background: #eef3f9;
-    color: #33415c;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
     font-size: 0.82rem;
     font-weight: 800;
-    border-bottom: 1px solid #dbe4ef;
+    border-bottom: 1px solid rgba(26, 161, 168, 0.25);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     white-space: nowrap;
@@ -2082,7 +2084,7 @@ span:first-child {
 
 .grupo-nivel {
     margin-bottom: 14px;
-    border: 1px solid #e7eef6;
+    border: 1px solid rgba(26, 161, 168, 0.22);
     border-radius: var(--radius);
     background: #ffffff;
     overflow: hidden;
@@ -2093,8 +2095,8 @@ span:first-child {
     align-items: center;
     gap: 10px;
     padding: 14px 18px;
-    background: #f8fafc;
-    color: var(--text);
+    background: var(--accent-soft);
+    color: var(--accent-dark);
     font-weight: 700;
     cursor: pointer;
     list-style: none;
@@ -2109,7 +2111,7 @@ span:first-child {
     content: "";
     width: 0;
     height: 0;
-    border-left: 6px solid var(--accent);
+    border-left: 6px solid var(--accent-dark);
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
     transition: transform 0.18s ease;
@@ -2120,12 +2122,12 @@ span:first-child {
 }
 
 .grupo-nivel > summary:hover {
-    background: #f1f5f9;
+    background: rgba(26, 161, 168, 0.16);
 }
 
 .grupo-nivel-conteo {
     margin-left: auto;
-    color: var(--muted);
+    color: var(--accent-dark);
     font-size: 0.85rem;
     font-weight: 500;
 }
