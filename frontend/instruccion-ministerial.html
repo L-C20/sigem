@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Instrucción Ministerial</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/notificaciones.css">
+</head>
+<body>
+
+  <div id="notificacionSIGEM" class="notificacion">
+    <span id="notificacionIcono"></span>
+    <span id="notificacionMensaje"></span>
+  </div>
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM Dorrego</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link active" href="instruccion-ministerial.html">Instrucción Ministerial</a>
+        <a class="nav-link" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+        <a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Instrucción Ministerial</span>
+          <h1>Alumnos en instrucción ministerial</h1>
+        </div>
+      </header>
+
+      <section class="card filtros">
+
+        <div class="form-grid">
+
+            <label class="field">
+
+                <span>
+                    Buscar alumno
+                </span>
+
+                <input
+                id="buscarAlumno"
+                placeholder="Nombre o apellido">
+
+            </label>
+
+
+            <label class="field">
+
+                <span>
+                    Filial
+                </span>
+
+                <select id="filtroFilial">
+
+                    <option value="">
+                        Todas
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <button
+            id="btnLimpiarFiltros"
+            class="button secondary"
+            type="button">
+
+                Limpiar filtros
+
+            </button>
+
+        </div>
+
+      </section>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Filial</th>
+                <th>Fecha de inicio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" class="empty-state">Sin alumnos cargados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/notificaciones.js"></script>
+  <script src="js/instruccion-ministerial.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
+</body>
+</html>

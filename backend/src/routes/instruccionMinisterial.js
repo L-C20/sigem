@@ -4,6 +4,67 @@ const router = express.Router();
 const pool = require("../database/connection");
 
 
+// Listado de alumnos en instrucción ministerial
+
+router.get("/", async (req,res)=>{
+
+    try{
+
+        const resultado = await pool.query(
+
+        `
+        SELECT
+
+            im.id,
+
+            im.alumno_id,
+
+            a.nombre || ' ' || a.apellido AS alumno,
+
+            f.nombre AS filial,
+
+            im.fecha_inicio,
+
+            im.estado
+
+
+        FROM instruccion_ministerial im
+
+
+        JOIN alumnos a
+        ON a.id = im.alumno_id
+
+
+        LEFT JOIN filiales f
+        ON f.id = a.filial_id
+
+
+        WHERE im.estado = 'Activo'
+
+
+        ORDER BY a.apellido, a.nombre;
+
+        `);
+
+
+        res.json(resultado.rows);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        res.status(500).json({
+            error:"Error obteniendo listado de instrucción ministerial"
+        });
+
+    }
+
+});
+
+
+
+
 // Obtener instrucción ministerial de un alumno
 
 router.get("/:alumno_id", async (req,res)=>{
