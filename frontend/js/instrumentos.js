@@ -327,29 +327,27 @@ function alumnosDelInstrumento(){
 
 
 // ===============================
-// MOSTRAR TABLA
+// MOSTRAR ALUMNOS POR NIVEL
 // ===============================
 
 function mostrarAlumnos(datos){
 
 
-    const tabla =
-    document.getElementById("tablaAlumnos");
+    const contenedor =
+    document.getElementById("gruposNiveles");
 
 
-    tabla.innerHTML = "";
+    contenedor.innerHTML = "";
 
 
     if(datos.length === 0){
 
 
-        tabla.innerHTML =
+        contenedor.innerHTML =
         `
-        <tr>
-            <td colspan="5" class="empty-state">
-                Sin alumnos para mostrar.
-            </td>
-        </tr>
+        <p class="empty-state">
+            Sin alumnos para mostrar.
+        </p>
         `;
 
 
@@ -359,56 +357,155 @@ function mostrarAlumnos(datos){
     }
 
 
-    datos.forEach(item=>{
+    agruparPorNivel(datos).forEach(grupo=>{
 
 
-        tabla.innerHTML +=
+        contenedor.innerHTML +=
         `
 
-        <tr>
+        <details class="grupo-nivel" open>
 
+            <summary>
 
-            <td>
-                ${escaparHTML(item.alumno)}
-            </td>
+                <span class="grupo-nivel-titulo">
+                    ${escaparHTML(grupo.nivel)}
+                </span>
 
+                <span class="grupo-nivel-conteo">
+                    ${grupo.alumnos.length}
+                    ${grupo.alumnos.length === 1 ? "alumno" : "alumnos"}
+                </span>
 
-            <td>
-                ${escaparHTML(item.instructor || "Sin asignar")}
-            </td>
+            </summary>
 
+            <div class="table-wrapper">
 
-            <td>
-                ${escaparHTML(item.nivel || "Sin nivel")}
-            </td>
+                <table>
 
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Instructor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
 
-            <td>
-                ${escaparHTML(item.estado)}
-            </td>
+                    <tbody>
+                        ${grupo.alumnos.map(filaAlumno).join("")}
+                    </tbody>
 
+                </table>
 
-            <td>
+            </div>
 
-                <div class="action-group">
-
-                    <a
-                    class="action-link"
-                    href="instrumento.html?id=${item.id}">
-                        Ver/Editar
-                    </a>
-
-                </div>
-
-            </td>
-
-
-        </tr>
+        </details>
 
         `;
 
 
     });
+
+
+}
+
+
+
+
+// ===============================
+// AGRUPAR POR NIVEL
+// ===============================
+
+// Los niveles se ordenan por su id (1 a 6 y luego
+// Perfeccionamiento); los que no tienen nivel van al final
+
+function agruparPorNivel(datos){
+
+
+    const grupos = new Map();
+
+
+    datos.forEach(item=>{
+
+
+        const clave =
+        item.nivel_instrumento_id ?? Number.MAX_SAFE_INTEGER;
+
+
+        if(!grupos.has(clave)){
+
+
+            grupos.set(clave, {
+                orden: clave,
+                nivel: item.nivel || "Sin nivel",
+                alumnos: []
+            });
+
+
+        }
+
+
+        grupos.get(clave).alumnos.push(item);
+
+
+    });
+
+
+    return [...grupos.values()].sort(
+        (a,b)=>a.orden - b.orden
+    );
+
+
+}
+
+
+
+
+// ===============================
+// FILA DE ALUMNO
+// ===============================
+
+function filaAlumno(item){
+
+
+    return `
+
+    <tr>
+
+
+        <td>
+            ${escaparHTML(item.alumno)}
+        </td>
+
+
+        <td>
+            ${escaparHTML(item.instructor || "Sin asignar")}
+        </td>
+
+
+        <td>
+            ${escaparHTML(item.estado)}
+        </td>
+
+
+        <td>
+
+            <div class="action-group">
+
+                <a
+                class="action-link"
+                href="instrumento.html?id=${item.id}">
+                    Ver/Editar
+                </a>
+
+            </div>
+
+        </td>
+
+
+    </tr>
+
+    `;
 
 
 }

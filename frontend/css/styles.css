@@ -2074,3 +2074,62 @@ span:first-child {
     flex-shrink: 0;
     min-height: 44px;
 }
+/* =========================================================
+   GRUPOS POR NIVEL (desplegables)
+========================================================= */
+
+.grupo-nivel {
+    margin-bottom: 14px;
+    border: 1px solid #e7eef6;
+    border-radius: var(--radius);
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.grupo-nivel > summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: #f8fafc;
+    color: var(--text);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.grupo-nivel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.grupo-nivel > summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 6px solid var(--muted);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    transition: transform 0.18s ease;
+}
+
+.grupo-nivel[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.grupo-nivel > summary:hover {
+    background: #f1f5f9;
+}
+
+.grupo-nivel-conteo {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.grupo-nivel .table-wrapper {
+    border: 0;
+    border-radius: 0;
+    border-top: 1px solid #e7eef6;
+}
