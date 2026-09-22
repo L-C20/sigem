@@ -1,7 +1,7 @@
 console.log("Instrumentos cargado");
 
 
-const API = "https://sigem-backend.onrender.com";
+const API = "";
 
 
 // ===============================

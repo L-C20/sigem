@@ -56,7 +56,8 @@ app.use("/instrumentos", instrumentosRoutes);
 app.use("/niveles-instrumento", nivelesInstrumentoRoutes);
 app.use("/niveles-teoria", nivelesTeoriaRoutes);
 app.use("/instructores", instructoresRoutes);
+app.use("/auth", authRoutes);
+
 app.listen(PORT, () => {
     console.log(`Servidor SIGEM activo en puerto ${PORT}`);
 });
-app.use("/auth", authRoutes);

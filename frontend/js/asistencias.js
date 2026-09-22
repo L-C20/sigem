@@ -692,7 +692,7 @@ async function cargarAlumnosInstrumento(
 
         const respuesta =
             await fetch(
-                `https://sigem-backend.onrender.com/asistencias/instrumento/${encodeURIComponent(instrumento)}`
+                `/asistencias/instrumento/${encodeURIComponent(instrumento)}`
             );
 
         if (!respuesta.ok) {
@@ -940,7 +940,7 @@ async function guardarAsistenciaInstrumento() {
 
             const respuesta =
                 await fetch(
-                    "https://sigem-backend.onrender.com/asistencias/instrumento",
+                    "/asistencias/instrumento",
                     {
 
                         method: "POST",
@@ -1013,7 +1013,7 @@ async function cargarAlumnosTeoria(
 
         const respuesta =
             await fetch(
-                `https://sigem-backend.onrender.com/asistencias/teoria/${encodeURIComponent(nivel)}`
+                `/asistencias/teoria/${encodeURIComponent(nivel)}`
             );
 
         if (!respuesta.ok) {
@@ -1163,7 +1163,7 @@ async function guardarAsistenciaTeoria() {
 
             const respuesta =
                 await fetch(
-                    "https://sigem-backend.onrender.com/asistencias/teoria",
+                    "/asistencias/teoria",
                     {
 
                         method: "POST",
@@ -1234,7 +1234,7 @@ async function cargarInstructores() {
 
         const respuesta =
             await fetch(
-                "https://sigem-backend.onrender.com/asistencias/instructores"
+                "/asistencias/instructores"
             );
 
         if (!respuesta.ok) {
@@ -1578,7 +1578,7 @@ for (const checkbox of checkboxes) {
     );
 
     const promesa = fetch(
-        "https://sigem-backend.onrender.com/asistencias/instructores",
+        "/asistencias/instructores",
         {
 
             method: "POST",
@@ -1650,7 +1650,7 @@ async function cargarAlumnosMinisterial() {
 
         const respuesta =
             await fetch(
-                "https://sigem-backend.onrender.com/alumnos"
+                "/alumnos"
             );
 
         if (!respuesta.ok) {
@@ -1859,7 +1859,7 @@ async function guardarAsistenciaMinisterial() {
         );
 
         const promesa = fetch(
-            "https://sigem-backend.onrender.com/asistencias/ministerial",
+            "/asistencias/ministerial",
             {
 
                 method: "POST",

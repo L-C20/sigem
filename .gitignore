@@ -3,3 +3,4 @@ node_modules/
 *.msi
 *.exe
 backups/
+graphify-out/

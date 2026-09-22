@@ -3,7 +3,7 @@
 // Gestión de filiales
 // ======================================
 
-const API_BASE_URL = "https://sigem-backend.onrender.com";
+const API_BASE_URL = "";
 
 
 const btnNuevaFilial = document.getElementById("btnNuevaFilial");
