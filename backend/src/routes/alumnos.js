@@ -53,7 +53,14 @@ SELECT
 
     nt.nombre AS nivel_teoria,
 
-    instr_t.nombre AS instructor_teoria
+    instr_t.nombre AS instructor_teoria,
+
+
+    -- ==========================
+    -- INSTRUCCIÓN MINISTERIAL
+    -- ==========================
+
+    im.estado AS estado_ministerial
 
 
 FROM alumnos a
@@ -127,6 +134,25 @@ LEFT JOIN niveles_teoria nt
 
 LEFT JOIN instructores instr_t
     ON ct.instructor_id = instr_t.id
+
+
+-- ==========================
+-- INSTRUCCIÓN MINISTERIAL
+-- ==========================
+
+LEFT JOIN LATERAL (
+
+    SELECT *
+
+    FROM instruccion_ministerial
+
+    WHERE alumno_id = a.id
+
+    ORDER BY id DESC
+
+    LIMIT 1
+
+) im ON true
 
 
 ORDER BY
