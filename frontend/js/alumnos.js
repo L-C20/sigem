@@ -167,6 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "input",
     buscarAlumnos
   );
+
+
+  elementos.buscadorAlumnos.focus();
 elementos.filtroFilial.addEventListener(
   "change",
   buscarAlumnos
@@ -832,9 +835,9 @@ async function guardarInstruccionMinisterial(
 function buscarAlumnos() {
 
   const termino =
-    elementos.buscadorAlumnos.value
-      .trim()
-      .toLowerCase();
+    normalizarBusqueda(
+      elementos.buscadorAlumnos.value
+    );
 
   const filialSeleccionada =
     elementos.filtroFilial.value;
@@ -844,21 +847,33 @@ function buscarAlumnos() {
     alumnos.filter((alumno) => {
 
       const dni =
-        String(alumno.dni || "").toLowerCase();
+        normalizarBusqueda(alumno.dni);
 
       const nombre =
-        String(alumno.nombre || "").toLowerCase();
+        normalizarBusqueda(alumno.nombre);
 
       const apellido =
-        String(alumno.apellido || "").toLowerCase();
+        normalizarBusqueda(alumno.apellido);
 
 
-      // Filtro de texto
+      // Nombre completo, en los dos ordenes en que
+      // se suele escribir al buscar
+      const completo =
+        apellido + " " + nombre;
+
+      const completoInverso =
+        nombre + " " + apellido;
+
+
+      // Filtro de texto: cada palabra escrita tiene
+      // que aparecer en algun lado de la ficha
       const coincideTexto =
         !termino ||
-        dni.includes(termino) ||
-        nombre.includes(termino) ||
-        apellido.includes(termino);
+        termino.split(/\s+/).every((palabra) =>
+          dni.includes(palabra) ||
+          completo.includes(palabra) ||
+          completoInverso.includes(palabra)
+        );
 
 
       // Filtro de iglesia
@@ -1655,5 +1670,27 @@ async function confirmarEliminarAlumno() {
       "Eliminar alumno";
 
   }
+
+}
+
+
+// =====================================
+// NORMALIZAR TEXTO PARA BUSCAR
+// =====================================
+
+// Pasa a minusculas y quita los acentos, para que
+// "marino" encuentre a "Mariño" (#busqueda)
+
+function normalizarBusqueda(valor) {
+
+  return String(valor ?? "")
+
+    .normalize("NFD")
+
+    .replace(/[\u0300-\u036f]/g, "")
+
+    .toLowerCase()
+
+    .trim();
 
 }
