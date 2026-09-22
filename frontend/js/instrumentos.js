@@ -10,6 +10,33 @@ const API = "";
 
 let datosInstrumentos = [];
 
+let instrumentoActual = "";
+
+
+
+// ===============================
+// VISTAS
+// ===============================
+
+const vistaInstrumentos =
+document.getElementById("vistaInstrumentos");
+
+
+const vistaAlumnos =
+document.getElementById("vistaAlumnos");
+
+
+const tarjetasInstrumentos =
+document.getElementById("tarjetasInstrumentos");
+
+
+const tituloInstrumento =
+document.getElementById("tituloInstrumento");
+
+
+const volverInstrumentos =
+document.getElementById("volverInstrumentos");
+
 
 
 // ===============================
@@ -18,10 +45,6 @@ let datosInstrumentos = [];
 
 const buscarAlumno =
 document.getElementById("buscarAlumno");
-
-
-const filtroInstrumento =
-document.getElementById("filtroInstrumento");
 
 
 const filtroNivel =
@@ -35,14 +58,36 @@ document.getElementById("filtroInstructor");
 const filtroEstado =
 document.getElementById("filtroEstado");
 
+
 const btnLimpiarFiltros =
 document.getElementById("btnLimpiarFiltros");
+
+
+
+
+// ===============================
+// INICIO
+// ===============================
+
+document.addEventListener(
+"DOMContentLoaded",
+async()=>{
+
+
+    await cargarInstrumentos();
+
+
+    cargarEventosFiltros();
+
+
+});
+
+
 
 
 // ===============================
 // CARGAR INSTRUMENTOS
 // ===============================
-
 
 async function cargarInstrumentos(){
 
@@ -59,12 +104,7 @@ async function cargarInstrumentos(){
         await respuesta.json();
 
 
-
-        mostrarInstrumentos(
-            datosInstrumentos
-        );
-
-        cargarFiltros();
+        mostrarTarjetas();
 
 
     }
@@ -74,6 +114,12 @@ async function cargarInstrumentos(){
         console.error(error);
 
 
+        mostrarNotificacion(
+            "Error cargando instrumentos",
+            "error"
+        );
+
+
     }
 
 
@@ -82,56 +128,263 @@ async function cargarInstrumentos(){
 
 
 
+// ===============================
+// MOSTRAR TARJETAS
+// ===============================
+
+function mostrarTarjetas(){
+
+
+    const conteo = new Map();
+
+
+    datosInstrumentos.forEach(item=>{
+
+
+        const nombre =
+        item.instrumento || "Sin instrumento";
+
+
+        conteo.set(
+            nombre,
+            (conteo.get(nombre) || 0) + 1
+        );
+
+
+    });
+
+
+    const instrumentos =
+    [...conteo.keys()].sort(
+        (a,b)=>a.localeCompare(b,"es")
+    );
+
+
+    if(instrumentos.length === 0){
+
+
+        tarjetasInstrumentos.innerHTML =
+        `
+        <p class="empty-state">
+            Sin instrumentos cargados.
+        </p>
+        `;
+
+
+        return;
+
+
+    }
+
+
+    tarjetasInstrumentos.innerHTML = "";
+
+
+    instrumentos.forEach(nombre=>{
+
+
+        const cantidad =
+        conteo.get(nombre);
+
+
+        tarjetasInstrumentos.innerHTML +=
+        `
+
+        <div class="card card-asistencia instrumento-card">
+
+            <h2>
+                ${escaparHTML(nombre)}
+            </h2>
+
+            <p>
+                ${cantidad}
+                ${cantidad === 1 ? "alumno" : "alumnos"}
+            </p>
+
+            <button
+                class="button abrirInstrumento"
+                data-instrumento="${escaparHTML(nombre)}">
+                Ingresar
+            </button>
+
+        </div>
+
+        `;
+
+
+    });
+
+
+    document.querySelectorAll(
+        ".abrirInstrumento"
+    ).forEach(boton=>{
+
+
+        boton.addEventListener(
+            "click",
+            ()=>{
+
+
+                abrirInstrumento(
+                    boton.dataset.instrumento
+                );
+
+
+            }
+        );
+
+
+    });
+
+
+}
+
+
+
+
+// ===============================
+// ABRIR INSTRUMENTO
+// ===============================
+
+function abrirInstrumento(nombre){
+
+
+    instrumentoActual = nombre;
+
+
+    tituloInstrumento.textContent = nombre;
+
+
+    vistaInstrumentos.classList.add("hidden");
+
+
+    vistaAlumnos.classList.remove("hidden");
+
+
+    limpiarValoresFiltros();
+
+
+    cargarFiltros();
+
+
+    mostrarAlumnos(
+        alumnosDelInstrumento()
+    );
+
+
+}
+
+
+
+
+// ===============================
+// VOLVER
+// ===============================
+
+if(volverInstrumentos){
+
+
+    volverInstrumentos.addEventListener(
+        "click",
+        ()=>{
+
+
+            vistaAlumnos.classList.add("hidden");
+
+
+            vistaInstrumentos.classList.remove("hidden");
+
+
+        }
+    );
+
+
+}
+
+
+
+
+// ===============================
+// ALUMNOS DEL INSTRUMENTO
+// ===============================
+
+function alumnosDelInstrumento(){
+
+
+    return datosInstrumentos.filter(item=>
+
+
+        (item.instrumento || "Sin instrumento")
+        === instrumentoActual
+
+
+    );
+
+
+}
+
+
+
 
 // ===============================
 // MOSTRAR TABLA
 // ===============================
 
-
-function mostrarInstrumentos(datos){
-
+function mostrarAlumnos(datos){
 
 
     const tabla =
-    document.querySelector("tbody");
-
+    document.getElementById("tablaAlumnos");
 
 
     tabla.innerHTML = "";
 
 
+    if(datos.length === 0){
+
+
+        tabla.innerHTML =
+        `
+        <tr>
+            <td colspan="5" class="empty-state">
+                Sin alumnos para mostrar.
+            </td>
+        </tr>
+        `;
+
+
+        return;
+
+
+    }
+
 
     datos.forEach(item=>{
 
 
-        tabla.innerHTML += `
-
+        tabla.innerHTML +=
+        `
 
         <tr>
 
 
             <td>
-                ${item.instrumento}
+                ${escaparHTML(item.alumno)}
             </td>
 
 
             <td>
-                ${item.alumno}
+                ${escaparHTML(item.instructor || "Sin asignar")}
             </td>
 
 
             <td>
-                ${item.instructor}
+                ${escaparHTML(item.nivel || "Sin nivel")}
             </td>
 
 
             <td>
-                ${item.nivel}
-            </td>
-
-
-            <td>
-                ${item.estado}
+                ${escaparHTML(item.estado)}
             </td>
 
 
@@ -139,31 +392,23 @@ function mostrarInstrumentos(datos){
 
                 <div class="action-group">
 
-
                     <a
                     class="action-link"
                     href="instrumento.html?id=${item.id}">
-
                         Ver/Editar
-
                     </a>
 
-
                 </div>
-
 
             </td>
 
 
         </tr>
 
-
         `;
 
 
-
     });
-
 
 
 }
@@ -171,174 +416,109 @@ function mostrarInstrumentos(datos){
 
 
 
-
-
 // ===============================
-// INICIO
+// CARGAR FILTROS
 // ===============================
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-    cargarInstrumentos();
-
-
-});
 
 function cargarFiltros(){
 
 
-    // Instrumentos
-
-    const instrumentos =
-    [...new Set(
-        datosInstrumentos.map(
-            item => item.instrumento
-        )
-    )];
+    const alumnos =
+    alumnosDelInstrumento();
 
 
-    instrumentos.forEach(nombre=>{
+    llenarSelect(
+        filtroNivel,
+        alumnos.map(item=>item.nivel)
+    );
 
-        filtroInstrumento.innerHTML +=
-        `
-        <option value="${nombre}">
-            ${nombre}
-        </option>
-        `;
 
-    });
+    llenarSelect(
+        filtroInstructor,
+        alumnos.map(item=>item.instructor)
+    );
+
+
+}
 
 
 
-    // Niveles
 
-    const niveles = [
+// ===============================
+// LLENAR SELECT
+// ===============================
 
-    "Nivel 1",
-    "Nivel 2",
-    "Nivel 3",
-    "Nivel 4",
-    "Nivel 5",
-    "Nivel 6",
-    "Perfeccionamiento"
-
-];
+function llenarSelect(select, valores){
 
 
-niveles.forEach(nombre=>{
+    if(!select){
 
 
-    filtroNivel.innerHTML +=
+        return;
+
+
+    }
+
+
+    const opciones =
+    [...new Set(valores)]
+
+        .filter(valor=>valor)
+
+        .sort(
+            (a,b)=>String(a).localeCompare(String(b),"es")
+        );
+
+
+    select.innerHTML =
     `
-    <option value="${nombre}">
-        ${nombre}
+    <option value="">
+        Todos
     </option>
     `;
 
 
-});
-    // Instructores
-
-    const instructores =
-    [...new Set(
-        datosInstrumentos.map(
-            item => item.instructor
-        )
-    )];
+    opciones.forEach(valor=>{
 
 
-    instructores.forEach(nombre=>{
-
-        filtroInstructor.innerHTML +=
+        select.innerHTML +=
         `
-        <option value="${nombre}">
-            ${nombre}
+        <option value="${escaparHTML(valor)}">
+            ${escaparHTML(valor)}
         </option>
         `;
+
 
     });
 
 
 }
 
-// ===============================
-// EVENTOS DE FILTROS
-// ===============================
-
-
-buscarAlumno.addEventListener(
-    "input",
-    aplicarFiltros
-);
-
-
-filtroInstrumento.addEventListener(
-    "change",
-    aplicarFiltros
-);
-
-
-filtroNivel.addEventListener(
-    "change",
-    aplicarFiltros
-);
-
-
-filtroInstructor.addEventListener(
-    "change",
-    aplicarFiltros
-);
-
-
-filtroEstado.addEventListener(
-    "change",
-    aplicarFiltros
-);
-
 
 
 
 // ===============================
-// APLICAR FILTROS
+// FILTROS
 // ===============================
-
 
 function aplicarFiltros(){
 
 
     const resultado =
-    datosInstrumentos.filter(item=>{
+    alumnosDelInstrumento().filter(item=>{
 
 
         return (
 
 
-            item.alumno
+            String(item.alumno || "")
             .toLowerCase()
             .includes(
                 buscarAlumno.value.toLowerCase()
             )
 
 
-
             &&
-
-
-
-            (
-                filtroInstrumento.value === ""
-                ||
-                item.instrumento === filtroInstrumento.value
-            )
-
-
-
-            &&
-
 
 
             (
@@ -348,9 +528,7 @@ function aplicarFiltros(){
             )
 
 
-
             &&
-
 
 
             (
@@ -360,9 +538,7 @@ function aplicarFiltros(){
             )
 
 
-
             &&
-
 
 
             (
@@ -378,24 +554,22 @@ function aplicarFiltros(){
     });
 
 
-
-    mostrarInstrumentos(resultado);
+    mostrarAlumnos(resultado);
 
 
 }
 
-btnLimpiarFiltros.addEventListener(
-    "click",
-    limpiarFiltros
-);
 
-function limpiarFiltros(){
+
+
+// ===============================
+// LIMPIAR FILTROS
+// ===============================
+
+function limpiarValoresFiltros(){
 
 
     buscarAlumno.value = "";
-
-
-    filtroInstrumento.value = "";
 
 
     filtroNivel.value = "";
@@ -407,9 +581,117 @@ function limpiarFiltros(){
     filtroEstado.value = "";
 
 
-    mostrarInstrumentos(
-        datosInstrumentos
+}
+
+
+function limpiarFiltros(){
+
+
+    limpiarValoresFiltros();
+
+
+    mostrarAlumnos(
+        alumnosDelInstrumento()
     );
+
+
+}
+
+
+
+
+// ===============================
+// EVENTOS
+// ===============================
+
+function cargarEventosFiltros(){
+
+
+    if(buscarAlumno){
+
+
+        buscarAlumno.addEventListener(
+            "input",
+            aplicarFiltros
+        );
+
+
+    }
+
+
+    if(filtroNivel){
+
+
+        filtroNivel.addEventListener(
+            "change",
+            aplicarFiltros
+        );
+
+
+    }
+
+
+    if(filtroInstructor){
+
+
+        filtroInstructor.addEventListener(
+            "change",
+            aplicarFiltros
+        );
+
+
+    }
+
+
+    if(filtroEstado){
+
+
+        filtroEstado.addEventListener(
+            "change",
+            aplicarFiltros
+        );
+
+
+    }
+
+
+    if(btnLimpiarFiltros){
+
+
+        btnLimpiarFiltros.addEventListener(
+            "click",
+            limpiarFiltros
+        );
+
+
+    }
+
+
+}
+
+
+
+
+// ===============================
+// ESCAPAR HTML
+// ===============================
+
+function escaparHTML(valor){
+
+
+    return String(
+        valor ?? ""
+    )
+
+        .replaceAll("&","&amp;")
+
+        .replaceAll("<","&lt;")
+
+        .replaceAll(">","&gt;")
+
+        .replaceAll('"',"&quot;")
+
+        .replaceAll("'","&#39;");
 
 
 }

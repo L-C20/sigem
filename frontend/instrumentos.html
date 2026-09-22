@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGEM | Instrumentos</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/asistencias.css">
 </head>
 <body>
 
@@ -44,128 +45,131 @@
         </div>
         
       </header>
-      
-<section class="card filtros">
 
-    <div class="form-grid">
+      <!-- ==========================
+           VISTA PRINCIPAL - TARJETAS
+      =========================== -->
+
+      <section id="vistaInstrumentos">
+
+        <div class="cards-asistencias" id="tarjetasInstrumentos">
+        </div>
+
+      </section>
 
 
-        <label class="field">
+      <!-- ==========================
+           VISTA ALUMNOS DEL INSTRUMENTO
+      =========================== -->
 
-            <span>
+      <section id="vistaAlumnos" class="hidden">
+
+        <div class="page-header">
+
+          <div>
+            <span class="eyebrow">Instrumentos</span>
+            <h2 id="tituloInstrumento">Instrumento</h2>
+          </div>
+
+          <button
+            id="volverInstrumentos"
+            class="button secondary">
+            Volver
+          </button>
+
+        </div>
+
+
+        <section class="card filtros">
+
+          <div class="form-grid">
+
+            <label class="field">
+
+              <span>
                 Buscar alumno
-            </span>
+              </span>
 
-            <input 
-            id="buscarAlumno"
-            placeholder="Nombre o apellido">
+              <input
+                id="buscarAlumno"
+                placeholder="Nombre o apellido">
 
-        </label>
-
-
-
-        <label class="field">
-
-            <span>
-                Instrumento
-            </span>
-
-            <select id="filtroInstrumento">
-
-                <option value="">
-                    Todos
-                </option>
-
-            </select>
-
-        </label>
+            </label>
 
 
+            <label class="field">
 
-
-        <label class="field">
-
-            <span>
+              <span>
                 Nivel
-            </span>
+              </span>
 
-            <select id="filtroNivel">
-
+              <select id="filtroNivel">
                 <option value="">
-                    Todos
+                  Todos
                 </option>
+              </select>
 
-            </select>
-
-        </label>
-
+            </label>
 
 
+            <label class="field">
 
-        <label class="field">
-
-            <span>
+              <span>
                 Instructor
-            </span>
+              </span>
 
-            <select id="filtroInstructor">
-
+              <select id="filtroInstructor">
                 <option value="">
-                    Todos
+                  Todos
                 </option>
+              </select>
 
-            </select>
-
-        </label>
-
+            </label>
 
 
+            <label class="field">
 
-        <label class="field">
-
-            <span>
+              <span>
                 Estado
-            </span>
+              </span>
 
-
-            <select id="filtroEstado">
+              <select id="filtroEstado">
 
                 <option value="">
-                    Todos
+                  Todos
                 </option>
 
                 <option value="Activo">
-                    Activo
+                  Activo
                 </option>
 
                 <option value="Finalizado">
-                    Finalizado
+                  Finalizado
                 </option>
 
-            </select>
+              </select>
+
+            </label>
 
 
-        </label>
+            <button
+              id="btnLimpiarFiltros"
+              class="button secondary"
+              type="button">
+              Limpiar filtros
+            </button>
 
-<button 
-    id="btnLimpiarFiltros"
-    class="button secondary"
-    type="button">
-    
-    Limpiar filtros
+          </div>
 
-</button>
+        </section>
 
-    </div>
-
-</section>
-    
 
         <div class="table-wrapper">
+
           <table>
+
             <thead>
               <tr>
-                <th>Instrumento</th>
                 <th>Alumno</th>
                 <th>Instructor</th>
                 <th>Nivel</th>
@@ -173,14 +177,16 @@
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td colspan="6" class="empty-state">Sin instrumentos cargados.</td>
-              </tr>
+
+            <tbody id="tablaAlumnos">
             </tbody>
+
           </table>
+
         </div>
+
       </section>
+
     </main>
   </div>
 <script src="js/notificaciones.js"></script>

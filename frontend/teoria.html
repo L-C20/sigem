@@ -6,6 +6,7 @@
   <title>SIGEM | Teoría y Solfeo</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/notificaciones.css">
+  <link rel="stylesheet" href="css/asistencias.css">
 </head>
 <body>
 
@@ -51,132 +52,131 @@
         </div>
       </header>
 
-     <section class="card filtros">
+      <!-- ==========================
+           VISTA PRINCIPAL - NIVELES
+      =========================== -->
 
-    <div class="form-grid">
+      <section id="vistaNiveles">
+
+        <div class="cards-asistencias" id="tarjetasNiveles">
+        </div>
+
+      </section>
 
 
-        <label class="field">
+      <!-- ==========================
+           VISTA ALUMNOS DEL NIVEL
+      =========================== -->
 
-            <span>
+      <section id="vistaAlumnos" class="hidden">
+
+        <div class="page-header">
+
+          <div>
+            <span class="eyebrow">Teoría y Solfeo</span>
+            <h2 id="tituloNivel">Nivel</h2>
+          </div>
+
+          <button
+            id="volverNiveles"
+            class="button secondary">
+            Volver
+          </button>
+
+        </div>
+
+
+        <section class="card filtros">
+
+          <div class="form-grid">
+
+            <label class="field">
+
+              <span>
                 Buscar alumno
-            </span>
+              </span>
 
-            <input 
-            id="buscarAlumno"
-            placeholder="Nombre o apellido">
+              <input
+                id="buscarAlumno"
+                placeholder="Nombre o apellido">
 
-        </label>
-
-
+            </label>
 
 
-        <label class="field">
+            <label class="field">
 
-            <span>
-                Nivel
-            </span>
-
-            <select id="filtroNivel">
-
-                <option value="">
-                    Todos
-                </option>
-
-            </select>
-
-        </label>
-
-
-
-
-
-        <label class="field">
-
-            <span>
+              <span>
                 Instructor
-            </span>
+              </span>
 
-            <select id="filtroInstructor">
-
+              <select id="filtroInstructor">
                 <option value="">
-                    Todos
+                  Todos
                 </option>
+              </select>
 
-            </select>
-
-        </label>
-
+            </label>
 
 
+            <label class="field">
 
-
-        <label class="field">
-
-            <span>
+              <span>
                 Estado
-            </span>
+              </span>
 
-
-            <select id="filtroEstado">
+              <select id="filtroEstado">
 
                 <option value="">
-                    Todos
+                  Todos
                 </option>
-
 
                 <option value="Activo">
-                    Activo
+                  Activo
                 </option>
-
 
                 <option value="Finalizado">
-                    Finalizado
+                  Finalizado
                 </option>
 
+              </select>
 
-            </select>
-
-
-        </label>
+            </label>
 
 
+            <button
+              id="btnLimpiarFiltros"
+              class="button secondary"
+              type="button">
+              Limpiar filtros
+            </button>
+
+          </div>
+
+        </section>
 
 
-
-        <button 
-        id="btnLimpiarFiltros"
-        class="button secondary"
-        type="button">
-
-            Limpiar filtros
-
-        </button>
-
-
-
-    </div>
-
-</section>
         <div class="table-wrapper">
+
           <table>
+
             <thead>
               <tr>
-                <th>Nivel</th>
                 <th>Alumno</th>
                 <th>Instructor</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td colspan="5" class="empty-state">Sin cursadas cargadas.</td>
-              </tr>
+
+            <tbody id="tablaAlumnos">
             </tbody>
+
           </table>
+
         </div>
+
       </section>
+
     </main>
   </div>
   <script src="js/notificaciones.js"></script>

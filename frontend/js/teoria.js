@@ -1,20 +1,47 @@
 const API_BASE_URL = "";
 
 
+// ===============================
+// DATOS
+// ===============================
+
 let datosTeoria = [];
 
+let nivelActual = "";
+
+
 
 // ===============================
-// ELEMENTOS
+// VISTAS
 // ===============================
 
+const vistaNiveles =
+document.getElementById("vistaNiveles");
+
+
+const vistaAlumnos =
+document.getElementById("vistaAlumnos");
+
+
+const tarjetasNiveles =
+document.getElementById("tarjetasNiveles");
+
+
+const tituloNivel =
+document.getElementById("tituloNivel");
+
+
+const volverNiveles =
+document.getElementById("volverNiveles");
+
+
+
+// ===============================
+// FILTROS
+// ===============================
 
 const buscarAlumno =
 document.getElementById("buscarAlumno");
-
-
-const filtroNivel =
-document.getElementById("filtroNivel");
 
 
 const filtroInstructor =
@@ -34,7 +61,6 @@ document.getElementById("btnLimpiarFiltros");
 // ===============================
 // INICIO
 // ===============================
-
 
 document.addEventListener(
 "DOMContentLoaded",
@@ -56,7 +82,6 @@ async()=>{
 // CARGAR TEORIA
 // ===============================
 
-
 async function cargarTeoria(){
 
 
@@ -64,24 +89,16 @@ async function cargarTeoria(){
 
 
         const respuesta =
-await fetch(
-    `${API_BASE_URL}/cursadas-teoria`
-);
+        await fetch(
+            `${API_BASE_URL}/cursadas-teoria`
+        );
 
 
         datosTeoria =
         await respuesta.json();
 
 
-
-        mostrarTeoria(
-            datosTeoria
-        );
-
-
-
-        cargarFiltros();
-
+        mostrarTarjetas();
 
 
     }
@@ -105,54 +122,258 @@ await fetch(
 
 
 
+// ===============================
+// MOSTRAR TARJETAS
+// ===============================
+
+function mostrarTarjetas(){
+
+
+    const conteo = new Map();
+
+
+    datosTeoria.forEach(item=>{
+
+
+        const nombre =
+        item.nivel || "Sin nivel";
+
+
+        conteo.set(
+            nombre,
+            (conteo.get(nombre) || 0) + 1
+        );
+
+
+    });
+
+
+    const niveles =
+    [...conteo.keys()].sort(
+        (a,b)=>a.localeCompare(b,"es",{numeric:true})
+    );
+
+
+    if(niveles.length === 0){
+
+
+        tarjetasNiveles.innerHTML =
+        `
+        <p class="empty-state">
+            Sin cursadas cargadas.
+        </p>
+        `;
+
+
+        return;
+
+
+    }
+
+
+    tarjetasNiveles.innerHTML = "";
+
+
+    niveles.forEach(nombre=>{
+
+
+        const cantidad =
+        conteo.get(nombre);
+
+
+        tarjetasNiveles.innerHTML +=
+        `
+
+        <div class="card card-asistencia instrumento-card">
+
+            <h2>
+                ${escaparHTML(nombre)}
+            </h2>
+
+            <p>
+                ${cantidad}
+                ${cantidad === 1 ? "alumno" : "alumnos"}
+            </p>
+
+            <button
+                class="button abrirNivel"
+                data-nivel="${escaparHTML(nombre)}">
+                Ingresar
+            </button>
+
+        </div>
+
+        `;
+
+
+    });
+
+
+    document.querySelectorAll(
+        ".abrirNivel"
+    ).forEach(boton=>{
+
+
+        boton.addEventListener(
+            "click",
+            ()=>{
+
+
+                abrirNivel(
+                    boton.dataset.nivel
+                );
+
+
+            }
+        );
+
+
+    });
+
+
+}
+
+
+
+
+// ===============================
+// ABRIR NIVEL
+// ===============================
+
+function abrirNivel(nombre){
+
+
+    nivelActual = nombre;
+
+
+    tituloNivel.textContent = nombre;
+
+
+    vistaNiveles.classList.add("hidden");
+
+
+    vistaAlumnos.classList.remove("hidden");
+
+
+    limpiarValoresFiltros();
+
+
+    cargarFiltros();
+
+
+    mostrarAlumnos(
+        alumnosDelNivel()
+    );
+
+
+}
+
+
+
+
+// ===============================
+// VOLVER
+// ===============================
+
+if(volverNiveles){
+
+
+    volverNiveles.addEventListener(
+        "click",
+        ()=>{
+
+
+            vistaAlumnos.classList.add("hidden");
+
+
+            vistaNiveles.classList.remove("hidden");
+
+
+        }
+    );
+
+
+}
+
+
+
+
+// ===============================
+// ALUMNOS DEL NIVEL
+// ===============================
+
+function alumnosDelNivel(){
+
+
+    return datosTeoria.filter(item=>
+
+
+        (item.nivel || "Sin nivel")
+        === nivelActual
+
+
+    );
+
+
+}
+
+
 
 
 // ===============================
 // MOSTRAR TABLA
 // ===============================
 
-
-function mostrarTeoria(datos){
-
+function mostrarAlumnos(datos){
 
 
-    const tbody =
-    document.querySelector(
-        "tbody"
-    );
+    const tabla =
+    document.getElementById("tablaAlumnos");
 
 
+    tabla.innerHTML = "";
 
-    tbody.innerHTML = "";
 
+    if(datos.length === 0){
+
+
+        tabla.innerHTML =
+        `
+        <tr>
+            <td colspan="4" class="empty-state">
+                Sin alumnos para mostrar.
+            </td>
+        </tr>
+        `;
+
+
+        return;
+
+
+    }
 
 
     datos.forEach(item=>{
 
 
-        tbody.innerHTML +=
+        tabla.innerHTML +=
         `
 
         <tr>
 
 
             <td>
-                ${item.nivel}
+                ${escaparHTML(item.alumno)}
             </td>
 
 
             <td>
-                ${item.alumno}
+                ${escaparHTML(item.instructor || "Sin asignar")}
             </td>
 
 
             <td>
-                ${item.instructor || "Sin asignar"}
-            </td>
-
-
-            <td>
-                ${item.estado}
+                ${escaparHTML(item.estado)}
             </td>
 
 
@@ -173,7 +394,6 @@ function mostrarTeoria(datos){
 
         </tr>
 
-
         `;
 
 
@@ -181,8 +401,6 @@ function mostrarTeoria(datos){
 
 
 }
-
-
 
 
 
@@ -191,83 +409,73 @@ function mostrarTeoria(datos){
 // CARGAR FILTROS
 // ===============================
 
-
 function cargarFiltros(){
 
 
-
-    // NIVELES FIJOS
-
-    const niveles = [
-
-        "Nivel 1",
-        "Nivel 2",
-        "Nivel 3",
-        "Nivel 4"
-
-    ];
+    const alumnos =
+    alumnosDelNivel();
 
 
+    llenarSelect(
+        filtroInstructor,
+        alumnos.map(item=>item.instructor)
+    );
 
-    niveles.forEach(nombre=>{
+
+}
 
 
-        filtroNivel.innerHTML +=
+
+
+// ===============================
+// LLENAR SELECT
+// ===============================
+
+function llenarSelect(select, valores){
+
+
+    if(!select){
+
+
+        return;
+
+
+    }
+
+
+    const opciones =
+    [...new Set(valores)]
+
+        .filter(valor=>valor)
+
+        .sort(
+            (a,b)=>String(a).localeCompare(String(b),"es")
+        );
+
+
+    select.innerHTML =
+    `
+    <option value="">
+        Todos
+    </option>
+    `;
+
+
+    opciones.forEach(valor=>{
+
+
+        select.innerHTML +=
         `
-
-        <option value="${nombre}">
-            ${nombre}
+        <option value="${escaparHTML(valor)}">
+            ${escaparHTML(valor)}
         </option>
-
         `;
 
 
     });
 
 
-
-
-
-    // INSTRUCTORES
-
-
-    const instructores =
-    [
-        ...new Set(
-
-            datosTeoria.map(
-                item=>item.instructor
-            )
-
-        )
-    ];
-
-
-
-    instructores.forEach(nombre=>{
-
-
-        if(nombre){
-
-
-            filtroInstructor.innerHTML +=
-            `
-
-            <option value="${nombre}">
-                ${nombre}
-            </option>
-
-            `;
-
-        }
-
-
-    });
-
-
-
 }
-
 
 
 
@@ -276,41 +484,24 @@ function cargarFiltros(){
 // FILTROS
 // ===============================
 
-
 function aplicarFiltros(){
 
 
-
     const resultado =
-    datosTeoria.filter(item=>{
+    alumnosDelNivel().filter(item=>{
 
 
         return (
 
 
-
-            item.alumno
+            String(item.alumno || "")
             .toLowerCase()
             .includes(
                 buscarAlumno.value.toLowerCase()
             )
 
 
-
             &&
-
-
-
-            (
-                filtroNivel.value === ""
-                ||
-                item.nivel === filtroNivel.value
-            )
-
-
-
-            &&
-
 
 
             (
@@ -320,9 +511,7 @@ function aplicarFiltros(){
             )
 
 
-
             &&
-
 
 
             (
@@ -338,14 +527,10 @@ function aplicarFiltros(){
     });
 
 
-
-    mostrarTeoria(resultado);
-
+    mostrarAlumnos(resultado);
 
 
 }
-
-
 
 
 
@@ -354,15 +539,10 @@ function aplicarFiltros(){
 // LIMPIAR FILTROS
 // ===============================
 
-
-function limpiarFiltros(){
-
+function limpiarValoresFiltros(){
 
 
     buscarAlumno.value = "";
-
-
-    filtroNivel.value = "";
 
 
     filtroInstructor.value = "";
@@ -371,9 +551,17 @@ function limpiarFiltros(){
     filtroEstado.value = "";
 
 
+}
 
-    mostrarTeoria(
-        datosTeoria
+
+function limpiarFiltros(){
+
+
+    limpiarValoresFiltros();
+
+
+    mostrarAlumnos(
+        alumnosDelNivel()
     );
 
 
@@ -382,15 +570,11 @@ function limpiarFiltros(){
 
 
 
-
-
 // ===============================
 // EVENTOS
 // ===============================
 
-
 function cargarEventosFiltros(){
-
 
 
     if(buscarAlumno){
@@ -405,20 +589,6 @@ function cargarEventosFiltros(){
     }
 
 
-
-    if(filtroNivel){
-
-
-        filtroNivel.addEventListener(
-            "change",
-            aplicarFiltros
-        );
-
-
-    }
-
-
-
     if(filtroInstructor){
 
 
@@ -431,7 +601,6 @@ function cargarEventosFiltros(){
     }
 
 
-
     if(filtroEstado){
 
 
@@ -442,7 +611,6 @@ function cargarEventosFiltros(){
 
 
     }
-
 
 
     if(btnLimpiarFiltros){
@@ -462,12 +630,26 @@ function cargarEventosFiltros(){
 
 
 
+// ===============================
+// ESCAPAR HTML
+// ===============================
 
-function editarTeoria(id){
+function escaparHTML(valor){
 
 
-    window.location.href =
-    `teoria-alumno.html?id=${id}`;
+    return String(
+        valor ?? ""
+    )
+
+        .replaceAll("&","&amp;")
+
+        .replaceAll("<","&lt;")
+
+        .replaceAll(">","&gt;")
+
+        .replaceAll('"',"&quot;")
+
+        .replaceAll("'","&#39;");
 
 
 }
