@@ -104,12 +104,16 @@ p {
     top: 0;
     width: 260px;
     height: 100vh;
+    box-sizing: border-box;
     background: var(--sidebar);
     color: #ffffff;
     padding: 28px 18px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     z-index: 1000;
+
+    /* Columna: la navegación scrollea y el pie queda abajo */
+    display: flex;
+    flex-direction: column;
 }
 
 .brand {
@@ -131,9 +135,15 @@ p {
 .main-nav {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-top: 24px;
-    min-height: calc(100vh - 145px);
+    gap: 4px;
+    margin-top: 20px;
+
+    /* Se queda con el espacio libre y scrollea si hace falta */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
 }
 
 .nav-link {
@@ -167,7 +177,6 @@ p {
 ========================================================= */
 
 .logout-button {
-    margin-top: auto;
     width: 100%;
     min-height: 44px;
     padding: 10px 14px;
@@ -1315,13 +1324,14 @@ input[type="checkbox"] {
 
 @media (max-width: 768px) {
 
-    .sidebar {
-        overflow-y: auto;
+    /* En el teléfono la barra de desplazamiento del menú
+       molesta: el gesto de arrastrar alcanza */
+    .main-nav {
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
 
-    .sidebar::-webkit-scrollbar {
+    .main-nav::-webkit-scrollbar {
         display: none;
         width: 0;
     }
@@ -1394,6 +1404,10 @@ input[type="checkbox"] {
 
         flex: 1;
 
+        min-height: 0;
+
+        overflow-y: auto;
+
         margin-top: 18px;
 
     }
@@ -1414,8 +1428,6 @@ input[type="checkbox"] {
     ----------------------------------------- */
 
     .logout-button {
-
-        margin-top: auto;
 
         flex-shrink: 0;
 
@@ -2116,22 +2128,7 @@ span:first-child {
 
 }
 
-.sidebar {
-    height: 100vh;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.main-nav {
-    overflow: visible;
-}
-
-.logout-button {
-    margin-top: auto;
-    margin-bottom: 12px;
-    flex-shrink: 0;
-    min-height: 44px;
-}
+/* (reglas del sidebar unificadas más arriba) */
 /* =========================================================
    GRUPOS POR NIVEL (desplegables)
 ========================================================= */
@@ -2217,11 +2214,6 @@ span:first-child {
 }
 
 
-/* Secciones reservadas al superadmin */
-.solo-superadmin{
-    display: none;
-}
-
 
 /* Botones chicos dentro de una tabla */
 .button.pequeno{
@@ -2279,7 +2271,55 @@ span:first-child {
 }
 
 
-/* Secciones reservadas a superadmin y admin */
-.solo-admin{
-    display: none;
+
+/* =========================================================
+   MENU: GRUPOS Y PIE
+========================================================= */
+
+/* Encabezado de cada grupo del menú */
+.nav-grupo{
+    margin: 18px 0 4px;
+    padding: 0 14px;
+    color: var(--sidebar-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nav-grupo:first-child{
+    margin-top: 0;
+}
+
+
+/* Pie del menú: quién entró y cómo salir */
+.sidebar-pie{
+    flex-shrink: 0;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.usuario-actual{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 14px 10px;
+}
+
+.usuario-nombre{
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.usuario-rol{
+    color: var(--accent);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }

@@ -1,55 +1,124 @@
-const menuToggle =
-    document.getElementById("menuToggle");
+// ===============================
+// MENU LATERAL
+// ===============================
 
-const sidebar =
-    document.querySelector(".sidebar");
+// El menu se arma acá, en un solo lugar, y no copiado en
+// cada página: así no se desincronizan y alcanza con tocar
+// este archivo para cambiarlo en todas.
+
+// Esconder un enlace es cosmético: no protege nada. Quien
+// decide de verdad es el backend, que rechaza el pedido
+// venga de donde venga. Acá solo evitamos mostrarle a
+// alguien puertas que no puede abrir.
 
 
-menuToggle.addEventListener(
-    "click",
-    () => {
+const SECCIONES = [
 
-        document.body.classList.toggle(
-            "menu-open"
-        );
+    {
+        titulo: null,
+        enlaces: [
+            {
+                href: "index.html",
+                texto: "Inicio",
+                roles: ["superadmin", "admin", "secretaria"]
+            },
+            {
+                href: "mi-espacio.html",
+                texto: "Mi espacio",
+                // No depende del rol sino de dar clases:
+                // Cesia administra y además enseña
+                soloInstructor: true
+            }
+        ]
+    },
 
-        const abierto =
-            document.body.classList.contains(
-                "menu-open"
-            );
+    {
+        titulo: "Cursos",
+        enlaces: [
+            {
+                href: "alumnos.html",
+                texto: "Alumnos",
+                roles: ["superadmin", "admin", "secretaria"]
+            },
+            {
+                href: "instrumentos.html",
+                texto: "Instrumentos",
+                roles: ["superadmin", "admin"]
+            },
+            {
+                href: "teoria.html",
+                texto: "Teoría y Solfeo",
+                roles: ["superadmin", "admin"]
+            },
+            {
+                href: "instruccion-ministerial.html",
+                texto: "Instrucción Ministerial",
+                roles: ["superadmin", "admin"]
+            }
+        ]
+    },
 
-        sidebar.classList.toggle(
-            "menu-open",
-            abierto
-        );
+    {
+        titulo: "Asistencias",
+        enlaces: [
+            {
+                href: "asistencias.html",
+                texto: "Tomar asistencia",
+                roles: ["superadmin", "admin"]
+            },
+            {
+                href: "registro-asistencias.html",
+                texto: "Historial",
+                roles: ["superadmin", "admin"]
+            }
+        ]
+    },
 
-        menuToggle.setAttribute(
-            "aria-expanded",
-            abierto
-        );
-
+    {
+        titulo: "Administración",
+        enlaces: [
+            {
+                href: "instructores.html",
+                texto: "Instructores",
+                roles: ["superadmin", "admin"]
+            },
+            {
+                href: "academico.html",
+                texto: "Académico",
+                roles: ["superadmin", "admin"]
+            },
+            {
+                href: "usuarios.html",
+                texto: "Usuarios",
+                roles: ["superadmin"]
+            }
+        ]
     }
-);
+
+];
+
+
+const NOMBRE_DEL_ROL = {
+    superadmin: "SuperAdmin",
+    admin:      "Administración",
+    instructor: "Instructor",
+    secretaria: "Secretaría"
+};
+
+
+
 
 // ===============================
-// EL MENU SEGUN QUIEN ENTRA
+// QUIEN ESTA MIRANDO
 // ===============================
 
-// Esto es solo cosmetico: esconder un enlace no protege
-// nada. Quien decide de verdad es el backend, que rechaza
-// el pedido venga de donde venga. Aca solo evitamos
-// mostrarle a alguien puertas que no puede abrir.
-
-(function(){
-
-
-    let yo = null;
+function usuarioDelMenu(){
 
 
     try{
 
 
-        yo = JSON.parse(
+        return JSON.parse(
             localStorage.getItem("usuario") || "null"
         );
 
@@ -58,13 +127,48 @@ menuToggle.addEventListener(
     catch(error){
 
 
-        yo = null;
+        return null;
 
 
     }
 
 
-    if(!yo){
+}
+
+
+
+
+// ===============================
+// PAGINA ACTUAL
+// ===============================
+
+function paginaActual(){
+
+
+    const partes =
+    window.location.pathname.split("/");
+
+
+    return partes[partes.length - 1] || "index.html";
+
+
+}
+
+
+
+
+// ===============================
+// ARMAR EL MENU
+// ===============================
+
+function armarMenu(){
+
+
+    const sidebar =
+    document.querySelector(".sidebar");
+
+
+    if(!sidebar){
 
 
         return;
@@ -73,81 +177,264 @@ menuToggle.addEventListener(
     }
 
 
-    function revelar(clase){
+    const yo = usuarioDelMenu();
 
 
-        document
-            .querySelectorAll("." + clase)
-            .forEach(elemento=>{
+    const aqui = paginaActual();
 
 
-                elemento.classList.remove(clase);
+    const puedeVer = enlace=>{
 
 
-            });
+        if(enlace.soloInstructor){
+
+
+            return !!(yo && yo.instructor_id);
+
+
+        }
+
+
+        return !!(yo && enlace.roles.includes(yo.rol));
+
+
+    };
+
+
+    let html =
+    `
+    <div class="brand">
+        <div class="brand-logo">SIGEM Dorrego</div>
+        <p>Enseñanza de música</p>
+    </div>
+
+    <nav class="main-nav" aria-label="Menú principal">
+    `;
+
+
+    SECCIONES.forEach(seccion=>{
+
+
+        const visibles =
+        seccion.enlaces.filter(puedeVer);
+
+
+        // Un título sin enlaces debajo no tiene sentido
+        if(visibles.length === 0){
+
+
+            return;
+
+
+        }
+
+
+        // Un título sobre un solo enlace es ruido: no
+        // agrupa nada
+        if(seccion.titulo && visibles.length > 1){
+
+
+            html +=
+            `
+            <p class="nav-grupo">
+                ${seccion.titulo}
+            </p>
+            `;
+
+
+        }
+
+
+        visibles.forEach(enlace=>{
+
+
+            const activo =
+            enlace.href === aqui ? " active" : "";
+
+
+            html +=
+            `
+            <a class="nav-link${activo}" href="${enlace.href}">
+                ${enlace.texto}
+            </a>
+            `;
+
+
+        });
+
+
+    });
+
+
+    html += `</nav>`;
+
+
+    if(yo){
+
+
+        html +=
+        `
+        <div class="sidebar-pie">
+
+            <div class="usuario-actual">
+
+                <span class="usuario-nombre">
+                    ${escaparMenu(yo.nombre)} ${escaparMenu(yo.apellido)}
+                </span>
+
+                <span class="usuario-rol">
+                    ${NOMBRE_DEL_ROL[yo.rol] || escaparMenu(yo.rol)}
+                </span>
+
+            </div>
+
+            <button type="button" class="logout-button" id="btnCerrarSesion">
+                Cerrar sesión
+            </button>
+
+        </div>
+        `;
 
 
     }
 
 
-    // El ABM de cuentas es solo tuyo
-    if(yo.rol === "superadmin"){
+    sidebar.innerHTML = html;
 
 
-        revelar("solo-superadmin");
+    const salir =
+    document.getElementById("btnCerrarSesion");
 
 
-    }
+    if(salir){
 
 
-    // La vista academica es de quien gobierna la escuela
-    if(yo.rol === "superadmin" || yo.rol === "admin"){
+        salir.addEventListener(
+            "click",
+            ()=>{
 
 
-        revelar("solo-admin");
+                // cerrarSesion vive en auth.js, que puede
+                // cargarse después: lo buscamos al hacer
+                // clic, no antes
+                if(typeof cerrarSesion === "function"){
 
 
-    }
+                    cerrarSesion();
 
 
-    // Quien da clases ve su espacio, sea cual sea su rol.
-    // Asi Cesia, que administra y ademas ensena, tiene las
-    // dos cosas en el mismo menu.
-    if(yo.instructor_id){
+                }
+                else{
 
 
-        revelar("solo-instructor");
+                    localStorage.removeItem("token");
 
+                    localStorage.removeItem("usuario");
 
-    }
-
-
-    // El instructor no tiene nada mas que su espacio
-    if(yo.rol === "instructor"){
-
-
-        document
-            .querySelectorAll(".main-nav .nav-link")
-            .forEach(enlace=>{
-
-
-                const destino =
-                enlace.getAttribute("href") || "";
-
-
-                if(!destino.startsWith("mi-espacio")){
-
-
-                    enlace.remove();
+                    window.location.href = "login.html";
 
 
                 }
 
 
-            });
+            }
+        );
 
 
     }
 
 
-})();
+}
+
+
+
+
+function escaparMenu(valor){
+
+
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+
+
+}
+
+
+
+
+// ===============================
+// BOTON DE MENU EN PANTALLA CHICA
+// ===============================
+
+function conectarBotonMenu(){
+
+
+    const menuToggle =
+    document.getElementById("menuToggle");
+
+
+    const sidebar =
+    document.querySelector(".sidebar");
+
+
+    if(!menuToggle || !sidebar){
+
+
+        return;
+
+
+    }
+
+
+    menuToggle.addEventListener(
+        "click",
+        () => {
+
+
+            const abierto =
+            document.body.classList.toggle("menu-open");
+
+
+            sidebar.classList.toggle("menu-open", abierto);
+
+
+            menuToggle.setAttribute("aria-expanded", abierto);
+
+
+        }
+    );
+
+
+    // Al elegir una sección, el menú se cierra solo
+    sidebar.addEventListener(
+        "click",
+        evento=>{
+
+
+            if(evento.target.closest(".nav-link")){
+
+
+                document.body.classList.remove("menu-open");
+
+                sidebar.classList.remove("menu-open");
+
+                menuToggle.setAttribute("aria-expanded", false);
+
+
+            }
+
+
+        }
+    );
+
+
+}
+
+
+
+
+armarMenu();
+
+conectarBotonMenu();
