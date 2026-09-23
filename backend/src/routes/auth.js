@@ -80,7 +80,11 @@ router.post("/login", async (req,res)=>{
                 id:usuario.id,
                 nombre:usuario.nombre,
                 apellido:usuario.apellido,
-                rol:usuario.rol
+                rol:usuario.rol,
+
+                // Sirve para saber si ademas de su rol
+                // esta persona da clases
+                instructor_id:usuario.instructor_id
             }
 
         });

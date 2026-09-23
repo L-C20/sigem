@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Mi espacio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/notificaciones.css">
+</head>
+<body>
+
+  <div id="notificacionSIGEM" class="notificacion">
+    <span id="notificacionIcono"></span>
+    <span id="notificacionMensaje"></span>
+  </div>
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM Dorrego</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link active solo-instructor" href="mi-espacio.html">Mi espacio</a>
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link" href="instruccion-ministerial.html">Instrucción Ministerial</a>
+        <a class="nav-link" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+        <a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
+        <a class="nav-link solo-superadmin" href="usuarios.html">Usuarios</a>
+      </nav>
+
+      <button type="button" class="button secondary" id="btnCerrarSesion">
+        Cerrar sesión
+      </button>
+    </aside>
+
+    <main class="content">
+
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Mi espacio</span>
+          <h1 id="titulo">Mis cursos</h1>
+          <p id="bienvenida" class="texto-tenue"></p>
+        </div>
+      </header>
+
+
+      <!-- ===============================
+           MIS NIVELES
+           =============================== -->
+
+      <section id="vistaNiveles">
+
+        <div class="cards-grid" id="tarjetasNiveles"></div>
+
+      </section>
+
+
+      <!-- ===============================
+           UN NIVEL
+           =============================== -->
+
+      <section id="vistaNivel" class="hidden">
+
+        <button type="button" class="button secondary" id="volverNiveles">
+          ← Volver a mis cursos
+        </button>
+
+
+        <!-- Tomar asistencia -->
+
+        <section class="card panel-suave">
+
+          <div class="section-heading">
+            <div>
+              <h2>Tomar asistencia</h2>
+              <p>Elegí la fecha y marcá quién vino. Si ya la cargaste, se ve lo guardado.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <label class="field">
+              <span>Fecha de la clase</span>
+              <input type="date" id="fechaClase">
+            </label>
+
+            <button type="button" class="button secondary" id="btnTodosPresentes">
+              Marcar todos presentes
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <section class="card">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2 id="tituloNivel"></h2>
+              <p id="resumenAsistencia" class="texto-tenue"></p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Filial</th>
+                  <th>Presente</th>
+                </tr>
+              </thead>
+              <tbody id="tablaAsistencia">
+                <tr>
+                  <td colspan="3" class="empty-state">Elegí una fecha para empezar.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal-acciones">
+            <button type="button" class="button" id="btnGuardarAsistencia">
+              Guardar asistencia
+            </button>
+          </div>
+
+        </section>
+
+      </section>
+
+    </main>
+  </div>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/notificaciones.js"></script>
+  <script src="js/mi-espacio.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+
+    document
+        .getElementById("btnCerrarSesion")
+        .addEventListener("click", cerrarSesion);
+</script>
+</body>
+</html>

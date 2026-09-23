@@ -43,8 +43,12 @@ const instructoresListadoRoutes =
 require("./routes/instructores-listado");
 const inicioRoutes = require("./routes/inicio");
 const usuariosRoutes = require("./routes/usuarios");
+const miEspacioRoutes = require("./routes/miEspacio");
 
-const { verificarToken } = require("./middleware/autenticacion");
+const {
+    verificarToken,
+    permitirRoles
+} = require("./middleware/autenticacion");
 
 // Publica: es la puerta de entrada
 app.use("/auth", authRoutes);
@@ -54,20 +58,40 @@ app.use("/auth", authRoutes);
 app.use(verificarToken);
 
 
+// El ABM de cuentas es solo del superadmin
 app.use("/usuarios", usuariosRoutes);
-app.use("/inicio", inicioRoutes);
-app.use("/instructores-listado",instructoresListadoRoutes);
-app.use("/teoria", teoria);
-app.use("/filiales", filialesRoutes);
-app.use("/instruccion-ministerial", instruccionMinisterialRoutes);
-app.use("/cursadas-teoria", cursadasTeoriaRoutes);
-app.use("/cursada-instrumento", cursadaInstrumentoRoutes);
-app.use("/asistencias", asistenciasRoutes);
-app.use("/alumnos", alumnosRoutes);
-app.use("/instrumentos", instrumentosRoutes);
-app.use("/niveles-instrumento", nivelesInstrumentoRoutes);
-app.use("/niveles-teoria", nivelesTeoriaRoutes);
-app.use("/instructores", instructoresRoutes);
+
+
+// El espacio propio de cada instructor. No lleva filtro de
+// rol: lo que importa no es el rol sino tener un instructor
+// vinculado, y eso lo verifica el propio archivo. Asi Cesia,
+// que es admin y ademas da clases, entra igual.
+app.use("/mi-espacio", miEspacioRoutes);
+
+
+// Todo lo demas es gestion de la escuela. El instructor no
+// entra: sus datos los pide por /mi-espacio, ya recortados
+// a su nivel.
+const soloGestion = permitirRoles(
+    "superadmin",
+    "admin",
+    "secretaria"
+);
+
+
+app.use("/inicio", soloGestion, inicioRoutes);
+app.use("/instructores-listado", soloGestion, instructoresListadoRoutes);
+app.use("/teoria", soloGestion, teoria);
+app.use("/filiales", soloGestion, filialesRoutes);
+app.use("/instruccion-ministerial", soloGestion, instruccionMinisterialRoutes);
+app.use("/cursadas-teoria", soloGestion, cursadasTeoriaRoutes);
+app.use("/cursada-instrumento", soloGestion, cursadaInstrumentoRoutes);
+app.use("/asistencias", soloGestion, asistenciasRoutes);
+app.use("/alumnos", soloGestion, alumnosRoutes);
+app.use("/instrumentos", soloGestion, instrumentosRoutes);
+app.use("/niveles-instrumento", soloGestion, nivelesInstrumentoRoutes);
+app.use("/niveles-teoria", soloGestion, nivelesTeoriaRoutes);
+app.use("/instructores", soloGestion, instructoresRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor SIGEM activo en puerto ${PORT}`);

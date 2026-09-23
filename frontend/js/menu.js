@@ -32,46 +32,106 @@ menuToggle.addEventListener(
 );
 
 // ===============================
-// SECCIONES SOLO DEL SUPERADMIN
+// EL MENU SEGUN QUIEN ENTRA
 // ===============================
 
-// Esconde los enlaces reservados. Es solo cosmetico:
-// quien decide de verdad es el backend, que rechaza
-// el pedido venga de donde venga.
+// Esto es solo cosmetico: esconder un enlace no protege
+// nada. Quien decide de verdad es el backend, que rechaza
+// el pedido venga de donde venga. Aca solo evitamos
+// mostrarle a alguien puertas que no puede abrir.
 
 (function(){
 
 
-    let rol = null;
+    let yo = null;
 
 
     try{
 
 
-        rol = JSON.parse(
+        yo = JSON.parse(
             localStorage.getItem("usuario") || "null"
-        )?.rol;
+        );
 
 
     }
     catch(error){
 
 
-        rol = null;
+        yo = null;
 
 
     }
 
 
-    if(rol === "superadmin"){
+    if(!yo){
+
+
+        return;
+
+
+    }
+
+
+    function revelar(clase){
 
 
         document
-            .querySelectorAll(".solo-superadmin")
+            .querySelectorAll("." + clase)
             .forEach(elemento=>{
 
 
-                elemento.classList.remove("solo-superadmin");
+                elemento.classList.remove(clase);
+
+
+            });
+
+
+    }
+
+
+    // El ABM de cuentas es solo tuyo
+    if(yo.rol === "superadmin"){
+
+
+        revelar("solo-superadmin");
+
+
+    }
+
+
+    // Quien da clases ve su espacio, sea cual sea su rol.
+    // Asi Cesia, que administra y ademas ensena, tiene las
+    // dos cosas en el mismo menu.
+    if(yo.instructor_id){
+
+
+        revelar("solo-instructor");
+
+
+    }
+
+
+    // El instructor no tiene nada mas que su espacio
+    if(yo.rol === "instructor"){
+
+
+        document
+            .querySelectorAll(".main-nav .nav-link")
+            .forEach(enlace=>{
+
+
+                const destino =
+                enlace.getAttribute("href") || "";
+
+
+                if(!destino.startsWith("mi-espacio")){
+
+
+                    enlace.remove();
+
+
+                }
 
 
             });

@@ -56,6 +56,8 @@
         aria-label="Menu principal"
       >
 
+        <a class="nav-link solo-instructor" href="mi-espacio.html">Mi espacio</a>
+
         <a
           class="nav-link active"
           href="index.html"
@@ -522,6 +524,31 @@
 
 <script>
     verificarSesion();
+
+    // El inicio muestra el panorama de toda la escuela.
+    // Quien solo da clases va derecho a su espacio.
+    (function(){
+
+        try{
+
+            const yo = JSON.parse(
+                localStorage.getItem("usuario") || "null"
+            );
+
+            if(yo && yo.rol === "instructor"){
+
+                window.location.href = "mi-espacio.html";
+
+            }
+
+        }
+        catch(error){
+
+            // si no se puede leer, que siga el guard normal
+
+        }
+
+    })();
 
     document
         .getElementById("btnCerrarSesion")
