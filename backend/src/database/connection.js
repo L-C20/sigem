@@ -4,7 +4,10 @@ require("dotenv").config();
 const pool = process.env.DATABASE_URL
     ? new Pool({
         connectionString: process.env.DATABASE_URL,
-        ssl: process.env.DATABASE_URL.includes("railway.internal")
+        // Sin SSL en la red interna de Railway y en local
+        // (tunel); con SSL laxo para cualquier otro destino
+        ssl: /railway\.internal|127\.0\.0\.1|localhost/
+            .test(process.env.DATABASE_URL)
             ? false
             : { rejectUnauthorized: false }
     })

@@ -30,3 +30,54 @@ menuToggle.addEventListener(
 
     }
 );
+
+// ===============================
+// SECCIONES SOLO DEL SUPERADMIN
+// ===============================
+
+// Esconde los enlaces reservados. Es solo cosmetico:
+// quien decide de verdad es el backend, que rechaza
+// el pedido venga de donde venga.
+
+(function(){
+
+
+    let rol = null;
+
+
+    try{
+
+
+        rol = JSON.parse(
+            localStorage.getItem("usuario") || "null"
+        )?.rol;
+
+
+    }
+    catch(error){
+
+
+        rol = null;
+
+
+    }
+
+
+    if(rol === "superadmin"){
+
+
+        document
+            .querySelectorAll(".solo-superadmin")
+            .forEach(elemento=>{
+
+
+                elemento.classList.remove("solo-superadmin");
+
+
+            });
+
+
+    }
+
+
+})();

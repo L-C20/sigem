@@ -42,6 +42,7 @@ const teoria = require("./routes/teoria");
 const instructoresListadoRoutes =
 require("./routes/instructores-listado");
 const inicioRoutes = require("./routes/inicio");
+const usuariosRoutes = require("./routes/usuarios");
 
 const { verificarToken } = require("./middleware/autenticacion");
 
@@ -53,6 +54,7 @@ app.use("/auth", authRoutes);
 app.use(verificarToken);
 
 
+app.use("/usuarios", usuariosRoutes);
 app.use("/inicio", inicioRoutes);
 app.use("/instructores-listado",instructoresListadoRoutes);
 app.use("/teoria", teoria);

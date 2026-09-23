@@ -647,7 +647,8 @@ tbody tr:last-child td {
    FILTROS
 ========================================================= */
 
-.filtros {
+.filtros,
+.panel-suave {
     padding: 20px 22px;
     margin-bottom: 20px;
     background: var(--card);
@@ -664,26 +665,32 @@ tbody tr:last-child td {
     font-weight: 600;
 }
 
-.filtros .form-grid {
+.filtros .form-grid,
+.panel-suave .form-grid {
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 16px;
 }
 
-.filtros .field span {
+.filtros .field span,
+.panel-suave .field span {
     color: var(--muted);
     font-size: 0.85rem;
     font-weight: 500;
 }
 
 .filtros input,
-.filtros select {
+.filtros select,
+.panel-suave input,
+.panel-suave select {
     min-height: 42px;
     border-radius: 10px;
     border-color: #e2e9f1;
 }
 
 .filtros input:hover,
-.filtros select:hover {
+.filtros select:hover,
+.panel-suave input:hover,
+.panel-suave select:hover {
     border-color: #cbd8e6;
 }
 
@@ -2207,4 +2214,23 @@ span:first-child {
 .estado-inactivo {
     background: #eef1f5;
     color: #55617a;
+}
+
+
+/* Secciones reservadas al superadmin */
+.solo-superadmin{
+    display: none;
+}
+
+
+/* Botones chicos dentro de una tabla */
+.button.pequeno{
+    padding: 6px 12px;
+    min-height: 34px;
+    font-size: 0.85rem;
+}
+
+
+.texto-tenue{
+    color: var(--muted);
 }
