@@ -43,6 +43,16 @@ const instructoresListadoRoutes =
 require("./routes/instructores-listado");
 const inicioRoutes = require("./routes/inicio");
 
+const { verificarToken } = require("./middleware/autenticacion");
+
+// Publica: es la puerta de entrada
+app.use("/auth", authRoutes);
+
+
+// De aca para abajo, todo exige token
+app.use(verificarToken);
+
+
 app.use("/inicio", inicioRoutes);
 app.use("/instructores-listado",instructoresListadoRoutes);
 app.use("/teoria", teoria);
@@ -56,7 +66,6 @@ app.use("/instrumentos", instrumentosRoutes);
 app.use("/niveles-instrumento", nivelesInstrumentoRoutes);
 app.use("/niveles-teoria", nivelesTeoriaRoutes);
 app.use("/instructores", instructoresRoutes);
-app.use("/auth", authRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor SIGEM activo en puerto ${PORT}`);
