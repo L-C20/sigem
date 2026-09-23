@@ -544,6 +544,29 @@ function cargarEventos(){
         .addEventListener("click", guardarAsistencia);
 
 
+    conectarSolapas();
+
+
+    document
+        .getElementById("formEvaluacion")
+        .addEventListener("submit", crearEvaluacion);
+
+
+    document
+        .getElementById("btnGuardarNotas")
+        .addEventListener("click", guardarNotas);
+
+
+    document
+        .getElementById("volverEvaluaciones")
+        .addEventListener("click", volverALista);
+
+
+    document
+        .getElementById("habCuatrimestre")
+        .addEventListener("change", cargarHabilitacion);
+
+
     document
         .getElementById("btnTodosPresentes")
         .addEventListener("click", ()=>{
@@ -609,6 +632,799 @@ function escaparHTML(valor){
         .replaceAll('"',"&quot;")
 
         .replaceAll("'","&#39;");
+
+
+}
+
+
+
+
+// ===============================
+// SOLAPAS
+// ===============================
+
+function conectarSolapas(){
+
+
+    document.querySelectorAll(".solapa")
+        .forEach(solapa=>{
+
+
+            solapa.addEventListener("click", ()=>{
+
+
+                document.querySelectorAll(".solapa")
+                    .forEach(otra=>otra.classList.remove("activa"));
+
+
+                solapa.classList.add("activa");
+
+
+                ["panelAsistencia","panelEvaluaciones","panelHabilitacion"]
+                    .forEach(id=>{
+
+
+                        document.getElementById(id)
+                            .classList.toggle(
+                                "hidden",
+                                id !== solapa.dataset.panel
+                            );
+
+
+                    });
+
+
+                if(solapa.dataset.panel === "panelEvaluaciones"){
+
+
+                    cargarEvaluaciones();
+
+
+                }
+
+
+                if(solapa.dataset.panel === "panelHabilitacion"){
+
+
+                    cargarHabilitacion();
+
+
+                }
+
+
+            });
+
+
+        });
+
+
+}
+
+
+
+
+// ===============================
+// EVALUACIONES
+// ===============================
+
+let evaluaciones = [];
+
+let evaluacionActual = null;
+
+let alumnosNotas = [];
+
+
+
+
+async function cargarEvaluaciones(){
+
+
+    if(!nivelActual){
+
+
+        return;
+
+
+    }
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/niveles/${nivelActual.nivel_id}/evaluaciones`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudieron cargar las evaluaciones",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        evaluaciones = datos;
+
+
+        mostrarEvaluaciones();
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error cargando las evaluaciones",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarEvaluaciones(){
+
+
+    const tabla =
+    document.getElementById("tablaEvaluaciones");
+
+
+    if(evaluaciones.length === 0){
+
+
+        tabla.innerHTML =
+        `
+        <tr>
+            <td colspan="5" class="empty-state">
+                Sin evaluaciones todavía.
+            </td>
+        </tr>
+        `;
+
+
+        return;
+
+
+    }
+
+
+    tabla.innerHTML =
+    evaluaciones.map(ev=>`
+
+        <tr>
+
+            <td>
+                ${escaparHTML(ev.titulo)}
+                ${ev.obligatoria
+                    ? `<br><small class="texto-tenue">habilita al examen</small>`
+                    : ""}
+                ${ev.fecha
+                    ? `<br><small class="texto-tenue">${formatearFecha(ev.fecha)}</small>`
+                    : ""}
+            </td>
+
+            <td>
+                ${escaparHTML(ev.area)}
+                <br><small class="texto-tenue">${escaparHTML(ev.tipo)}</small>
+            </td>
+
+            <td>${ev.cuatrimestre}º</td>
+
+            <td>
+                ${ev.corregidos}
+                ${Number(ev.corregidos) > 0
+                    ? `<br><small class="texto-tenue">${ev.aprobados} aprobados</small>`
+                    : ""}
+            </td>
+
+            <td>
+                <div class="action-group">
+
+                    <button type="button"
+                        class="button pequeno cargar-notas"
+                        data-id="${ev.id}">
+                        Cargar
+                    </button>
+
+                    ${Number(ev.corregidos) === 0
+                        ? `<button type="button"
+                               class="button secondary pequeno borrar-evaluacion"
+                               data-id="${ev.id}">
+                               Borrar
+                           </button>`
+                        : ""}
+
+                </div>
+            </td>
+
+        </tr>
+
+    `).join("");
+
+
+    document.querySelectorAll(".cargar-notas")
+        .forEach(boton=>{
+
+
+            boton.addEventListener(
+                "click",
+                ()=>abrirNotas(Number(boton.dataset.id))
+            );
+
+
+        });
+
+
+    document.querySelectorAll(".borrar-evaluacion")
+        .forEach(boton=>{
+
+
+            boton.addEventListener(
+                "click",
+                ()=>borrarEvaluacion(Number(boton.dataset.id))
+            );
+
+
+        });
+
+
+}
+
+
+
+
+async function crearEvaluacion(evento){
+
+
+    evento.preventDefault();
+
+
+    const cuerpo = {
+        anio:         nivelActual.anio,
+        cuatrimestre: Number(document.getElementById("evCuatrimestre").value),
+        area:         document.getElementById("evArea").value,
+        tipo:         document.getElementById("evTipo").value,
+        titulo:       document.getElementById("evTitulo").value.trim(),
+        fecha:        document.getElementById("evFecha").value || null,
+        obligatoria:  document.getElementById("evObligatoria").value === "si"
+    };
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/niveles/${nivelActual.nivel_id}/evaluaciones`,
+            {
+                method:"POST",
+                headers:{ "Content-Type":"application/json" },
+                body: JSON.stringify(cuerpo)
+            }
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudo crear",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        mostrarNotificacion("Evaluación creada", "exito");
+
+
+        document.getElementById("formEvaluacion").reset();
+
+
+        await cargarEvaluaciones();
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error creando la evaluación",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+async function borrarEvaluacion(id){
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/evaluaciones/${id}`,
+            { method:"DELETE" }
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        mostrarNotificacion(
+            datos.error || datos.mensaje,
+            respuesta.ok ? "exito" : "error"
+        );
+
+
+        if(respuesta.ok){
+
+
+            await cargarEvaluaciones();
+
+
+        }
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error eliminando la evaluación",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+// ===============================
+// CARGAR NOTAS
+// ===============================
+
+async function abrirNotas(id){
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/evaluaciones/${id}/resultados`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudieron cargar los resultados",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        evaluacionActual = datos.evaluacion;
+
+        alumnosNotas = datos.alumnos;
+
+
+        document.getElementById("tituloNotas").textContent =
+        evaluacionActual.titulo;
+
+
+        document.getElementById("subtituloNotas").textContent =
+        evaluacionActual.area === "Teoría"
+            ? "Notas del 1 al 10. Se aprueba desde 7."
+            : "Marcá aprobado o desaprobado.";
+
+
+        document.getElementById("columnaNota").textContent =
+        evaluacionActual.area === "Teoría"
+            ? "Nota"
+            : "Resultado";
+
+
+        mostrarNotas();
+
+
+        document.getElementById("listadoEvaluaciones")
+            .classList.add("hidden");
+
+
+        document.getElementById("panelNotas")
+            .classList.remove("hidden");
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error abriendo la evaluación",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarNotas(){
+
+
+    const esTeoria =
+    evaluacionActual.area === "Teoría";
+
+
+    document.getElementById("tablaNotas").innerHTML =
+    alumnosNotas.map(alumno=>`
+
+        <tr data-alumno="${alumno.alumno_id}">
+
+            <td>
+                ${escaparHTML(alumno.apellido)},
+                ${escaparHTML(alumno.nombre)}
+            </td>
+
+            <td>
+                ${esTeoria
+                    ? `<input type="number" class="campo-tabla campo-nota"
+                           min="1" max="10" step="0.25"
+                           value="${alumno.nota ?? ""}">`
+                    : `<select class="campo-tabla campo-resultado">
+                           <option value="">—</option>
+                           <option value="Aprobado"
+                               ${alumno.resultado === "Aprobado" ? "selected" : ""}>
+                               Aprobado
+                           </option>
+                           <option value="Desaprobado"
+                               ${alumno.resultado === "Desaprobado" ? "selected" : ""}>
+                               Desaprobado
+                           </option>
+                       </select>`}
+            </td>
+
+            <td>
+                <input type="checkbox" class="campo-ausente"
+                    ${alumno.ausente === true ? "checked" : ""}>
+            </td>
+
+            <td>
+                <input type="text" class="campo-ancho campo-observaciones"
+                    value="${escaparHTML(alumno.observaciones || "")}">
+            </td>
+
+        </tr>
+
+    `).join("");
+
+
+}
+
+
+
+
+async function guardarNotas(){
+
+
+    const resultados =
+    [...document.querySelectorAll("#tablaNotas tr")]
+        .map(fila=>{
+
+
+            const nota =
+            fila.querySelector(".campo-nota");
+
+
+            const resultado =
+            fila.querySelector(".campo-resultado");
+
+
+            return {
+
+                alumno_id: Number(fila.dataset.alumno),
+
+                nota: nota && nota.value !== ""
+                    ? Number(nota.value)
+                    : null,
+
+                resultado: resultado
+                    ? resultado.value || null
+                    : null,
+
+                ausente:
+                    fila.querySelector(".campo-ausente").checked,
+
+                observaciones:
+                    fila.querySelector(".campo-observaciones").value.trim() || null
+
+            };
+
+
+        });
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/evaluaciones/${evaluacionActual.id}/resultados`,
+            {
+                method:"POST",
+                headers:{ "Content-Type":"application/json" },
+                body: JSON.stringify({ resultados })
+            }
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudo guardar",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        mostrarNotificacion(
+            "Resultados guardados (" + datos.guardados + ")",
+            "exito"
+        );
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error guardando los resultados",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function volverALista(){
+
+
+    document.getElementById("panelNotas")
+        .classList.add("hidden");
+
+
+    document.getElementById("listadoEvaluaciones")
+        .classList.remove("hidden");
+
+
+    cargarEvaluaciones();
+
+
+}
+
+
+
+
+// ===============================
+// HABILITACION AL EXAMEN
+// ===============================
+
+async function cargarHabilitacion(){
+
+
+    if(!nivelActual){
+
+
+        return;
+
+
+    }
+
+
+    const cuatrimestre =
+    document.getElementById("habCuatrimestre").value;
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/niveles/${nivelActual.nivel_id}/habilitacion`
+            + `?cuatrimestre=${cuatrimestre}`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudo calcular",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        mostrarHabilitacion(datos);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error calculando la habilitación",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarHabilitacion(lista){
+
+
+    const habilitados =
+    lista.filter(a=>!a.adeuda).length;
+
+
+    document.getElementById("resumenHabilitacion").textContent =
+    habilitados + " de " + lista.length + " pueden rendir";
+
+
+    document.getElementById("tablaHabilitacion").innerHTML =
+    lista.map(alumno=>{
+
+
+        const puede = !alumno.adeuda;
+
+
+        return `
+
+        <tr>
+
+            <td>
+                ${escaparHTML(alumno.apellido)},
+                ${escaparHTML(alumno.nombre)}
+            </td>
+
+            <td>
+                ${alumno.aprobadas} / ${alumno.obligatorias}
+            </td>
+
+            <td>
+                <span class="estado ${puede ? "estado-activo" : "estado-inactivo"}">
+                    ${puede ? "Habilitado" : "No habilitado"}
+                </span>
+            </td>
+
+            <td>
+                ${escaparHTML(alumno.adeuda || "—")}
+            </td>
+
+        </tr>
+
+        `;
+
+
+    }).join("");
+
+
+}
+
+
+
+
+// ===============================
+// FECHA LEGIBLE
+// ===============================
+
+function formatearFecha(valor){
+
+
+    if(!valor){
+
+
+        return "";
+
+
+    }
+
+
+    const partes =
+    String(valor).slice(0, 10).split("-");
+
+
+    return partes[2] + "/" + partes[1] + "/" + partes[0];
 
 
 }

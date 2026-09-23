@@ -469,4 +469,812 @@ router.post("/asistencia/:nivelId", async(req,res)=>{
 
 
 
+// =====================================
+// EVALUACIONES
+// =====================================
+
+// Teoria se califica con nota; solfeo con aprobado o
+// desaprobado. En los dos casos guardamos el resultado
+// explicito, no calculado al vuelo: si manana cambia la
+// nota de aprobacion, lo ya corregido no cambia solo.
+
+const NOTA_APROBACION = 7;
+
+
+const AREAS = ["Teoría", "Solfeo"];
+
+const TIPOS = ["Trabajo práctico", "Lección", "Examen"];
+
+
+
+
+// La evaluacion tiene que ser suya
+
+async function esMiEvaluacion(instructorId, evaluacionId){
+
+
+    const resultado = await pool.query(
+        `
+        SELECT
+            id, nivel_id, area, tipo, titulo,
+            descripcion, fecha, anio, cuatrimestre, obligatoria
+        FROM evaluaciones
+        WHERE id = $1
+        AND instructor_id = $2
+        `,
+        [evaluacionId, instructorId]
+    );
+
+
+    return resultado.rows[0] || null;
+
+
+}
+
+
+
+
+// =====================================
+// LISTAR LAS EVALUACIONES DE UN NIVEL
+// =====================================
+
+router.get("/niveles/:nivelId/evaluaciones", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+
+        if(!await esMiNivel(req.instructorId, nivelId)){
+
+
+            return res.status(403).json({
+                error:"Ese nivel no está a tu cargo"
+            });
+
+
+        }
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                e.*,
+
+                -- Se guarda una fila por alumno para poder
+                -- borrar una nota puesta por error, asi que
+                -- contar filas no seria contar corregidos
+
+                COUNT(r.id) FILTER (
+                    WHERE r.nota      IS NOT NULL
+                    OR    r.resultado IS NOT NULL
+                    OR    r.ausente
+                ) AS corregidos,
+
+                COUNT(r.id) FILTER (
+                    WHERE r.resultado = 'Aprobado'
+                ) AS aprobados
+
+            FROM evaluaciones e
+
+            LEFT JOIN evaluacion_resultados r
+                ON r.evaluacion_id = e.id
+
+            WHERE e.nivel_id      = $1
+            AND   e.instructor_id = $2
+
+            GROUP BY e.id
+
+            ORDER BY e.cuatrimestre, e.fecha NULLS LAST, e.id
+            `,
+            [nivelId, req.instructorId]
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error obteniendo las evaluaciones"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// CREAR UNA EVALUACION
+// =====================================
+
+router.post("/niveles/:nivelId/evaluaciones", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+
+        if(!await esMiNivel(req.instructorId, nivelId)){
+
+
+            return res.status(403).json({
+                error:"Ese nivel no está a tu cargo"
+            });
+
+
+        }
+
+
+        const {
+
+            anio,
+            cuatrimestre,
+            area,
+            tipo,
+            titulo,
+            descripcion,
+            fecha,
+            obligatoria
+
+        } = req.body;
+
+
+        if(!titulo || !String(titulo).trim()){
+
+
+            return res.status(400).json({
+                error:"Poné un título"
+            });
+
+
+        }
+
+
+        if(!AREAS.includes(area)){
+
+
+            return res.status(400).json({
+                error:"El área tiene que ser Teoría o Solfeo"
+            });
+
+
+        }
+
+
+        if(!TIPOS.includes(tipo)){
+
+
+            return res.status(400).json({
+                error:"Tipo de evaluación no válido"
+            });
+
+
+        }
+
+
+        if(![1,2].includes(Number(cuatrimestre))){
+
+
+            return res.status(400).json({
+                error:"El cuatrimestre tiene que ser 1 o 2"
+            });
+
+
+        }
+
+
+        const creada = await pool.query(
+            `
+            INSERT INTO evaluaciones
+                (nivel_id, instructor_id, anio, cuatrimestre,
+                 area, tipo, titulo, descripcion, fecha, obligatoria)
+
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+
+            RETURNING *
+            `,
+            [
+                nivelId,
+                req.instructorId,
+                Number(anio) || new Date().getFullYear(),
+                Number(cuatrimestre),
+                area,
+                tipo,
+                String(titulo).trim(),
+                descripcion || null,
+                fecha || null,
+                obligatoria !== false
+            ]
+        );
+
+
+        res.status(201).json(creada.rows[0]);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error creando la evaluación"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// EDITAR UNA EVALUACION
+// =====================================
+
+router.put("/evaluaciones/:id", async(req,res)=>{
+
+
+    try{
+
+
+        const id = Number(req.params.id);
+
+
+        if(!await esMiEvaluacion(req.instructorId, id)){
+
+
+            return res.status(403).json({
+                error:"Esa evaluación no es tuya"
+            });
+
+
+        }
+
+
+        const {
+            titulo,
+            descripcion,
+            fecha,
+            obligatoria
+        } = req.body;
+
+
+        const actualizada = await pool.query(
+            `
+            UPDATE evaluaciones
+
+            SET
+                titulo      = COALESCE($2, titulo),
+                descripcion = $3,
+                fecha       = $4,
+                obligatoria = COALESCE($5, obligatoria)
+
+            WHERE id = $1
+
+            RETURNING *
+            `,
+            [
+                id,
+                titulo ? String(titulo).trim() : null,
+                descripcion || null,
+                fecha || null,
+                typeof obligatoria === "boolean" ? obligatoria : null
+            ]
+        );
+
+
+        res.json(actualizada.rows[0]);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error actualizando la evaluación"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// BORRAR UNA EVALUACION
+// =====================================
+
+// Solo si todavia no tiene nada corregido: borrar notas
+// cargadas por error de tipeo seria muy facil
+
+router.delete("/evaluaciones/:id", async(req,res)=>{
+
+
+    try{
+
+
+        const id = Number(req.params.id);
+
+
+        if(!await esMiEvaluacion(req.instructorId, id)){
+
+
+            return res.status(403).json({
+                error:"Esa evaluación no es tuya"
+            });
+
+
+        }
+
+
+        const cargados = await pool.query(
+            `
+            SELECT COUNT(*) AS total
+            FROM evaluacion_resultados
+            WHERE evaluacion_id = $1
+            AND (
+                nota      IS NOT NULL
+                OR resultado IS NOT NULL
+                OR ausente
+            )
+            `,
+            [id]
+        );
+
+
+        if(Number(cargados.rows[0].total) > 0){
+
+
+            return res.status(409).json({
+                error:"No se puede borrar: ya tiene resultados cargados"
+            });
+
+
+        }
+
+
+        await pool.query(
+            `DELETE FROM evaluaciones WHERE id = $1`,
+            [id]
+        );
+
+
+        res.json({ mensaje:"Evaluación eliminada" });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error eliminando la evaluación"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// RESULTADOS DE UNA EVALUACION
+// =====================================
+
+router.get("/evaluaciones/:id/resultados", async(req,res)=>{
+
+
+    try{
+
+
+        const id = Number(req.params.id);
+
+
+        const evaluacion =
+        await esMiEvaluacion(req.instructorId, id);
+
+
+        if(!evaluacion){
+
+
+            return res.status(403).json({
+                error:"Esa evaluación no es tuya"
+            });
+
+
+        }
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                a.id        AS alumno_id,
+                a.apellido,
+                a.nombre,
+
+                r.nota,
+                r.resultado,
+                r.observaciones,
+                r.ausente
+
+            FROM cursadas_teoria c
+
+            JOIN alumnos a
+                ON a.id = c.alumno_id
+
+            LEFT JOIN evaluacion_resultados r
+                ON  r.alumno_id     = a.id
+                AND r.evaluacion_id = $3
+
+            WHERE c.nivel_id      = $1
+            AND   c.instructor_id = $2
+            AND   c.estado        = 'Activo'
+
+            ORDER BY a.apellido, a.nombre
+            `,
+            [evaluacion.nivel_id, req.instructorId, id]
+        );
+
+
+        res.json({
+            evaluacion,
+            alumnos: resultado.rows
+        });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error obteniendo los resultados"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// GUARDAR RESULTADOS
+// =====================================
+
+router.post("/evaluaciones/:id/resultados", async(req,res)=>{
+
+
+    try{
+
+
+        const id = Number(req.params.id);
+
+
+        const evaluacion =
+        await esMiEvaluacion(req.instructorId, id);
+
+
+        if(!evaluacion){
+
+
+            return res.status(403).json({
+                error:"Esa evaluación no es tuya"
+            });
+
+
+        }
+
+
+        const { resultados } = req.body;
+
+
+        if(!Array.isArray(resultados)){
+
+
+            return res.status(400).json({
+                error:"Faltan los resultados"
+            });
+
+
+        }
+
+
+        const alumnos = [];
+        const notas = [];
+        const estados = [];
+        const observaciones = [];
+        const ausentes = [];
+
+
+        for(const item of resultados){
+
+
+            const ausente = item.ausente === true;
+
+
+            let nota = null;
+
+            let estado = null;
+
+
+            if(!ausente && evaluacion.area === "Teoría"){
+
+
+                if(item.nota !== null && item.nota !== undefined && item.nota !== ""){
+
+
+                    nota = Number(item.nota);
+
+
+                    if(Number.isNaN(nota) || nota < 1 || nota > 10){
+
+
+                        return res.status(400).json({
+                            error:"Las notas van del 1 al 10"
+                        });
+
+
+                    }
+
+
+                    estado =
+                    nota >= NOTA_APROBACION
+                        ? "Aprobado"
+                        : "Desaprobado";
+
+
+                }
+
+
+            }
+
+
+            if(!ausente && evaluacion.area === "Solfeo"){
+
+
+                if(item.resultado === "Aprobado" || item.resultado === "Desaprobado"){
+
+
+                    estado = item.resultado;
+
+
+                }
+
+
+            }
+
+
+            alumnos.push(Number(item.alumno_id));
+            notas.push(nota);
+            estados.push(estado);
+            observaciones.push(item.observaciones || null);
+            ausentes.push(ausente);
+
+
+        }
+
+
+        // El JOIN contra cursadas_teoria hace de guardia:
+        // un alumno que no sea de este nivel y de este
+        // instructor no encuentra pareja y no se guarda
+
+        const guardado = await pool.query(
+            `
+            INSERT INTO evaluacion_resultados
+                (evaluacion_id, alumno_id, nota, resultado,
+                 observaciones, ausente, cargado_por)
+
+            SELECT
+                $1,
+                c.alumno_id,
+                d.nota,
+                d.resultado,
+                d.observaciones,
+                d.ausente,
+                $7
+
+            FROM unnest(
+                $2::int[],
+                $3::numeric[],
+                $4::text[],
+                $5::text[],
+                $6::boolean[]
+            ) AS d(alumno_id, nota, resultado, observaciones, ausente)
+
+            JOIN cursadas_teoria c
+                ON  c.alumno_id     = d.alumno_id
+                AND c.nivel_id      = $8
+                AND c.instructor_id = $9
+                AND c.estado        = 'Activo'
+
+            ON CONFLICT (evaluacion_id, alumno_id)
+            DO UPDATE SET
+                nota          = EXCLUDED.nota,
+                resultado     = EXCLUDED.resultado,
+                observaciones = EXCLUDED.observaciones,
+                ausente       = EXCLUDED.ausente,
+                cargado_por   = EXCLUDED.cargado_por,
+                actualizado   = CURRENT_TIMESTAMP
+            `,
+            [
+                id,
+                alumnos,
+                notas,
+                estados,
+                observaciones,
+                ausentes,
+                req.usuario.id,
+                evaluacion.nivel_id,
+                req.instructorId
+            ]
+        );
+
+
+        res.json({
+            mensaje:"Resultados guardados",
+            guardados: guardado.rowCount,
+            ignorados: resultados.length - guardado.rowCount
+        });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error guardando los resultados"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// QUIEN PUEDE RENDIR EL EXAMEN
+// =====================================
+
+// La regla no se guarda en ningun lado: se calcula. Un
+// alumno esta habilitado si no le queda ninguna evaluacion
+// obligatoria sin aprobar, contando teoria y solfeo.
+
+router.get("/niveles/:nivelId/habilitacion", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+        const cuatrimestre = Number(req.query.cuatrimestre) || 1;
+
+
+        if(!await esMiNivel(req.instructorId, nivelId)){
+
+
+            return res.status(403).json({
+                error:"Ese nivel no está a tu cargo"
+            });
+
+
+        }
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                a.id        AS alumno_id,
+                a.apellido,
+                a.nombre,
+
+                COUNT(e.id) AS obligatorias,
+
+                COUNT(e.id) FILTER (
+                    WHERE r.resultado = 'Aprobado'
+                ) AS aprobadas,
+
+                STRING_AGG(
+                    e.titulo,
+                    ' · '
+                    ORDER BY e.id
+                ) FILTER (
+                    WHERE r.resultado IS DISTINCT FROM 'Aprobado'
+                ) AS adeuda
+
+            FROM cursadas_teoria c
+
+            JOIN alumnos a
+                ON a.id = c.alumno_id
+
+            LEFT JOIN evaluaciones e
+                ON  e.nivel_id      = c.nivel_id
+                AND e.instructor_id = c.instructor_id
+                AND e.anio          = c.anio
+                AND e.cuatrimestre  = $3
+                AND e.obligatoria   = TRUE
+                AND e.tipo         <> 'Examen'
+
+            LEFT JOIN evaluacion_resultados r
+                ON  r.evaluacion_id = e.id
+                AND r.alumno_id     = a.id
+
+            WHERE c.nivel_id      = $1
+            AND   c.instructor_id = $2
+            AND   c.estado        = 'Activo'
+
+            GROUP BY a.id, a.apellido, a.nombre
+
+            ORDER BY a.apellido, a.nombre
+            `,
+            [nivelId, req.instructorId, cuatrimestre]
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error calculando la habilitación"
+        });
+
+
+    }
+
+
+});
+
+
+
 module.exports = router;

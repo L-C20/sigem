@@ -81,6 +81,26 @@
         </button>
 
 
+        <div class="solapas" role="tablist">
+
+          <button type="button" class="solapa activa" data-panel="panelAsistencia">
+            Asistencia
+          </button>
+
+          <button type="button" class="solapa" data-panel="panelEvaluaciones">
+            Evaluaciones
+          </button>
+
+          <button type="button" class="solapa" data-panel="panelHabilitacion">
+            Habilitación al examen
+          </button>
+
+        </div>
+
+
+        <div id="panelAsistencia">
+
+
         <!-- Tomar asistencia -->
 
         <section class="card panel-suave">
@@ -141,6 +161,193 @@
           </div>
 
         </section>
+
+        </div>
+
+
+        <!-- ===============================
+             EVALUACIONES
+             =============================== -->
+
+        <div id="panelEvaluaciones" class="hidden">
+
+          <section class="card panel-suave">
+
+            <div class="section-heading">
+              <div>
+                <h2>Nueva evaluación</h2>
+                <p>Se crea para todo el curso y después le ponés la nota a cada alumno.</p>
+              </div>
+            </div>
+
+            <form id="formEvaluacion" class="form-grid" autocomplete="off">
+
+              <label class="field">
+                <span>Título</span>
+                <input id="evTitulo" required placeholder="TP 1 - Figuras y silencios">
+              </label>
+
+              <label class="field">
+                <span>Área</span>
+                <select id="evArea">
+                  <option value="Teoría">Teoría (nota del 1 al 10)</option>
+                  <option value="Solfeo">Solfeo (aprobado / desaprobado)</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Tipo</span>
+                <select id="evTipo">
+                  <option value="Trabajo práctico">Trabajo práctico</option>
+                  <option value="Lección">Lección</option>
+                  <option value="Examen">Examen</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Cuatrimestre</span>
+                <select id="evCuatrimestre">
+                  <option value="1">1er cuatrimestre</option>
+                  <option value="2">2do cuatrimestre</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Fecha <small class="texto-tenue">(opcional)</small></span>
+                <input type="date" id="evFecha">
+              </label>
+
+              <label class="field">
+                <span>¿Habilita al examen?</span>
+                <select id="evObligatoria">
+                  <option value="si">Sí, hay que aprobarla</option>
+                  <option value="no">No, es suelta</option>
+                </select>
+              </label>
+
+              <button type="submit" class="button">Crear evaluación</button>
+
+            </form>
+
+          </section>
+
+
+          <section class="card" id="listadoEvaluaciones">
+
+            <div class="section-heading table-heading">
+              <div>
+                <h2>Evaluaciones del curso</h2>
+                <p class="texto-tenue">En Teoría se aprueba desde 7.</p>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Evaluación</th>
+                    <th>Área / Tipo</th>
+                    <th>Cuatr.</th>
+                    <th>Corregidos</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaEvaluaciones">
+                  <tr><td colspan="5" class="empty-state">Sin evaluaciones todavía.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </section>
+
+
+          <!-- Cargar las notas de una evaluacion -->
+
+          <section class="card hidden" id="panelNotas">
+
+            <div class="section-heading table-heading">
+              <div>
+                <h2 id="tituloNotas"></h2>
+                <p id="subtituloNotas" class="texto-tenue"></p>
+              </div>
+              <button type="button" class="button secondary" id="volverEvaluaciones">
+                ← Volver a la lista
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Alumno</th>
+                    <th id="columnaNota">Nota</th>
+                    <th>Ausente</th>
+                    <th>Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaNotas"></tbody>
+              </table>
+            </div>
+
+            <div class="modal-acciones">
+              <button type="button" class="button" id="btnGuardarNotas">
+                Guardar resultados
+              </button>
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- ===============================
+             HABILITACION
+             =============================== -->
+
+        <div id="panelHabilitacion" class="hidden">
+
+          <section class="card panel-suave">
+
+            <div class="form-grid">
+
+              <label class="field">
+                <span>Cuatrimestre</span>
+                <select id="habCuatrimestre">
+                  <option value="1">1er cuatrimestre</option>
+                  <option value="2">2do cuatrimestre</option>
+                </select>
+              </label>
+
+            </div>
+
+          </section>
+
+          <section class="card">
+
+            <div class="section-heading table-heading">
+              <div>
+                <h2>¿Quién puede rendir?</h2>
+                <p id="resumenHabilitacion" class="texto-tenue"></p>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Alumno</th>
+                    <th>Aprobadas</th>
+                    <th>Estado</th>
+                    <th>Adeuda</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaHabilitacion"></tbody>
+              </table>
+            </div>
+
+          </section>
+
+        </div>
 
       </section>
 
