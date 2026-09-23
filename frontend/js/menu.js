@@ -100,6 +100,16 @@ menuToggle.addEventListener(
     }
 
 
+    // La vista academica es de quien gobierna la escuela
+    if(yo.rol === "superadmin" || yo.rol === "admin"){
+
+
+        revelar("solo-admin");
+
+
+    }
+
+
     // Quien da clases ve su espacio, sea cual sea su rol.
     // Asi Cesia, que administra y ademas ensena, tiene las
     // dos cosas en el mismo menu.

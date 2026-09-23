@@ -2277,3 +2277,9 @@ span:first-child {
     width: 100%;
     min-height: 34px;
 }
+
+
+/* Secciones reservadas a superadmin y admin */
+.solo-admin{
+    display: none;
+}

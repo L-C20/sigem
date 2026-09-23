@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGEM | Académico</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/notificaciones.css">
+</head>
+<body>
+
+  <div id="notificacionSIGEM" class="notificacion">
+    <span id="notificacionIcono"></span>
+    <span id="notificacionMensaje"></span>
+  </div>
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">SIGEM Dorrego</div>
+        <p>Enseñanza de música</p>
+      </div>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a class="nav-link solo-instructor" href="mi-espacio.html">Mi espacio</a>
+        <a class="nav-link" href="index.html">Inicio</a>
+        <a class="nav-link" href="alumnos.html">Alumnos</a>
+        <a class="nav-link" href="instrumentos.html">Instrumentos</a>
+        <a class="nav-link" href="teoria.html">Teoría y Solfeo</a>
+        <a class="nav-link" href="instruccion-ministerial.html">Instrucción Ministerial</a>
+        <a class="nav-link" href="instructores.html">Instructores</a>
+        <a class="nav-link" href="asistencias.html">Asistencias</a>
+        <a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
+        <a class="nav-link active solo-admin" href="academico.html">Académico</a>
+        <a class="nav-link solo-superadmin" href="usuarios.html">Usuarios</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Académico</span>
+          <h1>Habilitación al examen</h1>
+          <p class="texto-tenue">
+            Un alumno rinde si aprobó todas las evaluaciones obligatorias
+            de Teoría y Solfeo. La excepción la autorizás vos, con motivo.
+          </p>
+        </div>
+      </header>
+
+
+      <section class="card panel-suave">
+
+        <div class="form-grid">
+
+          <label class="field">
+            <span>Nivel</span>
+            <select id="filtroNivel">
+              <option value="">Elegí un nivel…</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Cuatrimestre</span>
+            <select id="filtroCuatrimestre">
+              <option value="1">1er cuatrimestre</option>
+              <option value="2">2do cuatrimestre</option>
+            </select>
+          </label>
+
+        </div>
+
+      </section>
+
+
+      <section class="card">
+
+        <div class="section-heading table-heading">
+          <div>
+            <h2 id="tituloNivel">Alumnos</h2>
+            <p id="resumen" class="texto-tenue"></p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Aprobadas</th>
+                <th>Estado</th>
+                <th>Adeuda</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaAlumnos">
+              <tr><td colspan="5" class="empty-state">Elegí un nivel para empezar.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+
+      <section class="card">
+
+        <div class="section-heading table-heading">
+          <div>
+            <h2>Excepciones autorizadas</h2>
+            <p class="texto-tenue">
+              Queda registrado quién autorizó cada una y por qué.
+            </p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Nivel</th>
+                <th>Período</th>
+                <th>Motivo</th>
+                <th>Autorizó</th>
+              </tr>
+            </thead>
+            <tbody id="tablaExcepciones">
+              <tr><td colspan="5" class="empty-state">Sin excepciones registradas.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ===============================
+       MODAL DE EXCEPCION
+       =============================== -->
+
+  <div id="modalExcepcion" class="modal-overlay hidden">
+
+    <div class="modal-confirmacion">
+
+      <div class="modal-icono">!</div>
+
+      <h2>Autorizar excepción</h2>
+
+      <p>
+        <strong id="nombreExcepcion"></strong> va a poder rendir
+        aunque adeude evaluaciones.
+      </p>
+
+      <label class="field">
+        <span>Motivo</span>
+        <input id="motivoExcepcion" type="text"
+               placeholder="Por qué se autoriza">
+      </label>
+
+      <p class="modal-advertencia">
+        Queda registrado con tu nombre y la fecha.
+      </p>
+
+      <div class="modal-acciones">
+
+        <button type="button" class="button secondary" id="btnCancelarExcepcion">
+          Cancelar
+        </button>
+
+        <button type="button" class="button" id="btnConfirmarExcepcion">
+          Autorizar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/notificaciones.js"></script>
+  <script src="js/academico.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
+</body>
+</html>

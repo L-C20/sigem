@@ -568,6 +568,21 @@ function cargarEventos(){
 
 
     document
+        .getElementById("cierrePeriodo")
+        .addEventListener("change", cargarCierre);
+
+
+    document
+        .getElementById("btnGuardarCierre")
+        .addEventListener("click", guardarCierre);
+
+
+    document
+        .getElementById("btnUsarPromedios")
+        .addEventListener("click", usarPromedios);
+
+
+    document
         .getElementById("btnTodosPresentes")
         .addEventListener("click", ()=>{
 
@@ -660,7 +675,8 @@ function conectarSolapas(){
                 solapa.classList.add("activa");
 
 
-                ["panelAsistencia","panelEvaluaciones","panelHabilitacion"]
+                ["panelAsistencia","panelEvaluaciones",
+                 "panelHabilitacion","panelCierre"]
                     .forEach(id=>{
 
 
@@ -687,6 +703,15 @@ function conectarSolapas(){
 
 
                     cargarHabilitacion();
+
+
+                }
+
+
+                if(solapa.dataset.panel === "panelCierre"){
+
+
+                    cargarCierre();
 
 
                 }
@@ -1353,8 +1378,12 @@ async function cargarHabilitacion(){
 function mostrarHabilitacion(lista){
 
 
+    const puedeRendir = alumno=>
+    !alumno.adeuda || !!alumno.excepcion_motivo;
+
+
     const habilitados =
-    lista.filter(a=>!a.adeuda).length;
+    lista.filter(puedeRendir).length;
 
 
     document.getElementById("resumenHabilitacion").textContent =
@@ -1365,7 +1394,19 @@ function mostrarHabilitacion(lista){
     lista.map(alumno=>{
 
 
-        const puede = !alumno.adeuda;
+        const porExcepcion =
+        !!alumno.adeuda && !!alumno.excepcion_motivo;
+
+
+        const puede = puedeRendir(alumno);
+
+
+        const etiqueta =
+        porExcepcion
+            ? "Habilitado por excepción"
+            : puede
+                ? "Habilitado"
+                : "No habilitado";
 
 
         return `
@@ -1383,12 +1424,22 @@ function mostrarHabilitacion(lista){
 
             <td>
                 <span class="estado ${puede ? "estado-activo" : "estado-inactivo"}">
-                    ${puede ? "Habilitado" : "No habilitado"}
+                    ${etiqueta}
                 </span>
+                ${porExcepcion
+                    ? `<br><small class="texto-tenue">
+                           autorizó ${escaparHTML(alumno.excepcion_por || "")}
+                       </small>`
+                    : ""}
             </td>
 
             <td>
                 ${escaparHTML(alumno.adeuda || "—")}
+                ${alumno.excepcion_motivo
+                    ? `<br><small class="texto-tenue">
+                           motivo: ${escaparHTML(alumno.excepcion_motivo)}
+                       </small>`
+                    : ""}
             </td>
 
         </tr>
@@ -1425,6 +1476,305 @@ function formatearFecha(valor){
 
 
     return partes[2] + "/" + partes[1] + "/" + partes[0];
+
+
+}
+
+
+
+
+// ===============================
+// CIERRE DE PERIODO
+// ===============================
+
+let listaCierre = [];
+
+
+async function cargarCierre(){
+
+
+    if(!nivelActual){
+
+
+        return;
+
+
+    }
+
+
+    const periodo =
+    document.getElementById("cierrePeriodo").value;
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/niveles/${nivelActual.nivel_id}/cierres`
+            + `?periodo=${encodeURIComponent(periodo)}`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        // Si cambiaron de periodo mientras viajaba, esta
+        // respuesta llega tarde y no sirve
+        if(document.getElementById("cierrePeriodo").value !== periodo){
+
+
+            return;
+
+
+        }
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudo cargar el cierre",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        listaCierre = datos;
+
+
+        mostrarCierre();
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error cargando el cierre",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarCierre(){
+
+
+    const cerrados =
+    listaCierre.filter(a=>a.cierre_id).length;
+
+
+    document.getElementById("resumenCierre").textContent =
+    cerrados + " de " + listaCierre.length + " ya tienen cierre guardado";
+
+
+    document.getElementById("tablaCierre").innerHTML =
+    listaCierre.map(alumno=>`
+
+        <tr data-alumno="${alumno.alumno_id}">
+
+            <td>
+                ${escaparHTML(alumno.apellido)},
+                ${escaparHTML(alumno.nombre)}
+                ${alumno.cerrado_el
+                    ? `<br><small class="texto-tenue">cerrado el ${formatearFecha(alumno.cerrado_el)}</small>`
+                    : ""}
+            </td>
+
+            <td class="promedio-sugerido" data-promedio="${alumno.promedio ?? ""}">
+                ${alumno.promedio ?? "—"}
+                <br><small class="texto-tenue">
+                    ${alumno.notas_contadas}
+                    ${Number(alumno.notas_contadas) === 1 ? "nota" : "notas"}
+                </small>
+            </td>
+
+            <td>
+                <input type="number" class="campo-tabla campo-final"
+                    min="1" max="10" step="0.25"
+                    value="${alumno.nota_final ?? ""}">
+            </td>
+
+            <td>
+                <select class="campo-tabla campo-condicion">
+                    <option value="Promocionado"
+                        ${alumno.condicion === "Promocionado" ? "selected" : ""}>
+                        Promocionado
+                    </option>
+                    <option value="Regular"
+                        ${alumno.condicion === "Regular" || !alumno.condicion ? "selected" : ""}>
+                        Regular
+                    </option>
+                    <option value="Libre"
+                        ${alumno.condicion === "Libre" ? "selected" : ""}>
+                        Libre
+                    </option>
+                </select>
+            </td>
+
+            <td>
+                <input type="text" class="campo-ancho campo-obs-cierre"
+                    value="${escaparHTML(alumno.observaciones || "")}">
+            </td>
+
+        </tr>
+
+    `).join("");
+
+
+}
+
+
+
+
+// Copia el promedio calculado a la nota final, sin pisar
+// lo que el instructor ya haya escrito a mano
+
+function usarPromedios(){
+
+
+    let copiados = 0;
+
+
+    document.querySelectorAll("#tablaCierre tr")
+        .forEach(fila=>{
+
+
+            const sugerido =
+            fila.querySelector(".promedio-sugerido").dataset.promedio;
+
+
+            const campo =
+            fila.querySelector(".campo-final");
+
+
+            if(sugerido && campo.value === ""){
+
+
+                campo.value = sugerido;
+
+                copiados++;
+
+
+            }
+
+
+        });
+
+
+    mostrarNotificacion(
+        copiados === 0
+            ? "No había promedios para copiar"
+            : copiados === 1
+                ? "Se copió 1 promedio"
+                : "Se copiaron " + copiados + " promedios",
+        copiados === 0 ? "error" : "exito"
+    );
+
+
+}
+
+
+
+
+async function guardarCierre(){
+
+
+    const periodo =
+    document.getElementById("cierrePeriodo").value;
+
+
+    const cierres =
+    [...document.querySelectorAll("#tablaCierre tr")]
+        .map(fila=>({
+
+            alumno_id:
+                Number(fila.dataset.alumno),
+
+            nota_final:
+                fila.querySelector(".campo-final").value || null,
+
+            condicion:
+                fila.querySelector(".campo-condicion").value,
+
+            observaciones:
+                fila.querySelector(".campo-obs-cierre").value.trim() || null
+
+        }));
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/mi-espacio/niveles/${nivelActual.nivel_id}/cierres`,
+            {
+                method:"POST",
+                headers:{ "Content-Type":"application/json" },
+                body: JSON.stringify({
+                    periodo,
+                    anio: nivelActual.anio,
+                    cierres
+                })
+            }
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudo guardar el cierre",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        mostrarNotificacion(
+            "Cierre guardado (" + datos.guardados + ")",
+            "exito"
+        );
+
+
+        await cargarCierre();
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error guardando el cierre",
+            "error"
+        );
+
+
+    }
 
 
 }

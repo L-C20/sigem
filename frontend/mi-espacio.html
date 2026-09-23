@@ -40,6 +40,7 @@
         <a class="nav-link" href="instructores.html">Instructores</a>
         <a class="nav-link" href="asistencias.html">Asistencias</a>
         <a class="nav-link" href="registro-asistencias.html">Registro de asistencias</a>
+        <a class="nav-link solo-admin" href="academico.html">Académico</a>
         <a class="nav-link solo-superadmin" href="usuarios.html">Usuarios</a>
       </nav>
 
@@ -93,6 +94,10 @@
 
           <button type="button" class="solapa" data-panel="panelHabilitacion">
             Habilitación al examen
+          </button>
+
+          <button type="button" class="solapa" data-panel="panelCierre">
+            Cierre de período
           </button>
 
         </div>
@@ -343,6 +348,75 @@
                 </thead>
                 <tbody id="tablaHabilitacion"></tbody>
               </table>
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- ===============================
+             CIERRE DE PERIODO
+             =============================== -->
+
+        <div id="panelCierre" class="hidden">
+
+          <section class="card panel-suave">
+
+            <div class="section-heading">
+              <div>
+                <h2>Cierre de período</h2>
+                <p>El promedio lo calcula el sistema con las notas de Teoría. La nota final y la condición las decidís vos.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+
+              <label class="field">
+                <span>Período</span>
+                <select id="cierrePeriodo">
+                  <option value="1er cuatrimestre">1er cuatrimestre</option>
+                  <option value="2do cuatrimestre">2do cuatrimestre</option>
+                  <option value="Anual">Anual</option>
+                </select>
+              </label>
+
+              <button type="button" class="button secondary" id="btnUsarPromedios">
+                Usar los promedios sugeridos
+              </button>
+
+            </div>
+
+          </section>
+
+          <section class="card">
+
+            <div class="section-heading table-heading">
+              <div>
+                <h2>Notas finales</h2>
+                <p id="resumenCierre" class="texto-tenue"></p>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Alumno</th>
+                    <th>Promedio</th>
+                    <th>Nota final</th>
+                    <th>Condición</th>
+                    <th>Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaCierre"></tbody>
+              </table>
+            </div>
+
+            <div class="modal-acciones">
+              <button type="button" class="button" id="btnGuardarCierre">
+                Guardar cierre
+              </button>
             </div>
 
           </section>

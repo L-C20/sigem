@@ -1224,12 +1224,25 @@ router.get("/niveles/:nivelId/habilitacion", async(req,res)=>{
                     ORDER BY e.id
                 ) FILTER (
                     WHERE r.resultado IS DISTINCT FROM 'Aprobado'
-                ) AS adeuda
+                ) AS adeuda,
+
+                MAX(x.motivo)        AS excepcion_motivo,
+                MAX(u.apellido)      AS excepcion_por,
+                MAX(x.autorizado_el) AS excepcion_fecha
 
             FROM cursadas_teoria c
 
             JOIN alumnos a
                 ON a.id = c.alumno_id
+
+            LEFT JOIN excepciones_examen x
+                ON  x.alumno_id    = a.id
+                AND x.nivel_id     = c.nivel_id
+                AND x.anio         = c.anio
+                AND x.cuatrimestre = $3
+
+            LEFT JOIN usuarios u
+                ON u.id = x.autorizado_por
 
             LEFT JOIN evaluaciones e
                 ON  e.nivel_id      = c.nivel_id
@@ -1267,6 +1280,361 @@ router.get("/niveles/:nivelId/habilitacion", async(req,res)=>{
 
         res.status(500).json({
             error:"Error calculando la habilitación"
+        });
+
+
+    }
+
+
+});
+
+
+
+// =====================================
+// CIERRES DE PERIODO
+// =====================================
+
+// El sistema calcula el promedio, que es un hecho, y
+// sugiere una condicion. Quien firma es la persona: nada
+// queda cerrado hasta que alguien lo guarda.
+
+const PERIODOS = [
+    "1er cuatrimestre",
+    "2do cuatrimestre",
+    "Anual"
+];
+
+
+const CONDICIONES = [
+    "Promocionado",
+    "Regular",
+    "Libre"
+];
+
+
+// A que cuatrimestres mira cada periodo
+
+function cuatrimestresDe(periodo){
+
+
+    if(periodo === "1er cuatrimestre"){
+
+
+        return [1];
+
+
+    }
+
+
+    if(periodo === "2do cuatrimestre"){
+
+
+        return [2];
+
+
+    }
+
+
+    return [1, 2];
+
+
+}
+
+
+
+
+router.get("/niveles/:nivelId/cierres", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+        const periodo = req.query.periodo || "1er cuatrimestre";
+
+
+        if(!PERIODOS.includes(periodo)){
+
+
+            return res.status(400).json({
+                error:"Período no válido"
+            });
+
+
+        }
+
+
+        if(!await esMiNivel(req.instructorId, nivelId)){
+
+
+            return res.status(403).json({
+                error:"Ese nivel no está a tu cargo"
+            });
+
+
+        }
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                a.id        AS alumno_id,
+                a.apellido,
+                a.nombre,
+                c.anio,
+
+                -- El promedio sale solo de las notas de
+                -- Teoria: solfeo no lleva nota
+                ROUND(AVG(r.nota), 2) AS promedio,
+
+                COUNT(r.nota) AS notas_contadas,
+
+                -- Lo que ya este guardado, si es que hay
+                ci.id            AS cierre_id,
+                ci.nota_final,
+                ci.condicion,
+                ci.observaciones,
+                ci.cerrado_el
+
+            FROM cursadas_teoria c
+
+            JOIN alumnos a
+                ON a.id = c.alumno_id
+
+            LEFT JOIN evaluaciones e
+                ON  e.nivel_id      = c.nivel_id
+                AND e.instructor_id = c.instructor_id
+                AND e.anio          = c.anio
+                AND e.area          = 'Teoría'
+                AND e.cuatrimestre  = ANY($3::int[])
+
+            LEFT JOIN evaluacion_resultados r
+                ON  r.evaluacion_id = e.id
+                AND r.alumno_id     = a.id
+                AND r.ausente       = FALSE
+
+            LEFT JOIN cierres ci
+                ON  ci.alumno_id = a.id
+                AND ci.nivel_id  = c.nivel_id
+                AND ci.anio      = c.anio
+                AND ci.periodo   = $4
+
+            WHERE c.nivel_id      = $1
+            AND   c.instructor_id = $2
+            AND   c.estado        = 'Activo'
+
+            GROUP BY a.id, a.apellido, a.nombre, c.anio,
+                     ci.id, ci.nota_final, ci.condicion,
+                     ci.observaciones, ci.cerrado_el
+
+            ORDER BY a.apellido, a.nombre
+            `,
+            [
+                nivelId,
+                req.instructorId,
+                cuatrimestresDe(periodo),
+                periodo
+            ]
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error calculando el cierre"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// GUARDAR EL CIERRE
+// =====================================
+
+router.post("/niveles/:nivelId/cierres", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+        const { periodo, anio, cierres } = req.body;
+
+
+        if(!PERIODOS.includes(periodo)){
+
+
+            return res.status(400).json({
+                error:"Período no válido"
+            });
+
+
+        }
+
+
+        if(!Array.isArray(cierres)){
+
+
+            return res.status(400).json({
+                error:"Faltan los cierres"
+            });
+
+
+        }
+
+
+        if(!await esMiNivel(req.instructorId, nivelId)){
+
+
+            return res.status(403).json({
+                error:"Ese nivel no está a tu cargo"
+            });
+
+
+        }
+
+
+        const alumnos = [];
+        const notas = [];
+        const condiciones = [];
+        const observaciones = [];
+
+
+        for(const item of cierres){
+
+
+            if(!CONDICIONES.includes(item.condicion)){
+
+
+                return res.status(400).json({
+                    error:"Condición no válida: " + item.condicion
+                });
+
+
+            }
+
+
+            let nota = null;
+
+
+            if(item.nota_final !== null
+               && item.nota_final !== undefined
+               && item.nota_final !== ""){
+
+
+                nota = Number(item.nota_final);
+
+
+                if(Number.isNaN(nota) || nota < 1 || nota > 10){
+
+
+                    return res.status(400).json({
+                        error:"Las notas van del 1 al 10"
+                    });
+
+
+                }
+
+
+            }
+
+
+            alumnos.push(Number(item.alumno_id));
+            notas.push(nota);
+            condiciones.push(item.condicion);
+            observaciones.push(item.observaciones || null);
+
+
+        }
+
+
+        // Igual que en el resto: el JOIN contra
+        // cursadas_teoria es el que deja afuera a
+        // cualquier alumno que no sea de este curso
+
+        const guardado = await pool.query(
+            `
+            INSERT INTO cierres
+                (alumno_id, nivel_id, anio, periodo,
+                 nota_final, condicion, observaciones, cerrado_por)
+
+            SELECT
+                c.alumno_id,
+                c.nivel_id,
+                c.anio,
+                $5,
+                d.nota_final,
+                d.condicion,
+                d.observaciones,
+                $6
+
+            FROM unnest(
+                $1::int[],
+                $2::numeric[],
+                $3::text[],
+                $4::text[]
+            ) AS d(alumno_id, nota_final, condicion, observaciones)
+
+            JOIN cursadas_teoria c
+                ON  c.alumno_id     = d.alumno_id
+                AND c.nivel_id      = $7
+                AND c.instructor_id = $8
+                AND c.estado        = 'Activo'
+
+            ON CONFLICT (alumno_id, nivel_id, anio, periodo)
+            DO UPDATE SET
+                nota_final    = EXCLUDED.nota_final,
+                condicion     = EXCLUDED.condicion,
+                observaciones = EXCLUDED.observaciones,
+                cerrado_por   = EXCLUDED.cerrado_por,
+                cerrado_el    = CURRENT_TIMESTAMP
+            `,
+            [
+                alumnos,
+                notas,
+                condiciones,
+                observaciones,
+                periodo,
+                req.usuario.id,
+                nivelId,
+                req.instructorId
+            ]
+        );
+
+
+        res.json({
+            mensaje:"Cierre guardado",
+            guardados: guardado.rowCount,
+            ignorados: cierres.length - guardado.rowCount
+        });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error guardando el cierre"
         });
 
 

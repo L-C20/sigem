@@ -44,6 +44,7 @@ require("./routes/instructores-listado");
 const inicioRoutes = require("./routes/inicio");
 const usuariosRoutes = require("./routes/usuarios");
 const miEspacioRoutes = require("./routes/miEspacio");
+const academicoRoutes = require("./routes/academico");
 
 const {
     verificarToken,
@@ -67,6 +68,10 @@ app.use("/usuarios", usuariosRoutes);
 // vinculado, y eso lo verifica el propio archivo. Asi Cesia,
 // que es admin y ademas da clases, entra igual.
 app.use("/mi-espacio", miEspacioRoutes);
+
+
+// Vista academica de toda la escuela (superadmin y admin)
+app.use("/academico", academicoRoutes);
 
 
 // Todo lo demas es gestion de la escuela. El instructor no
