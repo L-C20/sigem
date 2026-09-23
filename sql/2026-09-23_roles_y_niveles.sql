@@ -39,3 +39,17 @@ SET rol = 'admin', instructor_id = 26
 WHERE email = 'profecesiamusica@gmail.com';
 
 COMMIT;
+
+
+-- Administradores de gestion y secretaria
+BEGIN;
+
+-- Administradores de gestion (no dan clases)
+UPDATE usuarios SET rol = 'admin'
+WHERE id IN (11, 13);
+
+-- Secretaria: carga y edita alumnos, no ve notas
+UPDATE usuarios SET rol = 'secretaria'
+WHERE id = 12;
+
+COMMIT;
