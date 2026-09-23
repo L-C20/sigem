@@ -220,7 +220,13 @@ function filaUsuario(usuario){
 
 
         <td>
-            ${escaparHTML(usuario.email)}
+            ${escaparHTML(usuario.email || "")}
+            ${usuario.username
+                ? `<br><small class="texto-tenue">usuario: ${escaparHTML(usuario.username)}</small>`
+                : ""}
+            ${!usuario.email && !usuario.username
+                ? `<span class="texto-tenue">sin datos de ingreso</span>`
+                : ""}
         </td>
 
 
@@ -400,6 +406,7 @@ async function crearUsuario(evento){
         nombre:    document.getElementById("nuevoNombre").value.trim(),
         apellido:  document.getElementById("nuevoApellido").value.trim(),
         email:     document.getElementById("nuevoEmail").value.trim(),
+        username:  document.getElementById("nuevoUsuario").value.trim(),
         password:  document.getElementById("nuevoPassword").value,
         rol:       document.getElementById("nuevoRol").value,
         instructor_id:

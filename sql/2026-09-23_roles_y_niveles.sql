@@ -53,3 +53,9 @@ UPDATE usuarios SET rol = 'secretaria'
 WHERE id = 12;
 
 COMMIT;
+
+
+-- El correo pasa a ser opcional: hay cuentas que entran
+-- por nombre de usuario. username ya era UNIQUE y nullable.
+ALTER TABLE usuarios
+    ALTER COLUMN email DROP NOT NULL;

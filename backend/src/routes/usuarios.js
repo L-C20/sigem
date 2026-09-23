@@ -119,8 +119,20 @@ router.post("/", async(req,res)=>{
         } = req.body;
 
 
+        // Vacio y nulo son lo mismo aca: si guardaramos ""
+        // el segundo usuario sin correo chocaria contra el
+        // indice unico
+
+        const correo =
+        email && String(email).trim() ? String(email).trim() : null;
+
+
+        const usuario =
+        username && String(username).trim() ? String(username).trim() : null;
+
+
         const faltan =
-        !nombre || !apellido || !email || !password || !rol;
+        !nombre || !apellido || !password || !rol;
 
 
         if(faltan){
@@ -128,6 +140,21 @@ router.post("/", async(req,res)=>{
 
             return res.status(400).json({
                 error:"Faltan datos obligatorios"
+            });
+
+
+        }
+
+
+        // El login busca por username, asi que sin eso la
+        // cuenta no podria entrar nunca. El correo, en
+        // cambio, es opcional.
+
+        if(!usuario){
+
+
+            return res.status(400).json({
+                error:"El nombre de usuario es necesario para poder ingresar"
             });
 
 
@@ -156,23 +183,44 @@ router.post("/", async(req,res)=>{
         }
 
 
-        // El correo no se puede repetir
+        // Ni el correo ni el nombre de usuario se repiten
 
         const repetido = await pool.query(
             `
-            SELECT id
+            SELECT
+
+                COUNT(*) FILTER (
+                    WHERE $1::text IS NOT NULL
+                    AND LOWER(email) = LOWER($1)
+                ) AS correo,
+
+                COUNT(*) FILTER (
+                    WHERE $2::text IS NOT NULL
+                    AND LOWER(username) = LOWER($2)
+                ) AS usuario
+
             FROM usuarios
-            WHERE LOWER(email) = LOWER($1)
             `,
-            [email]
+            [correo, usuario]
         );
 
 
-        if(repetido.rows.length > 0){
+        if(Number(repetido.rows[0].correo) > 0){
 
 
             return res.status(409).json({
                 error:"Ya existe un usuario con ese correo"
+            });
+
+
+        }
+
+
+        if(Number(repetido.rows[0].usuario) > 0){
+
+
+            return res.status(409).json({
+                error:"Ya existe ese nombre de usuario"
             });
 
 
@@ -193,13 +241,14 @@ router.post("/", async(req,res)=>{
                 ($1, $2, $3, $4, $5, $6, 'Activo', $7)
 
             RETURNING
-                id, nombre, apellido, email, rol, estado, instructor_id
+                id, nombre, apellido, email, username,
+                rol, estado, instructor_id
             `,
             [
                 nombre,
                 apellido,
-                email,
-                username || null,
+                correo,
+                usuario,
                 clave,
                 rol,
                 instructor_id || null

@@ -62,7 +62,7 @@
         <div class="section-heading">
           <div>
             <h2>Nuevo usuario</h2>
-            <p>Las cuentas las creás vos y le pasás la contraseña a la persona.</p>
+            <p>Las cuentas las creás vos y le pasás la contraseña a la persona. Se ingresa con el nombre de usuario; el correo es opcional.</p>
           </div>
         </div>
 
@@ -79,8 +79,13 @@
           </label>
 
           <label class="field">
-            <span>Correo</span>
-            <input id="nuevoEmail" type="email" required>
+            <span>Correo <small class="texto-tenue">(opcional)</small></span>
+            <input id="nuevoEmail" type="email">
+          </label>
+
+          <label class="field">
+            <span>Usuario <small class="texto-tenue">(con esto ingresa)</small></span>
+            <input id="nuevoUsuario" autocomplete="off" required>
           </label>
 
           <label class="field">
@@ -134,7 +139,7 @@
             <thead>
               <tr>
                 <th>Persona</th>
-                <th>Correo</th>
+                <th>Ingreso</th>
                 <th>Rol</th>
                 <th>Instructor vinculado</th>
                 <th>Estado</th>
