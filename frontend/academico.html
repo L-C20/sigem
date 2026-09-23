@@ -31,10 +31,9 @@
       <header class="page-header">
         <div>
           <span class="eyebrow">Académico</span>
-          <h1>Habilitación al examen</h1>
+          <h1>Seguimiento de los cursos</h1>
           <p class="texto-tenue">
-            Un alumno rinde si aprobó todas las evaluaciones obligatorias
-            de Teoría y Solfeo. La excepción la autorizás vos, con motivo.
+            Notas, habilitación al examen y cierres de todos los niveles.
           </p>
         </div>
       </header>
@@ -51,77 +50,235 @@
             </select>
           </label>
 
-          <label class="field">
-            <span>Cuatrimestre</span>
-            <select id="filtroCuatrimestre">
-              <option value="1">1er cuatrimestre</option>
-              <option value="2">2do cuatrimestre</option>
-            </select>
-          </label>
-
         </div>
 
       </section>
 
 
-      <section class="card">
+      <div class="solapas" role="tablist">
 
-        <div class="section-heading table-heading">
-          <div>
-            <h2 id="tituloNivel">Alumnos</h2>
-            <p id="resumen" class="texto-tenue"></p>
+        <button type="button" class="solapa activa" data-panel="panelNotas">
+          Notas
+        </button>
+
+        <button type="button" class="solapa" data-panel="panelHabilitacion">
+          Habilitación al examen
+        </button>
+
+        <button type="button" class="solapa" data-panel="panelCierres">
+          Cierres
+        </button>
+
+      </div>
+
+
+      <!-- ===============================
+           NOTAS
+           =============================== -->
+
+      <div id="panelNotas">
+
+        <section class="card" id="listadoEvaluaciones">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2>Evaluaciones del nivel</h2>
+              <p class="texto-tenue">
+                Las notas las carga quien da la clase. Acá se ven, no se editan.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Alumno</th>
-                <th>Aprobadas</th>
-                <th>Estado</th>
-                <th>Adeuda</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tablaAlumnos">
-              <tr><td colspan="5" class="empty-state">Elegí un nivel para empezar.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </section>
-
-
-      <section class="card">
-
-        <div class="section-heading table-heading">
-          <div>
-            <h2>Excepciones autorizadas</h2>
-            <p class="texto-tenue">
-              Queda registrado quién autorizó cada una y por qué.
-            </p>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Evaluación</th>
+                  <th>Área / Tipo</th>
+                  <th>Cuatr.</th>
+                  <th>Corregidos</th>
+                  <th>Promedio</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tablaEvaluaciones">
+                <tr><td colspan="6" class="empty-state">Elegí un nivel para empezar.</td></tr>
+              </tbody>
+            </table>
           </div>
-        </div>
 
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Alumno</th>
-                <th>Nivel</th>
-                <th>Período</th>
-                <th>Motivo</th>
-                <th>Autorizó</th>
-              </tr>
-            </thead>
-            <tbody id="tablaExcepciones">
-              <tr><td colspan="5" class="empty-state">Sin excepciones registradas.</td></tr>
-            </tbody>
-          </table>
-        </div>
+        </section>
 
-      </section>
+
+        <section class="card hidden" id="detalleNotas">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2 id="tituloNotas"></h2>
+              <p id="subtituloNotas" class="texto-tenue"></p>
+            </div>
+            <button type="button" class="button secondary" id="volverEvaluaciones">
+              ← Volver a la lista
+            </button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th id="columnaNota">Nota</th>
+                  <th>Observaciones</th>
+                  <th>Cargó</th>
+                </tr>
+              </thead>
+              <tbody id="tablaNotas"></tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- ===============================
+           HABILITACION
+           =============================== -->
+
+      <div id="panelHabilitacion" class="hidden">
+
+        <section class="card panel-suave">
+
+          <div class="form-grid">
+
+            <label class="field">
+              <span>Cuatrimestre</span>
+              <select id="filtroCuatrimestre">
+                <option value="1">1er cuatrimestre</option>
+                <option value="2">2do cuatrimestre</option>
+              </select>
+            </label>
+
+          </div>
+
+        </section>
+
+        <section class="card">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2>¿Quién puede rendir?</h2>
+              <p id="resumen" class="texto-tenue">
+                Rinde quien aprobó todas las evaluaciones obligatorias.
+              </p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Aprobadas</th>
+                  <th>Estado</th>
+                  <th>Adeuda</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaAlumnos">
+                <tr><td colspan="5" class="empty-state">Elegí un nivel para empezar.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+
+        <section class="card">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2>Excepciones autorizadas</h2>
+              <p class="texto-tenue">
+                Queda registrado quién autorizó cada una y por qué.
+              </p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Nivel</th>
+                  <th>Período</th>
+                  <th>Motivo</th>
+                  <th>Autorizó</th>
+                </tr>
+              </thead>
+              <tbody id="tablaExcepciones">
+                <tr><td colspan="5" class="empty-state">Sin excepciones registradas.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- ===============================
+           CIERRES
+           =============================== -->
+
+      <div id="panelCierres" class="hidden">
+
+        <section class="card panel-suave">
+
+          <div class="form-grid">
+
+            <label class="field">
+              <span>Período</span>
+              <select id="filtroPeriodo">
+                <option value="1er cuatrimestre">1er cuatrimestre</option>
+                <option value="2do cuatrimestre">2do cuatrimestre</option>
+                <option value="Anual">Anual</option>
+              </select>
+            </label>
+
+          </div>
+
+        </section>
+
+        <section class="card">
+
+          <div class="section-heading table-heading">
+            <div>
+              <h2>Notas finales</h2>
+              <p id="resumenCierres" class="texto-tenue"></p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Nota final</th>
+                  <th>Condición</th>
+                  <th>Observaciones</th>
+                  <th>Cerró</th>
+                </tr>
+              </thead>
+              <tbody id="tablaCierres">
+                <tr><td colspan="5" class="empty-state">Elegí un nivel para empezar.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </div>
 
     </main>
   </div>

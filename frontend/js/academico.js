@@ -184,14 +184,6 @@ async function cargarAlumnos(){
         alumnos = datos;
 
 
-        const nivel =
-        niveles.find(n=>String(n.nivel_id) === nivelId);
-
-
-        document.getElementById("tituloNivel").textContent =
-        nivel ? nivel.nivel : "Alumnos";
-
-
         mostrarAlumnos();
 
 
@@ -693,12 +685,25 @@ function cargarEventos(){
 
     document
         .getElementById("filtroNivel")
-        .addEventListener("change", cargarAlumnos);
+        .addEventListener("change", cambiarNivel);
 
 
     document
         .getElementById("filtroCuatrimestre")
         .addEventListener("change", cargarAlumnos);
+
+
+    document
+        .getElementById("filtroPeriodo")
+        .addEventListener("change", cargarCierres);
+
+
+    document
+        .getElementById("volverEvaluaciones")
+        .addEventListener("click", volverALista);
+
+
+    conectarSolapas();
 
 
     document
@@ -760,6 +765,621 @@ function escaparHTML(valor){
         .replaceAll('"',"&quot;")
 
         .replaceAll("'","&#39;");
+
+
+}
+
+
+
+
+// ===============================
+// SOLAPAS
+// ===============================
+
+function conectarSolapas(){
+
+
+    document.querySelectorAll(".solapa")
+        .forEach(solapa=>{
+
+
+            solapa.addEventListener("click", ()=>{
+
+
+                document.querySelectorAll(".solapa")
+                    .forEach(otra=>otra.classList.remove("activa"));
+
+
+                solapa.classList.add("activa");
+
+
+                ["panelNotas","panelHabilitacion","panelCierres"]
+                    .forEach(id=>{
+
+
+                        document.getElementById(id)
+                            .classList.toggle(
+                                "hidden",
+                                id !== solapa.dataset.panel
+                            );
+
+
+                    });
+
+
+                cargarSolapaActual();
+
+
+            });
+
+
+        });
+
+
+}
+
+
+
+
+// Cada solapa pide lo suyo cuando se la mira
+
+function cargarSolapaActual(){
+
+
+    const activa =
+    document.querySelector(".solapa.activa");
+
+
+    if(!activa){
+
+
+        return;
+
+
+    }
+
+
+    if(activa.dataset.panel === "panelNotas"){
+
+
+        cargarEvaluaciones();
+
+
+    }
+
+
+    if(activa.dataset.panel === "panelHabilitacion"){
+
+
+        cargarAlumnos();
+
+
+    }
+
+
+    if(activa.dataset.panel === "panelCierres"){
+
+
+        cargarCierres();
+
+
+    }
+
+
+}
+
+
+
+
+function cambiarNivel(){
+
+
+    // Al cambiar de nivel, el detalle abierto ya no
+    // corresponde a nada
+    volverALista();
+
+
+    cargarSolapaActual();
+
+
+}
+
+
+
+
+// ===============================
+// EVALUACIONES DEL NIVEL
+// ===============================
+
+let evaluaciones = [];
+
+
+async function cargarEvaluaciones(){
+
+
+    const nivelId =
+    document.getElementById("filtroNivel").value;
+
+
+    if(!nivelId){
+
+
+        return;
+
+
+    }
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/academico/niveles/${nivelId}/evaluaciones`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(document.getElementById("filtroNivel").value !== nivelId){
+
+
+            return;
+
+
+        }
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudieron cargar las evaluaciones",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        evaluaciones = datos;
+
+
+        mostrarEvaluaciones();
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error cargando las evaluaciones",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarEvaluaciones(){
+
+
+    const tabla =
+    document.getElementById("tablaEvaluaciones");
+
+
+    if(evaluaciones.length === 0){
+
+
+        tabla.innerHTML =
+        `
+        <tr>
+            <td colspan="6" class="empty-state">
+                Este nivel todavía no tiene evaluaciones cargadas.
+            </td>
+        </tr>
+        `;
+
+
+        return;
+
+
+    }
+
+
+    tabla.innerHTML =
+    evaluaciones.map(ev=>`
+
+        <tr>
+
+            <td>
+                ${escaparHTML(ev.titulo)}
+                <br><small class="texto-tenue">
+                    ${escaparHTML(ev.instructor)}
+                    ${ev.fecha ? " · " + formatearFecha(ev.fecha) : ""}
+                </small>
+            </td>
+
+            <td>
+                ${escaparHTML(ev.area)}
+                <br><small class="texto-tenue">${escaparHTML(ev.tipo)}</small>
+            </td>
+
+            <td>${ev.cuatrimestre}º</td>
+
+            <td>
+                ${ev.corregidos}
+                ${Number(ev.corregidos) > 0
+                    ? `<br><small class="texto-tenue">${ev.aprobados} aprobados</small>`
+                    : ""}
+            </td>
+
+            <td>${ev.promedio ?? "—"}</td>
+
+            <td>
+                <button type="button"
+                    class="button pequeno ver-notas"
+                    data-id="${ev.id}">
+                    Ver notas
+                </button>
+            </td>
+
+        </tr>
+
+    `).join("");
+
+
+    document.querySelectorAll(".ver-notas")
+        .forEach(boton=>{
+
+
+            boton.addEventListener(
+                "click",
+                ()=>abrirNotas(Number(boton.dataset.id))
+            );
+
+
+        });
+
+
+}
+
+
+
+
+// ===============================
+// NOTAS DE UNA EVALUACION
+// ===============================
+
+async function abrirNotas(id){
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/academico/evaluaciones/${id}/resultados`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudieron cargar las notas",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        const ev = datos.evaluacion;
+
+
+        document.getElementById("tituloNotas").textContent =
+        ev.titulo;
+
+
+        document.getElementById("subtituloNotas").textContent =
+        ev.area + " · " + ev.tipo + " · " + ev.instructor;
+
+
+        document.getElementById("columnaNota").textContent =
+        ev.area === "Teoría" ? "Nota" : "Resultado";
+
+
+        document.getElementById("tablaNotas").innerHTML =
+        datos.alumnos.map(alumno=>`
+
+            <tr>
+
+                <td>
+                    ${escaparHTML(alumno.apellido)},
+                    ${escaparHTML(alumno.nombre)}
+                </td>
+
+                <td>
+                    ${celdaResultado(alumno, ev.area)}
+                </td>
+
+                <td>
+                    ${escaparHTML(alumno.observaciones || "—")}
+                </td>
+
+                <td>
+                    ${escaparHTML(alumno.cargado_por || "—")}
+                </td>
+
+            </tr>
+
+        `).join("");
+
+
+        document.getElementById("listadoEvaluaciones")
+            .classList.add("hidden");
+
+
+        document.getElementById("detalleNotas")
+            .classList.remove("hidden");
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error abriendo la evaluación",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function celdaResultado(alumno, area){
+
+
+    if(alumno.ausente){
+
+
+        return `<span class="estado estado-inactivo">Ausente</span>`;
+
+
+    }
+
+
+    if(area === "Teoría"){
+
+
+        if(alumno.nota === null || alumno.nota === undefined){
+
+
+            return `<span class="texto-tenue">sin corregir</span>`;
+
+
+        }
+
+
+        const aprobado =
+        alumno.resultado === "Aprobado";
+
+
+        return `
+        <span class="estado ${aprobado ? "estado-activo" : "estado-inactivo"}">
+            ${escaparHTML(alumno.nota)}
+        </span>
+        `;
+
+
+    }
+
+
+    if(!alumno.resultado){
+
+
+        return `<span class="texto-tenue">sin corregir</span>`;
+
+
+    }
+
+
+    return `
+    <span class="estado ${alumno.resultado === "Aprobado"
+        ? "estado-activo" : "estado-inactivo"}">
+        ${escaparHTML(alumno.resultado)}
+    </span>
+    `;
+
+
+}
+
+
+
+
+function volverALista(){
+
+
+    const detalle =
+    document.getElementById("detalleNotas");
+
+
+    if(detalle){
+
+
+        detalle.classList.add("hidden");
+
+
+        document.getElementById("listadoEvaluaciones")
+            .classList.remove("hidden");
+
+
+    }
+
+
+}
+
+
+
+
+// ===============================
+// CIERRES
+// ===============================
+
+async function cargarCierres(){
+
+
+    const nivelId =
+    document.getElementById("filtroNivel").value;
+
+
+    const periodo =
+    document.getElementById("filtroPeriodo").value;
+
+
+    if(!nivelId){
+
+
+        return;
+
+
+    }
+
+
+    try{
+
+
+        const respuesta = await fetch(
+            `${API}/academico/niveles/${nivelId}/cierres`
+            + `?periodo=${encodeURIComponent(periodo)}`
+        );
+
+
+        const datos = await respuesta.json();
+
+
+        if(document.getElementById("filtroNivel").value !== nivelId
+           || document.getElementById("filtroPeriodo").value !== periodo){
+
+
+            return;
+
+
+        }
+
+
+        if(!respuesta.ok){
+
+
+            mostrarNotificacion(
+                datos.error || "No se pudieron cargar los cierres",
+                "error"
+            );
+
+
+            return;
+
+
+        }
+
+
+        mostrarCierres(datos);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error cargando los cierres",
+            "error"
+        );
+
+
+    }
+
+
+}
+
+
+
+
+function mostrarCierres(lista){
+
+
+    const cerrados =
+    lista.filter(a=>a.condicion).length;
+
+
+    document.getElementById("resumenCierres").textContent =
+    cerrados + " de " + lista.length + " cerrados";
+
+
+    document.getElementById("tablaCierres").innerHTML =
+    lista.map(alumno=>`
+
+        <tr>
+
+            <td>
+                ${escaparHTML(alumno.apellido)},
+                ${escaparHTML(alumno.nombre)}
+            </td>
+
+            <td>
+                ${alumno.nota_final ?? "—"}
+            </td>
+
+            <td>
+                ${alumno.condicion
+                    ? `<span class="estado ${alumno.condicion === "Promocionado"
+                           ? "estado-activo" : "estado-inactivo"}">
+                           ${escaparHTML(alumno.condicion)}
+                       </span>`
+                    : `<span class="texto-tenue">sin cerrar</span>`}
+            </td>
+
+            <td>
+                ${escaparHTML(alumno.observaciones || "—")}
+            </td>
+
+            <td>
+                ${escaparHTML(alumno.cerrado_por || "—")}
+                ${alumno.cerrado_el
+                    ? `<br><small class="texto-tenue">${formatearFecha(alumno.cerrado_el)}</small>`
+                    : ""}
+            </td>
+
+        </tr>
+
+    `).join("");
 
 
 }

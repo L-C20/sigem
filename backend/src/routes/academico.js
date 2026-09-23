@@ -435,4 +435,271 @@ router.get("/excepciones", async(req,res)=>{
 
 
 
+// =====================================
+// NOTAS DE CUALQUIER NIVEL
+// =====================================
+
+// Solo lectura. Las notas las carga quien da la clase;
+// el admin mira, para poder seguir como viene cada curso
+// sin tener que pedirselo a la instructora.
+
+
+router.get("/niveles/:nivelId/evaluaciones", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                e.id,
+                e.titulo,
+                e.area,
+                e.tipo,
+                e.fecha,
+                e.anio,
+                e.cuatrimestre,
+                e.obligatoria,
+
+                i.apellido || ', ' || i.nombre AS instructor,
+
+                COUNT(r.id) FILTER (
+                    WHERE r.nota      IS NOT NULL
+                    OR    r.resultado IS NOT NULL
+                    OR    r.ausente
+                ) AS corregidos,
+
+                COUNT(r.id) FILTER (
+                    WHERE r.resultado = 'Aprobado'
+                ) AS aprobados,
+
+                ROUND(AVG(r.nota), 2) AS promedio
+
+            FROM evaluaciones e
+
+            JOIN instructores i
+                ON i.id = e.instructor_id
+
+            LEFT JOIN evaluacion_resultados r
+                ON r.evaluacion_id = e.id
+
+            WHERE e.nivel_id = $1
+
+            GROUP BY e.id, i.apellido, i.nombre
+
+            ORDER BY e.cuatrimestre, e.fecha NULLS LAST, e.id
+            `,
+            [nivelId]
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error obteniendo las evaluaciones"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// RESULTADOS DE UNA EVALUACION
+// =====================================
+
+router.get("/evaluaciones/:id/resultados", async(req,res)=>{
+
+
+    try{
+
+
+        const id = Number(req.params.id);
+
+
+        const cabecera = await pool.query(
+            `
+            SELECT
+                e.id, e.nivel_id, e.area, e.tipo, e.titulo,
+                e.fecha, e.anio, e.cuatrimestre, e.obligatoria,
+                i.apellido || ', ' || i.nombre AS instructor
+            FROM evaluaciones e
+            JOIN instructores i ON i.id = e.instructor_id
+            WHERE e.id = $1
+            `,
+            [id]
+        );
+
+
+        if(cabecera.rows.length === 0){
+
+
+            return res.status(404).json({
+                error:"Esa evaluación no existe"
+            });
+
+
+        }
+
+
+        const evaluacion = cabecera.rows[0];
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                a.id        AS alumno_id,
+                a.apellido,
+                a.nombre,
+
+                r.nota,
+                r.resultado,
+                r.observaciones,
+                r.ausente,
+
+                u.nombre || ' ' || u.apellido AS cargado_por,
+                r.actualizado
+
+            FROM cursadas_teoria c
+
+            JOIN alumnos a
+                ON a.id = c.alumno_id
+
+            LEFT JOIN evaluacion_resultados r
+                ON  r.alumno_id     = a.id
+                AND r.evaluacion_id = $2
+
+            LEFT JOIN usuarios u
+                ON u.id = r.cargado_por
+
+            WHERE c.nivel_id = $1
+            AND   c.anio     = $3
+            AND   c.estado   = 'Activo'
+
+            ORDER BY a.apellido, a.nombre
+            `,
+            [evaluacion.nivel_id, id, evaluacion.anio]
+        );
+
+
+        res.json({
+            evaluacion,
+            alumnos: resultado.rows
+        });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error obteniendo los resultados"
+        });
+
+
+    }
+
+
+});
+
+
+
+
+// =====================================
+// CIERRES DE CUALQUIER NIVEL
+// =====================================
+
+router.get("/niveles/:nivelId/cierres", async(req,res)=>{
+
+
+    try{
+
+
+        const nivelId = Number(req.params.nivelId);
+
+        const periodo = req.query.periodo || "1er cuatrimestre";
+
+
+        const resultado = await pool.query(
+            `
+            SELECT
+
+                a.id        AS alumno_id,
+                a.apellido,
+                a.nombre,
+                c.anio,
+
+                ci.nota_final,
+                ci.condicion,
+                ci.observaciones,
+                ci.cerrado_el,
+
+                u.nombre || ' ' || u.apellido AS cerrado_por
+
+            FROM cursadas_teoria c
+
+            JOIN alumnos a
+                ON a.id = c.alumno_id
+
+            LEFT JOIN cierres ci
+                ON  ci.alumno_id = a.id
+                AND ci.nivel_id  = c.nivel_id
+                AND ci.anio      = c.anio
+                AND ci.periodo   = $2
+
+            LEFT JOIN usuarios u
+                ON u.id = ci.cerrado_por
+
+            WHERE c.nivel_id = $1
+            AND   c.estado   = 'Activo'
+
+            ORDER BY a.apellido, a.nombre
+            `,
+            [nivelId, periodo]
+        );
+
+
+        res.json(resultado.rows);
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error obteniendo los cierres"
+        });
+
+
+    }
+
+
+});
+
+
+
 module.exports = router;
