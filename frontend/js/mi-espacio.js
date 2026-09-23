@@ -379,7 +379,7 @@ function mostrarAsistencia(){
                 ${escaparHTML(item.nombre)}
             </td>
 
-            <td>
+            <td class="ocultar-movil">
                 ${escaparHTML(item.filial || "—")}
             </td>
 

@@ -22,7 +22,9 @@
 
 .card-asistencia {
 
-    min-height: 210px;
+    position: relative;
+
+    min-height: 170px;
 
     display: flex;
 
@@ -30,49 +32,69 @@
 
     justify-content: space-between;
 
-    padding: 28px;
+    padding: var(--e-6);
+
+    padding-left: var(--e-6);
+
+    overflow: hidden;
 
     transition:
-        transform 0.2s ease,
         box-shadow 0.2s ease,
         border-color 0.2s ease;
 
 }
 
 
+/* La misma barra turquesa que las tarjetas del inicio:
+   el sistema entero se reconoce por ese borde */
+.card-asistencia::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 4px;
+
+    background: var(--accent);
+
+}
+
+
 .card-asistencia:hover {
 
-    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
 
-    box-shadow:
-        0 22px 50px rgba(16, 24, 39, 0.12);
-
-    border-color: #cbd5e1;
+    border-color: var(--accent-line);
 
 }
 
 
 .card-asistencia h2 {
 
-    margin: 0 0 12px;
+    margin: 0 0 var(--e-2);
 
-    color: var(--accent-dark);
+    color: var(--text);
 
-    font-size: 1.2rem;
+    font-size: var(--t-lg);
 
-    font-weight: 700;
+    font-weight: 800;
 
 }
 
 
 .card-asistencia p {
 
-    margin:
-        0 0 22px;
+    margin: 0 0 var(--e-5);
 
     color: var(--muted);
 
-    line-height: 1.6;
+    font-size: var(--t-base);
+
+    line-height: 1.5;
 
 }
 
