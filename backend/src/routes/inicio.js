@@ -113,10 +113,32 @@ const instruccionMinisterial =
 
 
         // ======================================
+        // ALUMNOS REGISTRADOS
+        // ======================================
+        // Para que "83 activos" signifique algo hace falta
+        // saber sobre cuantos: 83 de 85 no es lo mismo que
+        // 83 de 300.
+
+        const registrados =
+            await pool.query(`
+
+                SELECT COUNT(*) AS total
+
+                FROM alumnos
+
+            `);
+
+
+        // ======================================
         // RESPUESTA
         // ======================================
 
         res.json({
+
+            alumnosRegistrados:
+                Number(
+                    registrados.rows[0].total
+                ),
 
             alumnosActivos:
                 Number(

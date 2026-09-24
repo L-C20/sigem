@@ -7,8 +7,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --bg: #f3f6fa;
-    --sidebar: #101827;
+    --bg: #eef2f7;
+    --sidebar: #141d30;
     --sidebar-muted: #98a2b3;
     --sidebar-active: #1947A8;
     --text: #1d2939;
@@ -150,7 +150,7 @@ p {
     box-sizing: border-box;
     background: var(--sidebar);
     color: #ffffff;
-    padding: 28px 18px;
+    padding: var(--e-5) var(--e-3);
     overflow: hidden;
     z-index: 1000;
 
@@ -160,8 +160,8 @@ p {
 }
 
 .brand {
-    padding: 0 10px 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 var(--e-3) var(--e-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .brand-logo {
@@ -178,25 +178,50 @@ p {
 .main-nav {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: 20px;
+    gap: 2px;
+    margin-top: var(--e-3);
 
-    /* Se queda con el espacio libre y scrollea si hace falta */
+    /* Se queda con el espacio libre y scrollea si hace falta.
+       La barra se esconde: en una franja oscura y angosta
+       se veía como un defecto. */
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.main-nav::-webkit-scrollbar {
+    display: none;
+    width: 0;
+}
+
+/* Cuando queda algo debajo, el último renglón se desvanece.
+   La clase la pone menu.js solo si hay desborde real: así
+   no se difumina nada cuando el menú entra entero. */
+.main-nav.con-mas {
+    mask-image: linear-gradient(
+        to bottom,
+        #000 calc(100% - 32px),
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        #000 calc(100% - 32px),
+        transparent 100%
+    );
 }
 
 .nav-link {
     display: flex;
     align-items: center;
-    min-height: 44px;
-    padding: 10px 14px;
+    min-height: 38px;
+    padding: 8px var(--e-3);
     border-radius: var(--radius);
     background: transparent;
-    color: #d0d5dd;
+    color: #cfd6e2;
+    font-size: 0.92rem;
     font-weight: 600;
     text-align: left;
     cursor: pointer;
@@ -267,34 +292,60 @@ p {
     gap: 24px;
 }
 
+/* Una línea al pie separa el encabezado del contenido:
+   antes el título y la primera tarjeta flotaban juntos */
 .page-header {
-    margin-bottom: 28px;
+    align-items: flex-end;
+    margin-bottom: var(--e-6);
+    padding-bottom: var(--e-4);
+    border-bottom: 1px solid #dfe7f0;
 }
 
 .page-header h1,
 .page-header h2 {
-    margin: 4px 0 0;
+    margin: var(--e-1) 0 0;
     color: var(--text);
+    letter-spacing: -0.015em;
 }
 
 .page-header h1 {
-    font-size: 2rem;
+    font-size: var(--t-xl);
     line-height: 1.2;
+    font-weight: 800;
 }
 
 .page-header h2 {
-    font-size: 1.5rem;
+    font-size: var(--t-lg);
     line-height: 1.25;
 }
 
+/* Bajada del título: explica la pantalla sin competir */
+.page-header > div > p {
+    margin: var(--e-2) 0 0;
+    max-width: 62ch;
+    color: var(--muted);
+    font-size: var(--t-base);
+}
+
+/* El rótulo de sección, con una marca turquesa al lado */
 .eyebrow {
-    display: block;
-    margin-bottom: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e-2);
+    margin-bottom: 2px;
     color: var(--accent-dark);
-    font-size: 0.8rem;
+    font-size: var(--t-xs);
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent);
 }
 
 /* =========================================================
@@ -406,10 +457,22 @@ textarea:focus-visible,
     border-top: 4px solid var(--primary);
 }
 
+/* Se acomodan solas: en una pantalla ancha entran tres o
+   cuatro columnas en vez de estirar dos campos cortos a
+   media pantalla cada uno */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: var(--e-4) var(--e-5);
+}
+
+/* Lo que se escribe largo ocupa todo el ancho */
+.form-grid .field:has(textarea) {
+    grid-column: 1 / -1;
+}
+
+.form-grid .field:has(textarea) textarea {
+    min-height: 90px;
 }
 
 .field {
@@ -813,11 +876,12 @@ tbody tr:last-child td {
 /* El boton vive dentro de la grilla de filtros: sin esto
    se estira hasta ocupar todo el alto y ancho de su celda */
 
-.filtros .form-grid > .button {
+.filtros .form-grid > .button,
+.panel-suave .form-grid > .button {
     align-self: end;
     justify-self: start;
-    min-height: 42px;
-    padding: 10px 18px;
+    min-height: var(--toque);
+    padding: 10px var(--e-5);
 }
 
 /* Filtros pegados a la tabla (Alumnos): mismo aire que el
@@ -2394,10 +2458,10 @@ span:first-child {
 
 /* Encabezado de cada grupo del menú */
 .nav-grupo{
-    margin: 18px 0 4px;
-    padding: 0 14px;
+    margin: var(--e-3) 0 var(--e-1);
+    padding: 0 var(--e-3);
     color: var(--sidebar-muted);
-    font-size: 0.72rem;
+    font-size: 0.67rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -2420,7 +2484,7 @@ span:first-child {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 0 14px 10px;
+    padding: 0 var(--e-3) var(--e-2);
 }
 
 .usuario-nombre{
@@ -2661,4 +2725,74 @@ input[type="radio"]{
 
 .campo-resultado{
     min-width: 135px;
+}
+
+
+/* =========================================================
+   BAJADA Y PROPORCIÓN DE CADA CIFRA
+========================================================= */
+
+.dashboard-card-description{
+    display: block;
+    margin-top: var(--e-1);
+    color: var(--muted);
+    font-size: var(--t-sm);
+}
+
+/* Barra fina con la proporción sobre el total: convierte
+   un número suelto en una comparación */
+.dashboard-barra{
+    height: 4px;
+    margin-top: var(--e-3);
+    border-radius: 2px;
+    background: #e8eef5;
+    overflow: hidden;
+}
+
+.dashboard-barra span{
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce){
+    .dashboard-barra span{ transition: none; }
+}
+
+
+/* =========================================================
+   SECCIONES DE UN FORMULARIO LARGO
+   La ficha del alumno son cuatro bloques seguidos; sin un
+   encabezado con peso se leían como un muro de campos.
+========================================================= */
+
+.form-section h2{
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    margin: 0 0 var(--e-5);
+    padding-bottom: var(--e-3);
+    border-bottom: 1px solid #eef2f7;
+    color: var(--text);
+    font-size: var(--t-md);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.form-section h2::before{
+    content: "";
+    width: 3px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--accent);
+}
+
+
+/* El nombre no se parte en dos renglones: es la columna
+   por la que se busca con la vista */
+#tablaUsuarios td:first-child,
+#tablaEvaluaciones td:first-child{
+    white-space: nowrap;
 }

@@ -220,12 +220,11 @@ function filaUsuario(usuario){
 
 
         <td>
-            ${escaparHTML(usuario.email || "")}
             ${usuario.username
-                ? `<br><small class="texto-tenue">usuario: ${escaparHTML(usuario.username)}</small>`
-                : ""}
-            ${!usuario.email && !usuario.username
-                ? `<span class="texto-tenue">sin datos de ingreso</span>`
+                ? `<strong>${escaparHTML(usuario.username)}</strong>`
+                : `<span class="texto-tenue">sin usuario</span>`}
+            ${usuario.email
+                ? `<br><small class="texto-tenue">${escaparHTML(usuario.email)}</small>`
                 : ""}
         </td>
 

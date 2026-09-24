@@ -435,6 +435,75 @@ function conectarBotonMenu(){
 
 
 
+// ===============================
+// AVISAR QUE HAY MAS ABAJO
+// ===============================
+
+// Con diez secciones y una pantalla baja, el menú no entra
+// entero. En vez de mostrar una barra de desplazamiento
+// angosta dentro de la franja oscura, el último renglón se
+// desvanece. Solo cuando de verdad hay algo más abajo.
+
+function marcarDesborde(){
+
+
+    const nav =
+    document.querySelector(".main-nav");
+
+
+    if(!nav){
+
+
+        return;
+
+
+    }
+
+
+    const quedaAbajo =
+    nav.scrollHeight - nav.scrollTop - nav.clientHeight > 4;
+
+
+    nav.classList.toggle("con-mas", quedaAbajo);
+
+
+}
+
+
+
+
+function vigilarDesborde(){
+
+
+    const nav =
+    document.querySelector(".main-nav");
+
+
+    if(!nav){
+
+
+        return;
+
+
+    }
+
+
+    marcarDesborde();
+
+
+    nav.addEventListener("scroll", marcarDesborde);
+
+
+    window.addEventListener("resize", marcarDesborde);
+
+
+}
+
+
+
+
 armarMenu();
 
 conectarBotonMenu();
+
+vigilarDesborde();
