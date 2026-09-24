@@ -2796,3 +2796,44 @@ input[type="radio"]{
 #tablaEvaluaciones td:first-child{
     white-space: nowrap;
 }
+
+
+/* =========================================================
+   SECCIONES DEL CURSO EN EL MENÚ
+========================================================= */
+
+.nav-curso{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Van un poco corridas y con una guía al costado: se leen
+   como partes de un curso, no como secciones del sistema */
+.nav-seccion{
+    position: relative;
+    margin-left: var(--e-3);
+    padding-left: var(--e-3);
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.nav-seccion.active{
+    border-left: 2px solid var(--accent);
+    padding-left: calc(var(--e-3) - 1px);
+    font-weight: 700;
+}
+
+
+/* En el escritorio se navega desde el menú, así que las
+   pestañas de adentro sobran. En el teléfono el menú está
+   escondido detrás del botón, y ahí sí hacen falta. */
+@media (min-width: 769px){
+
+    #vistaNivel > .solapas{
+        display: none;
+    }
+
+}

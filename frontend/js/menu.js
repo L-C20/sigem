@@ -436,6 +436,113 @@ function conectarBotonMenu(){
 
 
 // ===============================
+// SECCIONES DEL CURSO ABIERTO
+// ===============================
+
+// Cuando una instructora entra a su nivel, las partes del
+// curso se suman al menu lateral en vez de vivir solo como
+// pestañas dentro de la pagina. En el telefono el menu
+// esta escondido, asi que ahi siguen valiendo las
+// pestañas: las dos vias hacen lo mismo.
+
+function mostrarSeccionesDeCurso(titulo, secciones, alElegir){
+
+
+    const nav =
+    document.querySelector(".main-nav");
+
+
+    if(!nav){
+
+
+        return;
+
+
+    }
+
+
+    ocultarSeccionesDeCurso();
+
+
+    const bloque = document.createElement("div");
+
+
+    bloque.className = "nav-curso";
+
+
+    bloque.innerHTML =
+    `<p class="nav-grupo">${escaparMenu(titulo)}</p>`
+    + secciones.map(seccion=>`
+        <button
+            type="button"
+            class="nav-link nav-seccion"
+            data-panel="${seccion.panel}">
+            ${escaparMenu(seccion.texto)}
+        </button>
+    `).join("");
+
+
+    nav.appendChild(bloque);
+
+
+    bloque.querySelectorAll(".nav-seccion")
+        .forEach(boton=>{
+
+
+            boton.addEventListener(
+                "click",
+                ()=>alElegir(boton.dataset.panel)
+            );
+
+
+        });
+
+
+    marcarDesborde();
+
+
+}
+
+
+
+
+function marcarSeccionActiva(panel){
+
+
+    document.querySelectorAll(".nav-seccion")
+        .forEach(boton=>{
+
+
+            boton.classList.toggle(
+                "active",
+                boton.dataset.panel === panel
+            );
+
+
+        });
+
+
+}
+
+
+
+
+function ocultarSeccionesDeCurso(){
+
+
+    document.querySelectorAll(".nav-curso")
+        .forEach(bloque=>bloque.remove());
+
+
+    marcarDesborde();
+
+
+}
+
+
+
+
+// ===============================
 // AVISAR QUE HAY MAS ABAJO
 // ===============================
 

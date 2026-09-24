@@ -217,6 +217,23 @@ function abrirNivel(nivelId){
         .classList.remove("hidden");
 
 
+    // Las partes del curso pasan al menu lateral
+    if(typeof mostrarSeccionesDeCurso === "function"){
+
+
+        mostrarSeccionesDeCurso(
+            nivelActual.nivel,
+            SECCIONES_DEL_CURSO,
+            activarPanel
+        );
+
+
+    }
+
+
+    activarPanel("panelAsistencia");
+
+
     // Arranca en el dia de hoy
     document.getElementById("fechaClase").value =
     fechaDeHoy();
@@ -234,6 +251,15 @@ function volver(){
 
 
     nivelActual = null;
+
+
+    if(typeof ocultarSeccionesDeCurso === "function"){
+
+
+        ocultarSeccionesDeCurso();
+
+
+    }
 
 
     document.getElementById("titulo").textContent =
@@ -658,6 +684,96 @@ function escaparHTML(valor){
 // SOLAPAS
 // ===============================
 
+// Las partes del curso. Aparecen en el menu lateral y,
+// en el telefono, como pestañas: las dos llaman a lo mismo.
+
+const SECCIONES_DEL_CURSO = [
+    { panel:"panelAsistencia",   texto:"Asistencia" },
+    { panel:"panelEvaluaciones", texto:"Evaluaciones" },
+    { panel:"panelHabilitacion", texto:"Habilitación al examen" },
+    { panel:"panelCierre",       texto:"Cierre de período" }
+];
+
+
+function activarPanel(id){
+
+
+    document.querySelectorAll(".solapa")
+        .forEach(solapa=>{
+
+
+            solapa.classList.toggle(
+                "activa",
+                solapa.dataset.panel === id
+            );
+
+
+        });
+
+
+    SECCIONES_DEL_CURSO.forEach(seccion=>{
+
+
+        const panel =
+        document.getElementById(seccion.panel);
+
+
+        if(panel){
+
+
+            panel.classList.toggle(
+                "hidden",
+                seccion.panel !== id
+            );
+
+
+        }
+
+
+    });
+
+
+    if(typeof marcarSeccionActiva === "function"){
+
+
+        marcarSeccionActiva(id);
+
+
+    }
+
+
+    if(id === "panelEvaluaciones"){
+
+
+        cargarEvaluaciones();
+
+
+    }
+
+
+    if(id === "panelHabilitacion"){
+
+
+        cargarHabilitacion();
+
+
+    }
+
+
+    if(id === "panelCierre"){
+
+
+        cargarCierre();
+
+
+    }
+
+
+}
+
+
+
+
 function conectarSolapas(){
 
 
@@ -665,59 +781,10 @@ function conectarSolapas(){
         .forEach(solapa=>{
 
 
-            solapa.addEventListener("click", ()=>{
-
-
-                document.querySelectorAll(".solapa")
-                    .forEach(otra=>otra.classList.remove("activa"));
-
-
-                solapa.classList.add("activa");
-
-
-                ["panelAsistencia","panelEvaluaciones",
-                 "panelHabilitacion","panelCierre"]
-                    .forEach(id=>{
-
-
-                        document.getElementById(id)
-                            .classList.toggle(
-                                "hidden",
-                                id !== solapa.dataset.panel
-                            );
-
-
-                    });
-
-
-                if(solapa.dataset.panel === "panelEvaluaciones"){
-
-
-                    cargarEvaluaciones();
-
-
-                }
-
-
-                if(solapa.dataset.panel === "panelHabilitacion"){
-
-
-                    cargarHabilitacion();
-
-
-                }
-
-
-                if(solapa.dataset.panel === "panelCierre"){
-
-
-                    cargarCierre();
-
-
-                }
-
-
-            });
+            solapa.addEventListener(
+                "click",
+                ()=>activarPanel(solapa.dataset.panel)
+            );
 
 
         });

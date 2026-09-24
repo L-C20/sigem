@@ -70,7 +70,7 @@ async function cargarMinisterial(){
         );
 
 
-        cargarFiltros();
+        await cargarFiltros();
 
 
     }
@@ -147,7 +147,7 @@ function mostrarMinisterial(datos){
 
 
             <td>
-                ${escaparHTML(item.filial || "Sin filial")}
+                ${escaparHTML(item.filial || "Sin iglesia")}
             </td>
 
 
@@ -188,41 +188,67 @@ function mostrarMinisterial(datos){
 // ===============================
 
 
-function cargarFiltros(){
+// Las iglesias salen de la base, no de lo que hay en
+// pantalla: si una todavia no tiene alumnos en instruccion
+// ministerial, igual tiene que poder elegirse
+
+async function cargarFiltros(){
 
 
-    const filiales =
-    [
-        ...new Set(
-
-            datosMinisterial.map(
-                item=>item.filial
-            )
-
-        )
-    ].sort();
+    try{
 
 
-    filiales.forEach(nombre=>{
+        const respuesta =
+        await fetch(`${API_BASE_URL}/filiales`);
 
 
-        if(nombre){
+        if(!respuesta.ok){
 
 
-            filtroFilial.innerHTML +=
-            `
-
-            <option value="${escaparHTML(nombre)}">
-                ${escaparHTML(nombre)}
-            </option>
-
-            `;
+            throw new Error("respuesta " + respuesta.status);
 
 
         }
 
 
-    });
+        const iglesias =
+        await respuesta.json();
+
+
+        iglesias
+            .map(item=>item.nombre)
+            .filter(nombre=>nombre)
+            .sort((a,b)=>a.localeCompare(b,"es"))
+            .forEach(nombre=>{
+
+
+                filtroFilial.innerHTML +=
+                `
+
+                <option value="${escaparHTML(nombre)}">
+                    ${escaparHTML(nombre)}
+                </option>
+
+                `;
+
+
+            });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        mostrarNotificacion(
+            "Error cargando las iglesias",
+            "error"
+        );
+
+
+    }
 
 
 }
