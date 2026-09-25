@@ -1353,3 +1353,72 @@ async function cargarInstruccionMinisterial(){
     }
 
 }
+
+
+// =====================================
+// ENLACE AL REPORTE
+// =====================================
+
+// El reporte reune notas, habilitacion y cierres, asi que
+// lo abren los mismos que entran a Academico. Esconder el
+// enlace no protege nada: el backend igual rechaza a quien
+// no corresponde. Aca solo evitamos mostrar una puerta que
+// no se puede abrir.
+
+function prepararEnlaceAlReporte(){
+
+
+    const enlace =
+    document.getElementById("enlaceReporte");
+
+
+    if(!enlace || !alumnoId){
+
+
+        return;
+
+
+    }
+
+
+    let yo = null;
+
+
+    try{
+
+
+        yo = JSON.parse(
+            localStorage.getItem("usuario") || "null"
+        );
+
+
+    }
+    catch(error){
+
+
+        yo = null;
+
+
+    }
+
+
+    if(!yo || !["superadmin","admin"].includes(yo.rol)){
+
+
+        return;
+
+
+    }
+
+
+    enlace.href =
+    "reporte-alumno.html?id=" + encodeURIComponent(alumnoId);
+
+
+    enlace.classList.remove("hidden");
+
+
+}
+
+
+prepararEnlaceAlReporte();

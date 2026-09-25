@@ -966,6 +966,9 @@ function renderizarAlumnos(
 
         ${botonesAccion({
           ficha: `alumno.html?id=${alumno.id}`,
+          reporte: puedeVerReportes()
+            ? `reporte-alumno.html?id=${alumno.id}`
+            : null,
           eliminarId: alumno.id,
           nombre: alumno.apellido + ", " + alumno.nombre
         })}
@@ -1679,5 +1682,47 @@ function normalizarBusqueda(valor) {
     .toLowerCase()
 
     .trim();
+
+}
+
+
+
+// =====================================
+// QUIEN VE LOS REPORTES
+// =====================================
+
+// El reporte reune notas, habilitacion y cierres: lo abren
+// los mismos que entran a Academico. La secretaria sigue
+// viendo la ficha, no el rendimiento.
+
+// Esconder el icono no protege nada, el backend igual
+// rechaza a quien no corresponde. Aca solo evitamos mostrar
+// una puerta que no se puede abrir.
+
+function puedeVerReportes() {
+
+
+  try {
+
+
+    const yo =
+      JSON.parse(
+        localStorage.getItem("usuario") || "null"
+      );
+
+
+    return !!yo
+      && ["superadmin", "admin"].includes(yo.rol);
+
+
+  }
+  catch (error) {
+
+
+    return false;
+
+
+  }
+
 
 }

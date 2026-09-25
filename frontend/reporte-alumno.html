@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SIGEM | Reporte del alumno</title>
+
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/notificaciones.css">
+</head>
+
+
+<body>
+
+<div id="notificacionSIGEM" class="notificacion">
+    <span id="notificacionIcono"></span>
+    <span id="notificacionMensaje"></span>
+</div>
+
+
+<button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+>
+    ☰
+</button>
+
+
+<div class="app-shell">
+
+
+<aside class="sidebar"></aside>
+
+
+<main class="content">
+
+
+<header class="page-header">
+
+
+    <div>
+
+        <span class="eyebrow">
+            Reporte del alumno
+        </span>
+
+        <h1 id="nombreAlumno">
+            Cargando…
+        </h1>
+
+        <p class="reporte-subtitulo" id="subtitulo"></p>
+
+    </div>
+
+
+    <div class="form-actions sin-imprimir">
+
+        <a
+            class="button secondary"
+            id="enlaceFicha"
+            href="alumnos.html">
+            Ver ficha
+        </a>
+
+        <button
+            type="button"
+            class="button primary"
+            id="btnImprimir">
+            Imprimir
+        </button>
+
+    </div>
+
+
+</header>
+
+
+<!-- Se llena desde js/reporte-alumno.js -->
+<div id="reporte">
+
+    <p class="empty-state cargando">
+        Cargando el reporte…
+    </p>
+
+</div>
+
+
+<p class="reporte-pie">
+    SIGEM Dorrego · <span id="pieFecha"></span>
+</p>
+
+
+</main>
+
+</div>
+
+
+<script src="js/api.js"></script>
+<script src="js/notificaciones.js"></script>
+<script src="js/reporte-alumno.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    verificarSesion();
+</script>
+
+</body>
+
+</html>

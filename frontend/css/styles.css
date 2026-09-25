@@ -2837,3 +2837,266 @@ input[type="radio"]{
     }
 
 }
+
+
+/* =========================================================
+   REPORTE DEL ALUMNO
+   Una hoja de lectura, no un formulario: nada se edita
+   desde acá. Pensada para mirarla en pantalla y para
+   imprimirla sin que salga el menú.
+========================================================= */
+
+.reporte-subtitulo{
+    margin: var(--e-1) 0 0;
+    color: var(--muted);
+    font-size: var(--t-base);
+}
+
+.reporte-seccion{
+    margin-bottom: var(--e-5);
+}
+
+
+/* Los datos personales son pares rótulo/valor, no campos:
+   se leen mejor en columnas que estirados a lo ancho */
+.reporte-datos{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--e-4);
+    margin: 0;
+}
+
+.reporte-datos dt{
+    color: var(--muted);
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+.reporte-datos dd{
+    margin: 0;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+
+.reporte-bloque{
+    padding: var(--e-4) 0;
+    border-top: 1px solid var(--line);
+}
+
+.reporte-bloque:first-child{
+    padding-top: 0;
+    border-top: 0;
+}
+
+.reporte-bloque h3{
+    margin: 0 0 var(--e-2);
+    font-size: var(--t-base);
+    display: flex;
+    align-items: baseline;
+    gap: var(--e-2);
+    flex-wrap: wrap;
+}
+
+.reporte-bloque p{
+    margin: 0 0 var(--e-1);
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
+    flex-wrap: wrap;
+}
+
+
+.reporte-lista{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.reporte-lista li{
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
+    flex-wrap: wrap;
+    padding: var(--e-2) 0;
+    border-bottom: 1px solid #f0f4f9;
+}
+
+.reporte-lista li:last-child{
+    border-bottom: 0;
+}
+
+
+/* El año adelante, en turquesa: ordena la lectura de una
+   lista que puede tener varios ciclos */
+.reporte-etiqueta{
+    display: inline-block;
+    min-width: 46px;
+    padding: 2px var(--e-2);
+    border-radius: var(--radius);
+    background: var(--accent-tint);
+    color: var(--accent-strong);
+    font-size: var(--t-xs);
+    font-weight: 700;
+    text-align: center;
+}
+
+
+.reporte-nota{
+    margin: var(--e-2) 0 0;
+    padding: var(--e-3);
+    border-left: 3px solid var(--accent-line);
+    background: #f7fafd;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    display: block;
+}
+
+.reporte-excepcion{
+    border-left-color: var(--accent);
+}
+
+
+/* Porcentaje de asistencia por área */
+.reporte-medidas,
+.reporte-cifras{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--e-4);
+}
+
+.reporte-cifras{
+    margin-bottom: var(--e-5);
+}
+
+.reporte-medida,
+.reporte-cifra{
+    padding: var(--e-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fbfdff;
+}
+
+.reporte-medida-rotulo{
+    display: block;
+    color: var(--muted);
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.reporte-medida-numero{
+    display: block;
+    font-size: var(--t-xl);
+    line-height: 1.1;
+    margin: var(--e-1) 0;
+    color: var(--primary);
+}
+
+.reporte-medida-pie{
+    display: block;
+    color: var(--muted);
+    font-size: var(--t-xs);
+}
+
+.reporte-barra{
+    height: 6px;
+    border-radius: 999px;
+    background: #e5ecf4;
+    overflow: hidden;
+    margin-bottom: var(--e-2);
+}
+
+.reporte-barra span{
+    display: block;
+    height: 100%;
+    background: var(--accent);
+}
+
+
+/* Detalle que acompaña a la celda sin competir con ella */
+.reporte-observacion{
+    display: block;
+    color: var(--muted);
+    font-size: var(--t-xs);
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+.reporte-marca{
+    display: inline-block;
+    margin-left: var(--e-1);
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--accent-line);
+    color: var(--accent-strong);
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+.estado-desaprobado{
+    background: rgba(180, 35, 24, 0.12);
+    color: #8f1d14;
+}
+
+
+.reporte-pie{
+    margin: var(--e-6) 0 0;
+    color: var(--muted);
+    font-size: var(--t-xs);
+}
+
+
+/* =========================================================
+   IMPRESION
+   Lo que se lleva a una reunión es la hoja, no la pantalla:
+   se van el menú, los botones y los fondos.
+========================================================= */
+
+@media print{
+
+    .sidebar,
+    .menu-toggle,
+    .sin-imprimir,
+    .notificacion{
+        display: none !important;
+    }
+
+    body{
+        background: #fff;
+    }
+
+    .app-shell{
+        display: block;
+    }
+
+    .content{
+        padding: 0;
+        max-width: none;
+    }
+
+    .card{
+        box-shadow: none;
+        border: 1px solid #ccc;
+        /* Que una sección no se corte al medio entre hojas */
+        break-inside: avoid;
+    }
+
+    .table-wrapper{
+        overflow: visible;
+    }
+
+    thead{
+        display: table-header-group;
+    }
+
+    tr{
+        break-inside: avoid;
+    }
+
+}

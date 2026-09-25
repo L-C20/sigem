@@ -26,6 +26,17 @@ const ICONO_EDITAR = `
 `;
 
 
+const ICONO_REPORTE = `
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true">
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/>
+    <path d="M14 3v5h5"/>
+    <path d="M9 13h6M9 17h4"/>
+</svg>
+`;
+
+
 const ICONO_ELIMINAR = `
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
      stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
@@ -40,6 +51,7 @@ const ICONO_ELIMINAR = `
 
 // opciones:
 //   ficha       -> url de la ficha (obligatoria)
+//   reporte     -> si viene, agrega el boton de reporte
 //   eliminarId  -> si viene, agrega el boton de eliminar
 //   nombre      -> se usa en las etiquetas accesibles
 
@@ -79,6 +91,24 @@ function botonesAccion(opciones){
             ${ICONO_EDITAR}
         </a>
     `;
+
+
+    if(opciones.reporte){
+
+
+        html += `
+
+        <a
+            class="action-icon action-reporte"
+            href="${opciones.reporte}"
+            title="Reporte"
+            aria-label="Reporte${nombre}">
+            ${ICONO_REPORTE}
+        </a>
+        `;
+
+
+    }
 
 
     if(opciones.eliminarId !== undefined){

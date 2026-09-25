@@ -4,3 +4,6 @@ node_modules/
 *.exe
 backups/
 graphify-out/
+
+# sesiones de prueba (llevan token)
+frontend/_*.json

@@ -702,4 +702,416 @@ router.get("/niveles/:nivelId/cierres", async(req,res)=>{
 
 
 
+
+
+// =====================================
+// REPORTE DE UN ALUMNO
+// =====================================
+
+// Todo lo que la escuela sabe de una persona, en una sola
+// lectura: quién es, qué cursa, cuánto vino, cómo le fue y
+// qué se decidió al cerrar.
+
+// Son consultas separadas a propósito. En un solo SELECT
+// con varios JOIN las filas se multiplican entre sí y los
+// promedios salen mal.
+
+router.get("/alumnos/:id/reporte", async(req,res)=>{
+
+
+    try{
+
+
+        const alumnoId = Number(req.params.id);
+
+
+        if(!Number.isInteger(alumnoId) || alumnoId < 1){
+
+
+            return res.status(400).json({
+                error:"Alumno inválido"
+            });
+
+
+        }
+
+
+        // ---------------------------------
+        // QUIEN ES
+        // ---------------------------------
+
+        const alumno = await pool.query(
+            `
+            SELECT
+
+                a.id,
+                a.dni,
+                a.nombre,
+                a.apellido,
+                a.fecha_nacimiento,
+                a.telefono,
+                a.telefono_tutor,
+                a.correo,
+                a.anciano_autoriza,
+                a.bautizado_agua,
+                a.observaciones,
+
+                f.nombre AS iglesia,
+
+                DATE_PART(
+                    'year',
+                    AGE(a.fecha_nacimiento)
+                ) AS edad
+
+            FROM alumnos a
+
+            LEFT JOIN filiales f
+                ON f.id = a.filial_id
+
+            WHERE a.id = $1
+            `,
+            [alumnoId]
+        );
+
+
+        if(alumno.rows.length === 0){
+
+
+            return res.status(404).json({
+                error:"Alumno no encontrado"
+            });
+
+
+        }
+
+
+        // ---------------------------------
+        // QUE CURSA
+        // ---------------------------------
+
+        // Las cursadas cerradas también: un reporte que
+        // solo muestra lo activo borra la historia
+
+        const teoria = await pool.query(
+            `
+            SELECT
+
+                c.id,
+                c.anio,
+                c.estado,
+                c.nivel_id,
+
+                n.nombre AS nivel,
+
+                i.apellido || ', ' || i.nombre AS instructor
+
+            FROM cursadas_teoria c
+
+            JOIN niveles_teoria n
+                ON n.id = c.nivel_id
+
+            LEFT JOIN instructores i
+                ON i.id = c.instructor_id
+
+            WHERE c.alumno_id = $1
+
+            ORDER BY c.anio DESC, c.id DESC
+            `,
+            [alumnoId]
+        );
+
+
+        const instrumento = await pool.query(
+            `
+            SELECT
+
+                c.id,
+                c.estado,
+
+                ins.nombre AS instrumento,
+                n.nombre   AS nivel,
+
+                i.apellido || ', ' || i.nombre AS instructor
+
+            FROM cursada_instrumento c
+
+            LEFT JOIN instrumentos ins
+                ON ins.id = c.instrumento_id
+
+            LEFT JOIN niveles_instrumento n
+                ON n.id = c.nivel_instrumento_id
+
+            LEFT JOIN instructores i
+                ON i.id = c.instructor_id
+
+            WHERE c.alumno_id = $1
+
+            ORDER BY c.id DESC
+            `,
+            [alumnoId]
+        );
+
+
+        const ministerial = await pool.query(
+            `
+            SELECT
+                estado,
+                fecha_inicio,
+                fecha_finalizacion,
+                observaciones
+            FROM instruccion_ministerial
+            WHERE alumno_id = $1
+            ORDER BY id DESC
+            LIMIT 1
+            `,
+            [alumnoId]
+        );
+
+
+        // ---------------------------------
+        // CUANTO VINO
+        // ---------------------------------
+
+        // Presentes sobre clases tomadas, no sobre clases
+        // del año: si ese día no se tomó lista, no es una
+        // falta del alumno
+
+        const asistencia = await pool.query(
+            `
+            SELECT
+                'Teoría y Solfeo' AS area,
+                COUNT(*)                            AS clases,
+                COUNT(*) FILTER (WHERE at.presente) AS presentes,
+                MAX(at.fecha)                       AS ultima
+            FROM asistencias_teoria at
+            WHERE at.alumno_id = $1
+
+            UNION ALL
+
+            SELECT
+                'Instrumento',
+                COUNT(*),
+                COUNT(*) FILTER (WHERE ai.presente),
+                MAX(ai.fecha)
+            FROM asistencias_instrumento ai
+            WHERE ai.alumno_id = $1
+
+            UNION ALL
+
+            SELECT
+                'Instrucción Ministerial',
+                COUNT(*),
+                COUNT(*) FILTER (WHERE am.presente),
+                MAX(am.fecha)
+            FROM asistencias_ministerial am
+            WHERE am.alumno_id = $1
+            `,
+            [alumnoId]
+        );
+
+
+        // ---------------------------------
+        // COMO LE FUE
+        // ---------------------------------
+
+        // Solo lo que tiene algo cargado: una evaluación
+        // creada y sin corregir no dice nada de este alumno
+
+        const evaluaciones = await pool.query(
+            `
+            SELECT
+
+                e.id,
+                e.anio,
+                e.cuatrimestre,
+                e.area,
+                e.tipo,
+                e.titulo,
+                e.fecha,
+                e.obligatoria,
+
+                n.nombre AS nivel,
+
+                r.nota,
+                r.resultado,
+                r.ausente,
+                r.observaciones
+
+            FROM evaluacion_resultados r
+
+            JOIN evaluaciones e
+                ON e.id = r.evaluacion_id
+
+            JOIN niveles_teoria n
+                ON n.id = e.nivel_id
+
+            WHERE r.alumno_id = $1
+            AND  (
+                    r.nota      IS NOT NULL
+                 OR r.resultado IS NOT NULL
+                 OR r.ausente
+                 )
+
+            ORDER BY
+                e.anio DESC,
+                e.cuatrimestre DESC,
+                e.fecha DESC NULLS LAST,
+                e.id DESC
+            `,
+            [alumnoId]
+        );
+
+
+        // ---------------------------------
+        // SI PUEDE RENDIR
+        // ---------------------------------
+
+        // Misma regla que ve el instructor en su nivel, sin
+        // recorte y para los dos cuatrimestres de cada año
+        // que cursó.
+
+        // Cuenta las obligatorias del curso, no las que el
+        // alumno tiene cargadas: una que nunca le
+        // corrigieron también lo frena, y si no la contamos
+        // el reporte diría que está habilitado.
+
+        const habilitacion = await pool.query(
+            `
+            SELECT
+
+                c.anio,
+                q.cuatrimestre,
+
+                n.nombre AS nivel,
+
+                COUNT(e.id) AS obligatorias,
+
+                COUNT(e.id) FILTER (
+                    WHERE r.resultado = 'Aprobado'
+                ) AS aprobadas,
+
+                STRING_AGG(
+                    e.titulo,
+                    ' · '
+                    ORDER BY e.id
+                ) FILTER (
+                    WHERE r.resultado IS DISTINCT FROM 'Aprobado'
+                ) AS adeuda,
+
+                MAX(x.motivo)        AS excepcion_motivo,
+                MAX(x.autorizado_el) AS excepcion_fecha,
+
+                MAX(
+                    u.nombre || ' ' || u.apellido
+                ) AS excepcion_por
+
+            FROM cursadas_teoria c
+
+            JOIN niveles_teoria n
+                ON n.id = c.nivel_id
+
+            CROSS JOIN (VALUES (1),(2)) AS q(cuatrimestre)
+
+            LEFT JOIN evaluaciones e
+                ON  e.nivel_id      = c.nivel_id
+                AND e.instructor_id = c.instructor_id
+                AND e.anio          = c.anio
+                AND e.cuatrimestre  = q.cuatrimestre
+                AND e.obligatoria   = TRUE
+                AND e.tipo         <> 'Examen'
+
+            LEFT JOIN evaluacion_resultados r
+                ON  r.evaluacion_id = e.id
+                AND r.alumno_id     = c.alumno_id
+
+            LEFT JOIN excepciones_examen x
+                ON  x.alumno_id    = c.alumno_id
+                AND x.nivel_id     = c.nivel_id
+                AND x.anio         = c.anio
+                AND x.cuatrimestre = q.cuatrimestre
+
+            LEFT JOIN usuarios u
+                ON u.id = x.autorizado_por
+
+            WHERE c.alumno_id = $1
+
+            GROUP BY c.id, c.anio, q.cuatrimestre, n.nombre
+
+            HAVING COUNT(e.id) > 0
+                OR MAX(x.motivo) IS NOT NULL
+
+            ORDER BY c.anio DESC, q.cuatrimestre
+            `,
+            [alumnoId]
+        );
+
+
+        // ---------------------------------
+        // QUE SE DECIDIO
+        // ---------------------------------
+
+        const cierres = await pool.query(
+            `
+            SELECT
+
+                c.anio,
+                c.periodo,
+                c.nota_final,
+                c.condicion,
+                c.observaciones,
+                c.cerrado_el,
+
+                n.nombre AS nivel,
+
+                u.nombre || ' ' || u.apellido AS cerrado_por
+
+            FROM cierres c
+
+            JOIN niveles_teoria n
+                ON n.id = c.nivel_id
+
+            LEFT JOIN usuarios u
+                ON u.id = c.cerrado_por
+
+            WHERE c.alumno_id = $1
+
+            ORDER BY c.anio DESC, c.periodo DESC
+            `,
+            [alumnoId]
+        );
+
+
+        res.json({
+
+            alumno:       alumno.rows[0],
+            teoria:       teoria.rows,
+            instrumento:  instrumento.rows,
+            ministerial:  ministerial.rows[0] || null,
+            asistencia:   asistencia.rows,
+            evaluaciones: evaluaciones.rows,
+            habilitacion: habilitacion.rows,
+            cierres:      cierres.rows
+
+        });
+
+
+    }
+    catch(error){
+
+
+        console.error(error);
+
+
+        res.status(500).json({
+            error:"Error armando el reporte del alumno"
+        });
+
+
+    }
+
+
+});
+
+
+
 module.exports = router;
