@@ -3131,3 +3131,49 @@ input[type="radio"]{
     gap: var(--e-2);
     flex-wrap: wrap;
 }
+
+/* ---------- Alta de instructor ---------- */
+
+/* Una casilla con su texto al lado, alineados por el centro del cuadrito
+   y no por la caja completa del input. */
+.check-line {
+    display: flex;
+    align-items: center;
+    gap: var(--e-2);
+    margin-bottom: var(--e-4);
+    cursor: pointer;
+}
+
+.check-line input[type="checkbox"] {
+    width: auto;
+    min-height: auto;
+    margin: 0;
+    accent-color: var(--accent-strong);
+}
+
+.check-line span {
+    color: #344054;
+    font-size: var(--t-sm);
+    font-weight: 700;
+}
+
+/* Los instrumentos son trece: en casillas se ven todos de una, mientras que
+   en un desplegable con seleccion multiple hay que descubrir que se puede
+   elegir mas de uno. */
+.opciones-casillas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: var(--e-2) var(--e-4);
+    padding: var(--e-3);
+    border: 1px solid #cdd8e5;
+    border-radius: var(--radius);
+    background: #ffffff;
+}
+
+.opciones-casillas .check-line {
+    margin-bottom: 0;
+}
+
+.opciones-casillas .check-line span {
+    font-weight: 500;
+}

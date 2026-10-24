@@ -8,6 +8,7 @@
   <title>SIGEM | Instructores</title>
 
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/notificaciones.css">
 </head>
 
 <body>
@@ -40,7 +41,149 @@
 
         </div>
 
+
+        <button
+          class="button primary hidden"
+          type="button"
+          id="btnNuevoInstructor"
+        >
+          + Nuevo instructor
+        </button>
+
       </header>
+
+
+      <!-- Alta de instructor. Se llena desde js/instructores.js -->
+      <section
+        class="card form-card hidden"
+        id="formularioInstructor"
+        aria-labelledby="tituloFormularioInstructor"
+      >
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2 id="tituloFormularioInstructor">
+              Nuevo instructor
+            </h2>
+
+            <p>
+              Indicá qué enseña: Teoría y Solfeo, uno o varios instrumentos, o las dos cosas.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form id="instructorForm">
+
+          <div class="form-grid">
+
+            <label class="field">
+              <span>Apellido</span>
+              <input
+                type="text"
+                id="instructorApellido"
+                name="apellido"
+                required
+                maxlength="80"
+              >
+            </label>
+
+
+            <label class="field">
+              <span>Nombre</span>
+              <input
+                type="text"
+                id="instructorNombre"
+                name="nombre"
+                required
+                maxlength="80"
+              >
+            </label>
+
+
+            <label class="field">
+              <span>Teléfono</span>
+              <input
+                type="text"
+                id="instructorTelefono"
+                name="telefono"
+                maxlength="40"
+              >
+            </label>
+
+
+            <label class="field">
+              <span>Estado</span>
+              <select id="instructorEstado" name="estado">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </label>
+
+          </div>
+
+
+          <div class="form-section">
+
+            <h3 class="form-section-title">
+              Qué enseña
+            </h3>
+
+
+            <label class="check-line">
+              <input
+                type="checkbox"
+                id="instructorEnsenaTeoria"
+              >
+              <span>Teoría y Solfeo</span>
+            </label>
+
+
+            <div class="field">
+
+              <span>Instrumentos</span>
+
+              <div
+                class="opciones-casillas"
+                id="instructorInstrumentos"
+              >
+                <p class="empty-state">
+                  Cargando instrumentos…
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              class="button secondary"
+              type="button"
+              id="btnCancelarInstructor"
+            >
+              Cancelar
+            </button>
+
+            <button
+              class="button primary"
+              type="submit"
+              id="btnGuardarInstructor"
+            >
+              Guardar instructor
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
 
 
       <section class="card">
@@ -81,8 +224,6 @@
   <option value="instrumento">Instrumento</option>
   <option value="teoria">Teoría</option>
 </select>
-
-            </label>
 
 
             <button
@@ -149,7 +290,76 @@
   </div>
 
 
+  <!-- ========================================== -->
+  <!-- CONFIRMAR HOMONIMO -->
+  <!-- ========================================== -->
+
+  <div
+    id="modalHomonimo"
+    class="modal-overlay hidden"
+  >
+
+    <div class="modal-confirmacion">
+
+      <div class="modal-icono">
+        !
+      </div>
+
+      <h2>
+        Ya hay alguien con ese nombre
+      </h2>
+
+      <p>
+        En el sistema figura
+        <strong id="nombreHomonimo"></strong>.
+      </p>
+
+      <p class="modal-advertencia">
+        Si es la misma persona, cancelá y buscala en el listado. Agregala solo
+        si de verdad son dos personas distintas con el mismo nombre.
+      </p>
+
+      <div class="modal-acciones">
+
+        <button
+          type="button"
+          class="button secondary"
+          id="btnCancelarHomonimo"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="button primary"
+          id="btnConfirmarHomonimo"
+        >
+          Es otra persona, agregar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- NOTIFICACION SIGEM -->
+  <!-- ========================================== -->
+
+  <div
+    id="notificacionSIGEM"
+    class="notificacion"
+  >
+    <span id="notificacionIcono"></span>
+
+    <span id="notificacionMensaje"></span>
+  </div>
+
+
   <script src="js/api.js"></script>
+  <script src="js/notificaciones.js"></script>
   <script src="js/instructores.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/auth.js"></script>
