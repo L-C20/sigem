@@ -344,6 +344,11 @@ async function cargarFiliales() {
 
   }
 
+
+  // El boton de agregar iglesia se monta una sola vez, aunque esto se
+  // vuelva a llamar.
+  montarNuevaIglesia("filial_id");
+
 }
 
 

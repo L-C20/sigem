@@ -457,6 +457,12 @@ async function cargarIglesiasEdicion(alumno){
     });
 
 
+
+    // Queda oculto hasta que se entre en edicion: lo decide el propio
+    // boton mirando si el select esta deshabilitado.
+    montarNuevaIglesia("filial_id");
+
+
 }
 
 // =====================================

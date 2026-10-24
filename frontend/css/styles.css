@@ -3100,3 +3100,34 @@ input[type="radio"]{
     }
 
 }
+
+/* ---------- Agregar una iglesia desde el formulario ---------- */
+
+/* Va debajo del desplegable, dentro del mismo .field, para que se lea como
+   parte de ese campo y no como un control suelto del formulario. */
+.nueva-iglesia {
+    display: grid;
+    gap: var(--e-2);
+}
+
+.nueva-iglesia .button {
+    justify-self: start;
+    min-height: auto;
+    padding: 6px 10px;
+    font-size: var(--t-sm);
+}
+
+.nueva-iglesia-form {
+    display: grid;
+    gap: var(--e-2);
+    padding: var(--e-3);
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius);
+    background: var(--accent-tint);
+}
+
+.nueva-iglesia-acciones {
+    display: flex;
+    gap: var(--e-2);
+    flex-wrap: wrap;
+}
