@@ -803,7 +803,24 @@ router.get("/alumnos/:id/reporte", async(req,res)=>{
 
                 n.nombre AS nivel,
 
-                i.apellido || ', ' || i.nombre AS instructor
+                i.apellido || ', ' || i.nombre AS instructor,
+
+                -- Recursante: cuantas veces curso ESTE nivel y cual de
+                -- esas veces es esta. Se cuenta por nivel y no por alumno,
+                -- porque repetir Nivel 3 no dice nada de Nivel 1.
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.nivel_id
+                    ORDER BY c.anio, c.id
+                ) AS vez,
+
+                -- Los anios en que ya lo habia cursado antes de esta vez.
+                -- Sin esto el reporte diria "recursa" sin poder mostrar
+                -- cuando fue la primera, que es justo lo que se pregunta.
+                ARRAY_AGG(c.anio) OVER (
+                    PARTITION BY c.nivel_id
+                    ORDER BY c.anio, c.id
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+                ) AS anios_anteriores
 
             FROM cursadas_teoria c
 
@@ -831,7 +848,21 @@ router.get("/alumnos/:id/reporte", async(req,res)=>{
                 ins.nombre AS instrumento,
                 n.nombre   AS nivel,
 
-                i.apellido || ', ' || i.nombre AS instructor
+                i.apellido || ', ' || i.nombre AS instructor,
+
+                -- Se parte por instrumento Y nivel: pasar de violin a
+                -- piano y volver a empezar en Nivel 1 no es recursar, es
+                -- otro instrumento.
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.instrumento_id, c.nivel_instrumento_id
+                    ORDER BY c.anio, c.id
+                ) AS vez,
+
+                ARRAY_AGG(c.anio) OVER (
+                    PARTITION BY c.instrumento_id, c.nivel_instrumento_id
+                    ORDER BY c.anio, c.id
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+                ) AS anios_anteriores
 
             FROM cursada_instrumento c
 

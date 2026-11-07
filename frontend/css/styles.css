@@ -3177,3 +3177,10 @@ input[type="radio"]{
 .opciones-casillas .check-line span {
     font-weight: 500;
 }
+
+/* Recursante: ambar, ni aprobado ni desaprobado. No es una falta, es un
+   dato de contexto que cambia como se lee todo el resto del reporte. */
+.estado-recursa{
+    background: rgba(184, 134, 11, 0.14);
+    color: #8a6400;
+}

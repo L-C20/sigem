@@ -327,6 +327,7 @@ function seccionCursa(datos){
                         · ${texto(c.instructor)}
                     </span>
                     ${etiquetaEstado(c.estado)}
+                    ${etiquetaRecursa(c)}
                 </li>
             `).join("")}
             </ul>
@@ -366,6 +367,7 @@ function seccionCursa(datos){
                         · ${texto(c.instructor)}
                     </span>
                     ${etiquetaEstado(c.estado)}
+                    ${etiquetaRecursa(c)}
                 </li>
             `).join("")}
             </ul>
@@ -444,6 +446,51 @@ function bloqueVacio(titulo, mensaje){
 }
 
 
+
+
+// Recursante: esta cursando un nivel que ya habia cursado antes.
+//
+// Se calcula contando las cursadas del mismo nivel, asi que solo aparece
+// si el paso anterior esta cargado en el sistema. Un alumno que repite
+// algo que curso antes de que existiera SIGEM no se detecta solo.
+function etiquetaRecursa(cursada){
+
+
+    const vez = Number(cursada.vez || 1);
+
+
+    if(vez < 2){
+
+
+        return "";
+
+
+    }
+
+
+    const anteriores =
+        Array.isArray(cursada.anios_anteriores)
+            ? cursada.anios_anteriores
+            : [];
+
+
+    const detalle =
+        anteriores.length > 0
+            ? `<span class="texto-tenue">
+                   · ya lo cursó en ${esc(anteriores.join(", "))}
+               </span>`
+            : "";
+
+
+    return `
+        <span class="estado estado-recursa">
+            Recursa · ${esc(vez)}ª vez
+        </span>
+        ${detalle}
+    `;
+
+
+}
 
 
 function etiquetaEstado(estado){
