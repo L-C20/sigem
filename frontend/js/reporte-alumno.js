@@ -305,7 +305,7 @@ function seccionCursa(datos){
 
         cuerpo += bloqueVacio(
             "Teoría y Solfeo",
-            "No cursa."
+            "Sin cursada registrada."
         );
 
 
@@ -345,7 +345,7 @@ function seccionCursa(datos){
 
         cuerpo += bloqueVacio(
             "Instrumento",
-            "No cursa."
+            "Sin cursada registrada."
         );
 
 
@@ -425,7 +425,7 @@ function seccionCursa(datos){
     }
 
 
-    return tarjeta("Qué cursa", null, cuerpo);
+    return tarjeta("Trayectoria académica", null, cuerpo);
 
 
 }
@@ -558,9 +558,9 @@ function seccionAsistencia(filas){
 
         return tarjeta(
             "Asistencia",
-            "Presentes sobre clases en las que se tomó lista.",
+            "Calculada sobre las clases en las que se tomó lista.",
             `<p class="empty-state">
-                Todavía no se le tomó asistencia.
+                Sin registros de asistencia.
             </p>`
         );
 
@@ -607,7 +607,7 @@ function seccionAsistencia(filas){
 
     return tarjeta(
         "Asistencia",
-        "Presentes sobre clases en las que se tomó lista.",
+        "Calculada sobre las clases en las que se tomó lista.",
         `<div class="reporte-medidas">${tarjetas}</div>`
     );
 
@@ -631,7 +631,7 @@ function seccionEvaluaciones(filas){
             "Evaluaciones",
             null,
             `<p class="empty-state">
-                Todavía no tiene evaluaciones corregidas.
+                Sin evaluaciones registradas.
             </p>`
         );
 
@@ -747,7 +747,7 @@ function seccionEvaluaciones(filas){
 
     return tarjeta(
         "Evaluaciones",
-        "Solo las que tienen algo cargado.",
+        "Se incluyen únicamente las evaluaciones con resultado registrado.",
         cabezaResumen + tabla
     );
 
@@ -822,7 +822,7 @@ function seccionHabilitacion(filas){
             "Habilitación al examen",
             null,
             `<p class="empty-state">
-                No hay evaluaciones obligatorias cargadas.
+                Sin evaluaciones obligatorias registradas.
             </p>`
         );
 
@@ -867,7 +867,7 @@ function seccionHabilitacion(filas){
                     ${obligatorias > 0
                         ? aprobadas + " de " + obligatorias
                           + " obligatorias aprobadas"
-                        : "por excepción; no hay obligatorias cargadas"}
+                        : "por excepción; no hay obligatorias registradas"}
                 </span>
             </p>
 
@@ -896,7 +896,7 @@ function seccionHabilitacion(filas){
 
     return tarjeta(
         "Habilitación al examen",
-        "Se calcula: hay que aprobar todas las obligatorias del curso.",
+        "Requiere tener aprobadas todas las evaluaciones obligatorias del curso.",
         cuerpo
     );
 
@@ -920,7 +920,7 @@ function seccionCierres(filas){
             "Cierres de período",
             null,
             `<p class="empty-state">
-                Todavía no tiene períodos cerrados.
+                Sin períodos cerrados.
             </p>`
         );
 
@@ -978,7 +978,7 @@ function seccionCierres(filas){
 
     return tarjeta(
         "Cierres de período",
-        "La condición la decide una persona; el sistema solo sugiere el promedio.",
+        "El sistema calcula el promedio; la condición la define quien cierra el período.",
         tabla
     );
 
