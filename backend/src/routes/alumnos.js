@@ -216,6 +216,7 @@ SELECT
     ci.instrumento_id,
     ci.nivel_instrumento_id,
     ci.instructor_id AS instructor_instrumento_id,
+    ci.recursante AS recursante_instrumento,
 
     i.nombre AS instrumento,
 
@@ -228,6 +229,7 @@ SELECT
 
     ct.nivel_id AS nivel_teoria_id,
     ct.instructor_id AS instructor_teoria_id,
+    ct.recursante AS recursante_teoria,
 
     nt.nombre AS nivel_teoria
 

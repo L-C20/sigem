@@ -21,9 +21,15 @@ router.post("/", async(req,res)=>{
             nivel_id,
             instructor_id,
             anio,
-            estado
+            estado,
+            recursante
 
         } = req.body;
+
+
+        // Marca manual: la pone una persona en la ficha cuando el alumno
+        // ya curso este nivel antes de que estuviera cargado en SIGEM.
+        const esRecursante = Boolean(recursante);
 
 
 
@@ -69,10 +75,12 @@ router.post("/", async(req,res)=>{
 
                     instructor_id = $2,
 
-                    anio = $3
+                    anio = $3,
+
+                    recursante = $4
 
 
-                WHERE id = $4
+                WHERE id = $5
 
 
                 RETURNING *
@@ -88,6 +96,8 @@ router.post("/", async(req,res)=>{
                     instructor_id,
 
                     anio,
+
+                    esRecursante,
 
                     existe.rows[0].id
 
@@ -127,14 +137,16 @@ router.post("/", async(req,res)=>{
 
                 anio,
 
-                estado
+                estado,
+
+                recursante
 
             )
 
 
             VALUES
 
-            ($1,$2,$3,$4,$5)
+            ($1,$2,$3,$4,$5,$6)
 
 
             RETURNING *
@@ -152,7 +164,9 @@ router.post("/", async(req,res)=>{
 
                 anio,
 
-                estado
+                estado,
+
+                esRecursante
 
             ]
 

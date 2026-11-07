@@ -800,6 +800,7 @@ router.get("/alumnos/:id/reporte", async(req,res)=>{
                 c.anio,
                 c.estado,
                 c.nivel_id,
+                c.recursante AS marcado_recursante,
 
                 n.nombre AS nivel,
 
@@ -844,6 +845,7 @@ router.get("/alumnos/:id/reporte", async(req,res)=>{
 
                 c.id,
                 c.estado,
+                c.recursante AS marcado_recursante,
 
                 ins.nombre AS instrumento,
                 n.nombre   AS nivel,

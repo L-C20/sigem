@@ -450,19 +450,38 @@ function bloqueVacio(titulo, mensaje){
 
 // Recursante: esta cursando un nivel que ya habia cursado antes.
 //
-// Se calcula contando las cursadas del mismo nivel, asi que solo aparece
-// si el paso anterior esta cargado en el sistema. Un alumno que repite
-// algo que curso antes de que existiera SIGEM no se detecta solo.
+// Sale de dos lados. El conteo de cursadas del mismo nivel, que ademas
+// sabe en que anios fue; y la marca que se pone a mano en la ficha, para
+// los chicos que lo cursaron antes de que existiera SIGEM y por lo tanto
+// no tienen la cursada anterior cargada.
 function etiquetaRecursa(cursada){
 
 
     const vez = Number(cursada.vez || 1);
 
+    const marcado = Boolean(cursada.marcado_recursante);
 
-    if(vez < 2){
+
+    if(vez < 2 && !marcado){
 
 
         return "";
+
+
+    }
+
+
+    // Marcado a mano y sin cursada anterior cargada: se puede afirmar que
+    // recursa, pero no cuantas veces ni desde cuando. Decir "2a vez" ahi
+    // seria inventar un dato que nadie cargo.
+    if(vez < 2){
+
+
+        return `
+            <span class="estado estado-recursa">
+                Recursa
+            </span>
+        `;
 
 
     }

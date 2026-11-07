@@ -76,8 +76,10 @@ const camposEditables = [
     "instrumento_id",
     "nivel_instrumento_id",
     "instructor_instrumento_id",
+    "recursante_instrumento",
     "nivel_teoria_id",
     "instructor_teoria_id",
+    "recursante_teoria",
     "estado_ministerial","fecha_inicio_ministerial","fecha_fin_ministerial","observaciones_ministerial"
 ];
 
@@ -368,6 +370,21 @@ document.getElementById("nivel_teoria_id").value =
 
 document.getElementById("instructor_teoria_id").value =
     alumno.instructor_teoria_id || "";
+
+
+// =========================
+// RECURSANTE
+// =========================
+
+// Salen de la cursada activa, no del alumno: la marca es de este nivel
+// en este anio, no de la persona.
+
+document.getElementById("recursante_teoria").checked =
+    Boolean(alumno.recursante_teoria);
+
+
+document.getElementById("recursante_instrumento").checked =
+    Boolean(alumno.recursante_instrumento);
     }
     catch(error){
 
@@ -810,7 +827,10 @@ async function guardarInstrumento(){
             new Date().getFullYear(),
 
         estado:
-            "Activo"
+            "Activo",
+
+        recursante:
+            document.getElementById("recursante_instrumento").checked
 
     };
 
@@ -945,7 +965,10 @@ async function guardarTeoria(){
             new Date().getFullYear(),
 
         estado:
-            "Activo"
+            "Activo",
+
+        recursante:
+            document.getElementById("recursante_teoria").checked
 
     };
 
